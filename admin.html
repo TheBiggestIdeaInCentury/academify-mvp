@@ -542,28 +542,60 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
           <span style="font-size:10px;color:var(--muted)">Base URL: <code style="color:var(--accent2)">api.academify.xyz/v1</code></span>
         </div>
 
+        <div style="font-size:11px;color:var(--muted);margin-bottom:12px;padding:8px 12px;background:rgba(124,109,250,0.05);border:1px solid rgba(124,109,250,0.15);border-radius:8px;line-height:1.6">
+          💡 Alle <code style="color:var(--accent2)">/members</code> Endpunkte unterstützen Rollen-Filter: <code style="color:var(--success)">?role=student</code> <code style="color:var(--success)">?role=professor</code> <code style="color:var(--success)">?role=management</code> <code style="color:var(--success)">?role=social-media</code> <code style="color:var(--success)">?role=admin</code>
+        </div>
+
+        <div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted2);margin:12px 0 8px;font-weight:500">👥 Mitglieder & Rollen</div>
+
         <div class="endpoint-card">
           <div class="endpoint-header">
             <span class="endpoint-method method-get">GET</span>
-            <span class="endpoint-path">/students</span>
+            <span class="endpoint-path">/members</span>
           </div>
-          <div class="endpoint-desc">Alle Studierenden der Organisation abrufen. Unterstützt Pagination & Filter nach Fakultät, Semester.</div>
+          <div class="endpoint-desc">Alle Mitglieder abrufen — Studierende, Professoren, Management, Social Media, Admins. Filter: <code style="color:var(--accent2)">?role=</code> <code style="color:var(--accent2)">?faculty=</code> <code style="color:var(--accent2)">?department=</code></div>
         </div>
 
         <div class="endpoint-card">
           <div class="endpoint-header">
             <span class="endpoint-method method-post">POST</span>
-            <span class="endpoint-path">/students/import</span>
+            <span class="endpoint-path">/members</span>
           </div>
-          <div class="endpoint-desc">Studierende per CSV oder JSON-Array importieren. Automatische Zuordnung über E-Mail-Domain.</div>
+          <div class="endpoint-desc">Neues Mitglied hinzufügen mit Rolle (student, professor, management, social_media, admin), Abteilung und Berechtigungen.</div>
         </div>
+
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <span class="endpoint-method method-post">POST</span>
+            <span class="endpoint-path">/members/import</span>
+          </div>
+          <div class="endpoint-desc">Massen-Import per CSV/JSON — Studierende, Professoren und Personal gleichzeitig. Automatische Rollenzuordnung über E-Mail-Domain.</div>
+        </div>
+
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <span class="endpoint-method method-put">PUT</span>
+            <span class="endpoint-path">/members/{id}/role</span>
+          </div>
+          <div class="endpoint-desc">Rolle eines Mitglieds ändern (z.B. Student → Tutor, Mitarbeiter → Dekan). Berechtigungen werden automatisch angepasst.</div>
+        </div>
+
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <span class="endpoint-method method-delete">DELETE</span>
+            <span class="endpoint-path">/members/{id}</span>
+          </div>
+          <div class="endpoint-desc">Mitglied aus der Organisation entfernen. DSGVO-konform mit vollständiger Datenlöschung.</div>
+        </div>
+
+        <div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted2);margin:16px 0 8px;font-weight:500">🏛️ Organisationsstruktur</div>
 
         <div class="endpoint-card">
           <div class="endpoint-header">
             <span class="endpoint-method method-get">GET</span>
             <span class="endpoint-path">/structure</span>
           </div>
-          <div class="endpoint-desc">Komplette Organisationsstruktur als JSON-Baum abrufen (Fakultäten, Institute, Lehrstühle).</div>
+          <div class="endpoint-desc">Komplette Organisationsstruktur als JSON-Baum (Rektorat → Fakultäten → Institute → Lehrstühle → Teams).</div>
         </div>
 
         <div class="endpoint-card">
@@ -573,6 +605,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
           </div>
           <div class="endpoint-desc">Organisationseinheit aktualisieren (Name, Leitung, Beschreibung, übergeordnete Einheit).</div>
         </div>
+
+        <div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted2);margin:16px 0 8px;font-weight:500">👻 Bewertungen & Integrationen</div>
 
         <div class="endpoint-card">
           <div class="endpoint-header">
@@ -587,15 +621,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
             <span class="endpoint-method method-post">POST</span>
             <span class="endpoint-path">/sync/moodle</span>
           </div>
-          <div class="endpoint-desc">Moodle-Kursdaten synchronisieren. Automatischer Abgleich von Kursen, Teilnehmern und Noten.</div>
+          <div class="endpoint-desc">Moodle/Canvas-Kursdaten synchronisieren. Automatischer Abgleich von Kursen, Teilnehmern und Noten.</div>
         </div>
 
         <div class="endpoint-card">
           <div class="endpoint-header">
-            <span class="endpoint-method method-delete">DELETE</span>
-            <span class="endpoint-path">/students/{id}</span>
+            <span class="endpoint-method method-get">GET</span>
+            <span class="endpoint-path">/analytics</span>
           </div>
-          <div class="endpoint-desc">Studierenden aus der Organisation entfernen. DSGVO-konform mit vollständiger Datenlöschung.</div>
+          <div class="endpoint-desc">Organisations-Statistiken abrufen — Aktivität pro Rolle, Engagement, Bewertungstrends. Ideal für Management-Reports.</div>
         </div>
       </div>
 
@@ -641,22 +675,26 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
           <span class="api-copy-btn" onclick="showToast('✓ Code kopiert!')">Kopieren</span>
         </div>
         <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem;font-family:'Courier New',monospace;font-size:12px;color:var(--muted);line-height:1.8;overflow-x:auto">
-          <span style="color:var(--coral)">curl</span> -X GET <span style="color:var(--success)">https://api.academify.xyz/v1/students</span> \<br>
-          &nbsp;&nbsp;-H <span style="color:var(--warn)">"Authorization: Bearer YOUR_API_KEY"</span> \<br>
-          &nbsp;&nbsp;-H <span style="color:var(--warn)">"Content-Type: application/json"</span><br><br>
+          <span style="color:var(--muted2)">// Alle Mitglieder nach Rolle filtern:</span><br>
+          <span style="color:var(--coral)">curl</span> -X GET <span style="color:var(--success)">https://api.academify.xyz/v1/members?role=professor</span> \<br>
+          &nbsp;&nbsp;-H <span style="color:var(--warn)">"Authorization: Bearer YOUR_API_KEY"</span><br><br>
           <span style="color:var(--muted2)">// Response:</span><br>
           {<br>
-          &nbsp;&nbsp;<span style="color:var(--info)">"total"</span>: <span style="color:var(--accent2)">51400</span>,<br>
-          &nbsp;&nbsp;<span style="color:var(--info)">"students"</span>: [<br>
+          &nbsp;&nbsp;<span style="color:var(--info)">"total"</span>: <span style="color:var(--accent2)">386</span>,<br>
+          &nbsp;&nbsp;<span style="color:var(--info)">"members"</span>: [<br>
           &nbsp;&nbsp;&nbsp;&nbsp;{<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--info)">"id"</span>: <span style="color:var(--accent2)">1</span>,<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--info)">"name"</span>: <span style="color:var(--success)">"Max Müller"</span>,<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--info)">"email"</span>: <span style="color:var(--success)">"max@stud.uni-koeln.de"</span>,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--info)">"id"</span>: <span style="color:var(--accent2)">42</span>,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--info)">"name"</span>: <span style="color:var(--success)">"Prof. Dr. Werner Mellis"</span>,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--info)">"email"</span>: <span style="color:var(--success)">"mellis@uni-koeln.de"</span>,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--info)">"role"</span>: <span style="color:var(--success)">"professor"</span>,<br>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--info)">"faculty"</span>: <span style="color:var(--success)">"WiSo"</span>,<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--info)">"semester"</span>: <span style="color:var(--accent2)">3</span><br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--info)">"position"</span>: <span style="color:var(--success)">"Dekan"</span><br>
           &nbsp;&nbsp;&nbsp;&nbsp;}<br>
           &nbsp;&nbsp;]<br>
-          }
+          }<br><br>
+          <span style="color:var(--muted2)">// Verfügbare Rollen:</span><br>
+          <span style="color:var(--muted2)">// student, professor, management, social_media,</span><br>
+          <span style="color:var(--muted2)">// admin, tutor, researcher, staff</span>
         </div>
       </div>
     </div>
