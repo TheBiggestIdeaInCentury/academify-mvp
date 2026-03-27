@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="de"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ProjectXYZ - Dein Studium. Deine Regeln. Deine Zentrale.</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#9D7BFF",
+                        "primary-container": "#290070",
+                        "on-primary": "#FFFFFF",
+                        "surface": "#0e0e11",
+                        "surface-container-low": "#131316",
+                        "surface-container": "#19191d",
+                        "surface-container-high": "#1f1f23",
+                        "surface-container-highest": "#25252a",
+                        "on-surface": "#f0edf1",
+                        "on-surface-variant": "#acaaae",
+                        "outline": "#767579",
+                        "outline-variant": "#48474b",
+                        "secondary": "#c08ffb",
+                        "tertiary": "#ff96b8",
+                        "error": "#ff6e84",
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "3xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #0e0e11; color: #f0edf1; overflow-x: hidden; }
+        h1, h2, h3, .font-headline { font-family: 'Manrope', sans-serif; }
+        .glass-card { background: rgba(25, 25, 29, 0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .view-section { display: none; min-height: 100vh; }
+        .view-section.active { display: block; }
+        .text-glow { text-shadow: 0 0 15px rgba(157, 123, 255, 0.4); }
+        .bg-glow-primary { background: radial-gradient(circle, rgba(157, 123, 255, 0.15) 0%, rgba(14, 14, 17, 0) 70%); }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .fill-1 { font-variation-settings: 'FILL' 1; }
+        
+        /* Smooth transitions */
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-surface text-on-surface selection:bg-primary selection:text-white">
+<!-- Skip-to-Content (Barrierefreiheit) -->
+<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[9999] focus:bg-primary focus:text-white focus:px-4 focus:py-2 focus:rounded-lg focus:font-bold">Zum Hauptinhalt springen</a>
+<!-- NAVIGATION (Top Bar Shared for Landing & Auth) -->
+<nav class="fixed top-0 w-full z-50 flex justify-between items-center px-8 h-20 bg-[#0e0e11]/80 backdrop-blur-xl border-b border-white/5" id="global-header">
+<div class="flex items-center gap-12">
+<span class="text-2xl font-black text-white cursor-pointer" onclick="navigate('landing')">Project<span class="text-primary">XYZ</span></span>
+<div class="hidden md:flex gap-8 items-center text-sm font-medium">
+<a class="text-on-surface-variant hover:text-white transition-colors" href="#features">Features</a>
+<a class="text-on-surface-variant hover:text-white transition-colors" href="#community">Community</a>
+<a class="text-on-surface-variant hover:text-white transition-colors" href="#vision">Vision</a>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-on-surface hover:text-primary transition-colors font-medium" onclick="navigate('login')">Login</button>
+<button class="bg-primary text-white px-6 py-2.5 rounded-lg font-bold shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all" onclick="navigate('login')">Sign Up</button>
+</div>
+</nav>
+<!-- SIDE NAVIGATION (Dashboard Only) -->
+<aside class="fixed left-0 top-0 h-screen w-64 bg-[#131316] flex flex-col p-4 gap-2 shadow-2xl shadow-black/20 z-50 hidden" id="dashboard-sidebar">
+<div class="mb-8 px-4 flex items-center gap-2">
+<span class="text-xl font-black tracking-tight text-white">Project<span class="text-primary">XYZ</span></span>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 bg-surface-container-highest text-primary rounded-lg px-4 py-3 transition-all duration-200" href="#" onclick="navigate('dashboard')">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-highest/50 hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined">school</span>
+<span class="text-sm font-medium">Meine Kurse</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-highest/50 hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined">event_note</span>
+<span class="text-sm font-medium">Fristen</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-highest/50 hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-sm font-medium">Tutoren</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-highest/50 hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined">forum</span>
+<span class="text-sm font-medium">Community</span>
+</a>
+</nav>
+<div class="mt-auto flex flex-col gap-4">
+<div class="p-4 rounded-xl bg-gradient-to-br from-primary/10 to-surface-container border border-primary/20">
+<p class="text-[10px] font-bold text-primary mb-2 uppercase tracking-widest">ProjectXYZ Pro</p>
+<p class="text-xs text-on-surface-variant mb-4 leading-relaxed">Schalte erweiterte Analysen und 1-zu-1-Sitzungen frei.</p>
+<button class="w-full py-2 bg-primary text-white text-xs font-bold rounded-lg hover:brightness-110 transition-all">Upgrade auf Pro</button>
+</div>
+<div class="flex flex-col gap-1 border-t border-white/5 pt-4">
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-2 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-sm">help</span>
+<span class="text-sm">Hilfe</span>
+</a>
+<a class="flex items-center gap-3 text-error px-4 py-2 hover:bg-error/10 transition-colors rounded-lg" href="#" onclick="navigate('landing')">
+<span class="material-symbols-outlined text-sm">logout</span>
+<span class="text-sm">Abmelden</span>
+</a>
+</div>
+</div>
+</aside>
+<main id="content-canvas" aria-label="Hauptinhalt">
+<!-- Anker für Skip-Link -->
+<span id="main-content" tabindex="-1" class="sr-only">Hauptinhalt</span>
+<!-- 1. LANDINGPAGE SECTION -->
+<section class="view-section active fade-in pt-20" id="view-landing">
+<!-- Hero -->
+<div class="relative min-h-[85vh] flex flex-col items-center justify-center px-8 text-center overflow-hidden">
+<div class="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] -z-10"></div>
+<div class="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-secondary/10 rounded-full blur-[100px] -z-10"></div>
+<h1 class="text-5xl md:text-8xl font-black mb-8 tracking-tight leading-[1.1]">
+                    Dein Studium.<br/>
+<span class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-primary text-glow">Deine Regeln.</span>
+</h1>
+<p class="text-lg md:text-xl text-on-surface-variant max-w-3xl mb-12 font-body leading-relaxed">
+                    Vergiss das Chaos aus Excel-Listen, PDF-Ordnern und verpassten Fristen. ProjectXYZ ist die smarte Schaltzentrale, die alles vereint, was du für ein erfolgreiches Studium brauchst.
+                </p>
+<div class="flex flex-wrap gap-4 justify-center">
+<button class="bg-primary text-white px-10 py-4 rounded-2xl font-bold text-lg hover:scale-105 transition-transform shadow-xl shadow-primary/25" onclick="navigate('login')">Jetzt kostenlos starten</button>
+<button class="bg-surface-container-highest px-10 py-4 rounded-2xl font-bold text-lg border border-white/10 hover:bg-surface-bright transition-colors">Tour ansehen</button>
+</div>
+<!-- Hero Image Concept -->
+<div class="mt-20 w-full max-w-6xl rounded-[40px] overflow-hidden border border-white/10 shadow-2xl relative group">
+<div class="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent opacity-60 z-10"></div>
+<img class="w-full h-auto object-cover opacity-90 transition-transform duration-700 group-hover:scale-105" alt="Gruppe glücklicher, vielfältiger Studierender beim gemeinsamen Lernen mit Laptops" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKS3yVzve6lZuTH_gRQeqvzatato01PlC4B9fBhdMLuqIqbvd40b8YYNjPxxgzCwqeXIb8fGymAs8-bnxviPo7mx7wFQfdHY9sxOAGyV_GI7kDU7Gf4AakUtnfiU9H_JWezQ3fK0ZxlDafm7e3_J92wVU6l-cNWoq0IjNQQxgyJg1xLmUJELSCHLTMOc8jcMpBBPZ86aiedvpVg2uCypTCRNdNll3S3zge5ZwVkdnskpsN9Vh47OVdsYXUIbJKn-wSKOVN_RCfSxo"/>
+<div class="absolute bottom-12 left-12 z-20 text-left">
+<div class="flex -space-x-3 mb-4">
+<div class="w-10 h-10 rounded-full border-2 border-surface bg-gray-500 overflow-hidden"><img alt="" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUmX_yyIKfGV4nHf-MHyOl0HARJanXEpKenGY-po545_DbIRe6rDZ3LT6imltxYY2doTk_uebgfkC3FAMjk-usMo7DfR2A9rxS7-EXJwfK51uRxKDnESgsJ9WWlVw-qjVdVcsCtu5VXF4rCKAUUPvqnH9tQ4C2k00sgAK0TVcfZjZPoLMlsEstgQ9IPu3A7uj-b3BQrOV-_pdu9iGO-2S-QeQNV_b72mMwmEmSfgzlnHdS2tisEzIi8R2UEJWpu6RB8aCPQOzotiQ"/></div>
+<div class="w-10 h-10 rounded-full border-2 border-surface bg-gray-600 overflow-hidden"><img alt="" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEBQaPGRMgCUJ6zwx_FOtPIRxhPlsYx5H5VBKSbqdnCTP5E1NfxTH6ntH3R3pxviBmmUEnkMok_lSy4wuqrCIt1D5ZTkvWf5X5yIhwvK10K77C0uMyLZrPtEZiRx8AXGozeTeR8MVJWEJDtWwQ5LF-ZLndR05LK65en3F6G_aSY_qrzJLJzGkQMaLAF1Xvr5O2kkD3u39mUl4BcP8OhIDd5q3vhcAXi7q0zATEAJJCyE30inSDvVw2bbu_FJZIdrbblC2_MZq42aE"/></div>
+<div class="w-10 h-10 rounded-full border-2 border-surface bg-gray-700 overflow-hidden"><img alt="" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAt0Lf0y67dDrR-DNbsJOgmsuAoI6shgu79nIx8qHlRfDAet1C3eZZDOGpyHqdrQbcc9oImVCQcPzDUqDs1mhgx5X29mEKGxfR4TfZ6YbgWXYMtcjZvhwlM9JC3wy1oto76b3CurEcD1Rb8_vtiQJzxeetwjFJ0IbBIvvlJd5jg-YeqgqqFKJuwz14BWgBpuBpl6fl8xav2OYqfetuCU0UxyYrgFM2hIrFimHzI5oJExtlit7k_afr_iR4zgiRIsEokMmwCyThh5sk"/></div>
+<div class="w-10 h-10 rounded-full border-2 border-surface bg-primary flex items-center justify-center text-[10px] font-bold">+50k</div>
+</div>
+<p class="text-white font-bold text-lg">Über 50.000 aktive Studierende vertrauen uns bereits.</p>
+</div>
+</div>
+</div>
+<!-- "So funktioniert's" -->
+<div class="py-32 px-8 max-w-7xl mx-auto" id="features">
+<div class="text-center mb-20">
+<h2 class="text-4xl md:text-5xl font-black mb-6">In drei Schritten zum Master-Plan.</h2>
+<p class="text-on-surface-variant max-w-2xl mx-auto">Wir haben ProjectXYZ so intuitiv gebaut, dass du keine Anleitung brauchst. In weniger als zwei Minuten bist du startklar für ein stressfreieres Semester.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+<div class="flex flex-col items-center text-center group">
+<div class="w-20 h-20 rounded-3xl bg-primary/10 flex items-center justify-center text-primary mb-8 group-hover:scale-110 transition-transform duration-300">
+<span class="text-3xl font-black">1</span>
+</div>
+<h3 class="text-2xl font-bold mb-4">Profil erstellen</h3>
+<p class="text-on-surface-variant leading-relaxed">Wähle deine Hochschule und deinen Studiengang aus. Wir passen uns deinen spezifischen Anforderungen an.</p>
+</div>
+<div class="flex flex-col items-center text-center group">
+<div class="w-20 h-20 rounded-3xl bg-secondary/10 flex items-center justify-center text-secondary mb-8 group-hover:scale-110 transition-transform duration-300">
+<span class="text-3xl font-black">2</span>
+</div>
+<h3 class="text-2xl font-bold mb-4">Studium organisieren</h3>
+<p class="text-on-surface-variant leading-relaxed">Importiere deine Kurse und setze deine persönlichen Lernziele. Alles synchronisiert an einem Ort.</p>
+</div>
+<div class="flex flex-col items-center text-center group">
+<div class="w-20 h-20 rounded-3xl bg-tertiary/10 flex items-center justify-center text-tertiary mb-8 group-hover:scale-110 transition-transform duration-300">
+<span class="text-3xl font-black">3</span>
+</div>
+<h3 class="text-2xl font-bold mb-4">Netzwerk nutzen</h3>
+<p class="text-on-surface-variant leading-relaxed">Verbinde dich mit Kommilitonen und teile Ressourcen blitzschnell über unseren Hub.</p>
+</div>
+</div>
+</div>
+<!-- Bento Features -->
+<div class="py-24 bg-surface-container-low/30 border-y border-white/5">
+<div class="max-w-7xl mx-auto px-8">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<div class="md:col-span-8 glass-card p-12 rounded-[2.5rem] flex flex-col justify-between overflow-hidden relative">
+<div class="absolute -right-10 -top-10 w-40 h-40 bg-primary/20 blur-3xl rounded-full"></div>
+<div>
+<span class="material-symbols-outlined text-5xl text-primary mb-8">auto_awesome</span>
+<h3 class="text-3xl font-bold mb-6">KI-gestütztes Lernen</h3>
+<p class="text-on-surface-variant text-lg max-w-lg mb-8">Lass dir Zusammenfassungen erstellen, übe mit generierten Quiz-Fragen und erhalte personalisierte Lernpläne basierend auf deinem Tempo.</p>
+<div class="flex gap-3">
+<span class="px-4 py-2 bg-white/5 rounded-full text-xs font-bold border border-white/5">GPT-4 Integration</span>
+<span class="px-4 py-2 bg-white/5 rounded-full text-xs font-bold border border-white/5">Smart Flashcards</span>
+</div>
+</div>
+</div>
+<div class="md:col-span-4 bg-gradient-to-br from-secondary/20 to-surface-container p-12 rounded-[2.5rem] border border-white/5">
+<span class="material-symbols-outlined text-5xl text-secondary mb-8">group</span>
+<h3 class="text-3xl font-bold mb-6">Community</h3>
+<p class="text-on-surface-variant text-lg mb-8">Finde automatisch Lernpartner basierend auf deinen belegten Kursen in deiner Stadt.</p>
+<button class="text-secondary font-bold hover:underline flex items-center gap-2">Match finden <span class="material-symbols-outlined">arrow_forward</span></button>
+</div>
+<div class="md:col-span-4 bg-surface-container p-12 rounded-[2.5rem] border border-white/5">
+<span class="material-symbols-outlined text-5xl text-tertiary mb-8">speed</span>
+<h3 class="text-2xl font-bold mb-4">Deadline Radar</h3>
+<p class="text-on-surface-variant leading-relaxed">Verpasse nie wieder eine Abgabe. Intelligente Push-Erinnerungen synchronisiert mit deinem Kalender.</p>
+</div>
+<div class="md:col-span-8 glass-card p-12 rounded-[2.5rem] flex flex-col justify-center">
+<h3 class="text-3xl font-bold mb-8">Partner-Universitäten</h3>
+<p class="text-on-surface-variant text-lg mb-10">Wir unterstützen bereits über 150 Hochschulen in DACH mit direkter Anbindung an Moodle &amp; Canvas.</p>
+<div class="flex flex-wrap gap-x-12 gap-y-8 grayscale opacity-60">
+<span class="text-2xl font-black">TU München</span>
+<span class="text-2xl font-black">RWTH Aachen</span>
+<span class="text-2xl font-black">FU Berlin</span>
+<span class="text-2xl font-black">Uni Heidelberg</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Vision / Mission -->
+<div class="py-32 px-8 max-w-4xl mx-auto text-center" id="vision">
+<h2 class="text-primary font-bold tracking-widest uppercase text-xs mb-8">Warum wir ProjectXYZ bauen</h2>
+<p class="text-3xl md:text-5xl font-black italic leading-tight mb-12">
+                    "Wir glauben, dass Bildung inspirieren sollte, statt durch Bürokratie und Organisationschaos zu bremsen."
+                </p>
+<div class="w-16 h-1 bg-primary/30 mx-auto mb-12"></div>
+<p class="text-xl text-on-surface-variant leading-relaxed">
+                    Unsere Mission ist es, jedem Studierenden die Werkzeuge an die Hand zu geben, um das volle Potenzial auszuschöpfen – effizient, vernetzt und mit Spaß am Lernen.
+                </p>
+</div>
+<!-- Social Proof -->
+<div class="py-24 px-8 max-w-7xl mx-auto">
+<h2 class="text-center text-4xl font-black mb-16">Von Studierenden geliebt.</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="glass-card p-10 rounded-3xl">
+<div class="flex gap-1 text-yellow-500 mb-6">
+<span class="material-symbols-outlined fill-1">star</span>
+<span class="material-symbols-outlined fill-1">star</span>
+<span class="material-symbols-outlined fill-1">star</span>
+<span class="material-symbols-outlined fill-1">star</span>
+<span class="material-symbols-outlined fill-1">star</span>
+</div>
+<p class="text-lg italic mb-8">"Ohne ProjectXYZ hätte ich im dritten Semester fast hingeschmissen. Jetzt habe ich meine Noten und meine Freizeit endlich wieder im Griff!"</p>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-gray-500 overflow-hidden"><img alt="" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgU8AgI_OaNGjSmerCmKw21Rkt9It2YbfGhA5AuMQBtgw9Jh4Vd4xhitnoz0RxQMzvpAbkIhqEed2h58Tpaj5aZK_8vHV-R9llZlwN_SnZ8xLCKUy2rDufzMuVTHziNnC3tqbKIFK-zkMXmMZTcPTUJ6AFcmEJSzgf2_iIhGcugx3zSNZA4GVOdKPPfrnxPrf2KuWeLBnH33AOwL-hw1BRV5rTp5n8T_IjzKzID8ehVw7U0RRex08er1Tm93TtxijNSzoRfRP_IUg"/></div>
+<div>
+<p class="font-bold">Lena</p>
+<p class="text-xs text-on-surface-variant">Medizinstudentin</p>
+</div>
+</div>
+</div>
+<!-- More testimonials can be added similarly -->
+</div>
+</div>
+<!-- FAQ -->
+<div class="py-24 px-8 max-w-3xl mx-auto">
+<h2 class="text-4xl font-black mb-12 text-center">FAQ</h2>
+<div class="space-y-4">
+<div class="bg-surface-container p-6 rounded-2xl border border-white/5">
+<h4 class="font-bold mb-2">Ist ProjectXYZ wirklich kostenlos?</h4>
+<p class="text-sm text-on-surface-variant">Ja, die Basis-Version für Studierende ist und bleibt komplett kostenlos.</p>
+</div>
+<div class="bg-surface-container p-6 rounded-2xl border border-white/5">
+<h4 class="font-bold mb-2">Wie sicher sind meine Daten?</h4>
+<p class="text-sm text-on-surface-variant">Deine Privatsphäre steht an erster Stelle. Wir nutzen Banken-Standard-Verschlüsselung und Server in Deutschland (DSGVO-konform).</p>
+</div>
+<div class="bg-surface-container p-6 rounded-2xl border border-white/5">
+<h4 class="font-bold mb-2">Funktioniert es mit meiner Uni?</h4>
+<p class="text-sm text-on-surface-variant">Wir unterstützen bereits über 150 Hochschulen in Deutschland, Österreich und der Schweiz.</p>
+</div>
+</div>
+</div>
+<!-- =============================================
+     FOOTER – v2: Vollständige Rechts-Links & Copyright
+     Ergänzt: echte Placeholder-URLs, Widerrufsbelehrung,
+     Streitbeilegung, Kontakt-Spalte, Copyright-Zeile
+     ============================================= -->
+<footer class="w-full pt-20 pb-10 px-8 border-t border-white/5 bg-surface-container-low mt-20" aria-label="Seiten-Footer">
+  <!-- Oberer Footer-Bereich -->
+  <div class="flex flex-col md:flex-row justify-between items-start gap-12 mb-16 max-w-7xl mx-auto">
+    <!-- Branding & Kurzbeschreibung -->
+    <div class="mb-4 md:mb-0 max-w-xs">
+      <span class="text-2xl font-black text-white">Project<span class="text-primary">XYZ</span></span>
+      <p class="text-sm text-on-surface-variant mt-4 leading-relaxed">Dein smartes Portal für einen stressfreien Uni-Alltag. Von Studierenden für Studierende.</p>
+      <!-- Social-Links (Platzhalter) -->
+      <div class="flex gap-4 mt-6" aria-label="Soziale Netzwerke">
+        <a href="/social/instagram" class="text-on-surface-variant hover:text-white transition-colors" aria-label="ProjectXYZ auf Instagram">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.337 3.608 1.312.975.975 1.25 2.242 1.312 3.608.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.062 1.366-.337 2.633-1.312 3.608-.975.975-2.242 1.25-3.608 1.312-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.062-2.633-.337-3.608-1.312-.975-.975-1.25-2.242-1.312-3.608C2.175 15.584 2.163 15.204 2.163 12s.012-3.584.07-4.85c.062-1.366.337-2.633 1.312-3.608.975-.975 2.242-1.25 3.608-1.312C8.416 2.175 8.796 2.163 12 2.163zm0-2.163c-3.259 0-3.667.014-4.947.072C5.637.174 4.118.546 2.95 1.713 1.783 2.881 1.41 4.399 1.352 5.82.014 7.1 0 7.508 0 12s.014 4.9.072 6.18c.058 1.421.43 2.94 1.598 4.107 1.168 1.167 2.686 1.54 4.107 1.598C7.1 23.986 7.508 24 12 24s4.9-.014 6.18-.072c1.421-.058 2.94-.43 4.107-1.598 1.167-1.168 1.54-2.686 1.598-4.107C23.986 16.9 24 16.492 24 12s-.014-4.9-.072-6.18c-.058-1.421-.43-2.94-1.598-4.107C21.162.546 19.644.174 18.223.116 16.943.014 16.535 0 12 0z"/><path d="M12 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+        </a>
+        <a href="/social/linkedin" class="text-on-surface-variant hover:text-white transition-colors" aria-label="ProjectXYZ auf LinkedIn">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        </a>
+        <a href="/social/tiktok" class="text-on-surface-variant hover:text-white transition-colors" aria-label="ProjectXYZ auf TikTok">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Link-Spalten -->
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-x-16 gap-y-10">
+      <!-- Portal -->
+      <div>
+        <h5 class="font-bold mb-6 text-sm uppercase tracking-widest text-primary">Portal</h5>
+        <ul class="space-y-4 text-sm text-on-surface-variant">
+          <li><a class="hover:text-white transition-colors" href="/features">Features</a></li>
+          <li><a class="hover:text-white transition-colors" href="/preise">Preise</a></li>
+          <li><a class="hover:text-white transition-colors" href="/blog">Blog</a></li>
+          <li><a class="hover:text-white transition-colors" href="/ueber-uns">Über uns</a></li>
+        </ul>
+      </div>
+
+      <!-- Support & Kontakt – NEU (vertrauensbildend & rechtlich empfohlen) -->
+      <div>
+        <h5 class="font-bold mb-6 text-sm uppercase tracking-widest text-primary">Support</h5>
+        <ul class="space-y-4 text-sm text-on-surface-variant">
+          <li><a class="hover:text-white transition-colors" href="/kontakt">Kontakt</a></li>
+          <li><a class="hover:text-white transition-colors" href="/hilfe">Hilfe-Center</a></li>
+          <li><a class="hover:text-white transition-colors" href="/status">System-Status</a></li>
+          <!-- Barrierefreiheit-Erklärung empfohlen nach BFSG/WCAG -->
+          <li><a class="hover:text-white transition-colors" href="/barrierefreiheit">Barrierefreiheit</a></li>
+        </ul>
+      </div>
+
+      <!-- Rechtliches – ERWEITERT -->
+      <div>
+        <h5 class="font-bold mb-6 text-sm uppercase tracking-widest text-primary">Rechtliches</h5>
+        <ul class="space-y-4 text-sm text-on-surface-variant">
+          <!-- Pflicht §5 TMG / §5 DDG -->
+          <li><a class="hover:text-white transition-colors" href="/impressum">Impressum</a></li>
+          <!-- Pflicht DSGVO Art. 13/14 -->
+          <li><a class="hover:text-white transition-colors" href="/datenschutz">Datenschutzerklärung</a></li>
+          <!-- Vertragsbedingungen -->
+          <li><a class="hover:text-white transition-colors" href="/agb">AGB</a></li>
+          <!-- NEU: Pflicht §312g BGB für digitale Dienste mit Entgelt (Pro-Plan) -->
+          <li><a class="hover:text-white transition-colors" href="/widerruf">Widerrufsbelehrung</a></li>
+          <!-- NEU: Cookie-Einstellungen (DSGVO / TTDSG) -->
+          <li>
+            <button class="hover:text-white transition-colors text-left" onclick="openCookieSettings()" aria-label="Cookie-Einstellungen öffnen">
+              Cookie-Einstellungen
+            </button>
+          </li>
+          <!-- NEU: EU-Streitschlichtung §36 VSBG Pflicht für B2C -->
+          <li><a class="hover:text-white transition-colors" href="/streitbeilegung">Streitbeilegung</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trennlinie + Copyright -->
+  <div class="border-t border-white/5 pt-8 max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-on-surface-variant">
+    <p>© <span id="footer-year"></span> ProjectXYZ GmbH. Alle Rechte vorbehalten.</p>
+    <!-- EU-Streitbeilegungshinweis (Pflichtangabe §36 VSBG + EU-ODR-Verordnung 524/2013) -->
+    <p class="text-center">
+      Plattform der EU-Kommission zur Online-Streitbeilegung:
+      <a href="https://ec.europa.eu/consumers/odr" class="text-primary hover:underline" target="_blank" rel="noopener noreferrer" aria-label="EU-Streitbeilegungsplattform (öffnet in neuem Tab)">ec.europa.eu/consumers/odr</a>
+    </p>
+    <p>Made with ♥ in Germany 🇩🇪</p>
+  </div>
+</footer>
+
+</section>
+<!-- 2. LOGIN / ROLE SELECTION SECTION -->
+<section class="view-section py-32 px-8" id="view-login">
+<div class="max-w-md mx-auto fade-in">
+<div class="text-center mb-12">
+<h2 class="text-4xl font-black mb-4 tracking-tight">Wähle dein Profil</h2>
+<p class="text-on-surface-variant">Um dir das beste Erlebnis zu bieten, verrate uns wer du bist.</p>
+</div>
+<div class="space-y-4">
+<div class="bg-surface-container p-8 rounded-3xl border border-white/5 group cursor-pointer hover:bg-surface-container-high transition-all hover:border-primary/50" onclick="navigate('verify')">
+<div class="flex items-center gap-6">
+<div class="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-3xl">school</span>
+</div>
+<div class="flex-1">
+<h4 class="text-xl font-bold mb-1">Student</h4>
+<p class="text-sm text-on-surface-variant">Manage dein Studium &amp; vernetze dich.</p>
+</div>
+</div>
+</div>
+<div class="bg-surface-container p-8 rounded-3xl border border-white/5 group cursor-pointer hover:bg-surface-container-high transition-all opacity-60">
+<div class="flex items-center gap-6">
+<div class="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-3xl">business</span>
+</div>
+<div class="flex-1">
+<h4 class="text-xl font-bold mb-1">Unternehmen</h4>
+<p class="text-sm text-on-surface-variant">Finde Talente &amp; schalte Anzeigen.</p>
+</div>
+</div>
+</div>
+<div class="bg-surface-container p-8 rounded-3xl border border-white/5 group cursor-pointer hover:bg-surface-container-high transition-all opacity-60">
+<div class="flex items-center gap-6">
+<div class="w-16 h-16 rounded-2xl bg-tertiary/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-3xl">account_balance</span>
+</div>
+<div class="flex-1">
+<h4 class="text-xl font-bold mb-1">Hochschule</h4>
+<p class="text-sm text-on-surface-variant">Verwalte Kurse &amp; kommuniziere direkt.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-12 text-center">
+<p class="text-on-surface-variant text-sm">Du hast bereits ein Konto? <a class="text-primary font-bold hover:underline" href="#">Hier anmelden</a></p>
+</div>
+</div>
+</section>
+<!-- 3. VERIFICATION SECTION -->
+<section class="view-section py-32 px-8" id="view-verify">
+<div class="max-w-2xl mx-auto fade-in">
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-white mb-8 transition-colors" onclick="navigate('login')">
+<span class="material-symbols-outlined text-sm">arrow_back</span>
+<span class="text-sm font-bold">Zurück</span>
+</button>
+<h2 class="text-4xl font-black mb-4 tracking-tight">Verifizierung</h2>
+<p class="text-on-surface-variant mb-12 text-lg">Um die Vorteile für Studierende zu nutzen, müssen wir deinen Status bestätigen. Wähle eine Methode:</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Option 1 -->
+<div class="bg-surface-container p-10 rounded-[2.5rem] border border-white/5 hover:border-primary transition-all cursor-pointer group" onclick="navigate('dashboard')">
+<div class="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-8">
+<span class="material-symbols-outlined text-4xl">mail</span>
+</div>
+<h3 class="text-2xl font-bold mb-4">Uni E-Mail</h3>
+<p class="text-on-surface-variant mb-8 leading-relaxed">Wir senden einen Bestätigungscode an deine offizielle Hochschuladresse.</p>
+<span class="text-primary font-bold flex items-center gap-2 group-hover:translate-x-2 transition-transform">Code anfordern <span class="material-symbols-outlined">arrow_forward</span></span>
+</div>
+<!-- Option 2 -->
+<div class="bg-surface-container p-10 rounded-[2.5rem] border border-white/5 hover:border-secondary transition-all cursor-pointer group" onclick="navigate('dashboard')">
+<div class="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary mb-8">
+<span class="material-symbols-outlined text-4xl">badge</span>
+</div>
+<h3 class="text-2xl font-bold mb-4">Ausweis-Upload</h3>
+<p class="text-on-surface-variant mb-8 leading-relaxed">Lade ein Foto deines Studierendenausweises zur manuellen Prüfung hoch.</p>
+<span class="text-secondary font-bold flex items-center gap-2 group-hover:translate-x-2 transition-transform">Datei wählen <span class="material-symbols-outlined">upload</span></span>
+</div>
+<!-- Option 3 -->
+<div class="md:col-span-2 glass-card p-10 rounded-[2.5rem] flex flex-col md:flex-row items-center justify-between gap-8 cursor-pointer hover:bg-white/5 transition-all group" onclick="navigate('dashboard')">
+<div class="flex items-center gap-8">
+<div class="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-4xl">link</span>
+</div>
+<div>
+<h3 class="text-2xl font-bold mb-2">LinkedIn-Verknüpfung</h3>
+<p class="text-on-surface-variant">Nutze dein verifiziertes LinkedIn-Profil für den schnellen Check.</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary text-4xl group-hover:translate-x-4 transition-transform">login</span>
+</div>
+</div>
+</div>
+</section>
+<!-- 4. DASHBOARD SECTION -->
+<section class="view-section md:pl-64" id="view-dashboard">
+<!-- Dashboard Top Nav -->
+<header class="sticky top-0 z-40 bg-surface/80 backdrop-blur-xl flex justify-between items-center w-full px-8 py-6 border-b border-white/5">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-highest border-none rounded-full py-2.5 pl-12 pr-6 text-sm focus:ring-2 focus:ring-primary/50 text-on-surface placeholder:text-on-surface-variant transition-all" placeholder="Kurse, Tutoren oder Events suchen..." type="text"/>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex gap-2">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-highest rounded-full transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-surface"></span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-highest rounded-full transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+<div class="flex items-center gap-3 pl-4 border-l border-white/5">
+<div class="text-right hidden sm:block">
+<p class="text-sm font-bold text-on-surface">Lukas Müller</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">B.A. Psychologie</p>
+</div>
+<img alt="Lukas Profil" class="w-10 h-10 rounded-full border-2 border-primary/30 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtSvFRxAAdbYHoiqjSa9dKvlASY1SFNNOwLf4LN8UqORCeJWkzFzsrrmOQf_rrRxkBP-Xs6ua9FEbnURlg1RpbFK5foGSD-AaHVJ-EvNFecvmBt7sGjxHjhJdK71TK8SXr230QMETmm90MJjS3EiQjC-Eh6Xcey9_x5oycYsR3eXiB5ifj9hJ3Bw2vXz-lSXttFG3XJpTOrSEGfw1CEiFVH0k__yx8GEhvlOrdvJUsBxViA3Tg3VU0VYtum1bNVXcZ-c58Xbklf9M"/>
+</div>
+</div>
+</header>
+<div class="p-8 space-y-8 fade-in">
+<!-- Dashboard Hero -->
+<section class="relative overflow-hidden rounded-[2.5rem] p-12 bg-gradient-to-br from-surface-container to-surface border border-white/5">
+<div class="absolute -top-24 -right-24 w-96 h-96 bg-primary/10 blur-[100px] rounded-full"></div>
+<div class="relative z-10">
+<h1 class="text-4xl font-black mb-4 tracking-tight">Willkommen zurück, <span class="text-primary text-glow">Lukas!</span></h1>
+<p class="text-on-surface-variant text-lg max-w-xl mb-8 leading-relaxed">Du hast heute 2 Vorlesungen und 1 Abgabe in 48 Stunden. Bereit weiterzumachen?</p>
+<div class="flex flex-wrap gap-4">
+<button class="flex items-center gap-3 px-8 py-4 bg-primary text-white font-bold rounded-2xl hover:brightness-110 active:scale-95 transition-all shadow-xl shadow-primary/25">
+<span class="material-symbols-outlined fill-1">play_circle</span>
+                                Lernen fortsetzen
+                            </button>
+<button class="flex items-center gap-3 px-8 py-4 bg-surface-container-highest text-on-surface font-bold rounded-2xl border border-white/10 hover:bg-surface-bright transition-all">
+<span class="material-symbols-outlined">calendar_today</span>
+                                Stundenplan
+                            </button>
+</div>
+</div>
+</section>
+<!-- KPI Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="glass-card p-8 rounded-3xl flex items-center gap-6">
+<div class="relative w-16 h-16">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-white/5" cx="32" cy="32" fill="transparent" r="28" stroke="currentColor" stroke-width="5"></circle>
+<circle class="text-primary" cx="32" cy="32" fill="transparent" r="28" stroke="currentColor" stroke-dasharray="175.9" stroke-dashoffset="52.7" stroke-width="5"></circle>
+</svg>
+<span class="absolute inset-0 flex items-center justify-center text-xs font-black">70%</span>
+</div>
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Lernfortschritt</p>
+<p class="text-2xl font-black">70.4%</p>
+</div>
+</div>
+<div class="glass-card p-8 rounded-3xl flex items-center gap-6">
+<div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-4xl fill-1">star</span>
+</div>
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Durchschnittsnote</p>
+<p class="text-2xl font-black">1.4</p>
+</div>
+</div>
+<div class="glass-card p-8 rounded-3xl flex items-center gap-6">
+<div class="w-16 h-16 bg-tertiary/10 rounded-2xl flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-4xl">task_alt</span>
+</div>
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Abgeschlossen</p>
+<p class="text-2xl font-black">12 Kurse</p>
+</div>
+</div>
+</div>
+<!-- Secondary Stats -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+<div class="bg-surface-container p-5 rounded-2xl flex flex-col justify-between h-32 border border-white/5">
+<div class="flex justify-between items-center">
+<span class="material-symbols-outlined text-primary">schedule</span>
+<span class="text-[10px] font-bold text-green-500">+12%</span>
+</div>
+<div>
+<p class="text-2xl font-black">24h</p>
+<p class="text-xs text-on-surface-variant">Lernstunden / Woche</p>
+</div>
+</div>
+<div class="bg-surface-container p-5 rounded-2xl flex flex-col justify-between h-32 border border-white/5">
+<div class="flex justify-between items-center">
+<span class="material-symbols-outlined text-secondary">bolt</span>
+<span class="text-[10px] font-bold text-primary">REKORD</span>
+</div>
+<div>
+<p class="text-2xl font-black">7 Tage</p>
+<p class="text-xs text-on-surface-variant">Lern-Streak</p>
+</div>
+</div>
+<div class="bg-surface-container p-5 rounded-2xl flex flex-col justify-between h-32 border border-white/5">
+<div class="flex justify-between items-center">
+<span class="material-symbols-outlined text-tertiary">group</span>
+<div class="flex -space-x-2">
+<div class="w-5 h-5 rounded-full bg-gray-600 border border-surface"></div>
+<div class="w-5 h-5 rounded-full bg-gray-500 border border-surface"></div>
+</div>
+</div>
+<div>
+<p class="text-2xl font-black">127</p>
+<p class="text-xs text-on-surface-variant">Kommilitonen online</p>
+</div>
+</div>
+<div class="bg-surface-container p-5 rounded-2xl border border-white/5 h-32 flex flex-col justify-center">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase mb-2">Plattform-Mitglieder</p>
+<p class="text-2xl font-black">12.847</p>
+<div class="mt-2 h-1 w-full bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 85%"></div>
+</div>
+</div>
+</div>
+<!-- Main Dashboard Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Left: Courses & Feed -->
+<div class="lg:col-span-8 space-y-8">
+<div>
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-2xl font-black">Aktive Kurse</h3>
+<button class="text-primary text-sm font-bold hover:underline">Alle ansehen</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Psychology -->
+<div class="p-6 rounded-3xl bg-surface-container-low border border-white/5 hover:border-primary/40 transition-all">
+<p class="text-[10px] font-bold text-primary mb-2 uppercase">Sozialwissenschaften</p>
+<h4 class="font-bold text-lg mb-4">Psychologie</h4>
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-bold">
+<span class="text-on-surface-variant">Fortschritt</span>
+<span>74%</span>
+</div>
+<div class="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 74%"></div>
+</div>
+</div>
+</div>
+<!-- Business -->
+<div class="p-6 rounded-3xl bg-surface-container-low border border-white/5 hover:border-secondary/40 transition-all">
+<p class="text-[10px] font-bold text-secondary mb-2 uppercase">Wirtschaft</p>
+<h4 class="font-bold text-lg mb-4">BWL</h4>
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-bold">
+<span class="text-on-surface-variant">Fortschritt</span>
+<span>42%</span>
+</div>
+<div class="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-secondary" style="width: 42%"></div>
+</div>
+</div>
+</div>
+<!-- Stats -->
+<div class="p-6 rounded-3xl bg-surface-container-low border border-white/5 hover:border-tertiary/40 transition-all">
+<p class="text-[10px] font-bold text-tertiary mb-2 uppercase">Mathematik</p>
+<h4 class="font-bold text-lg mb-4">Statistik</h4>
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-bold">
+<span class="text-on-surface-variant">Fortschritt</span>
+<span>18%</span>
+</div>
+<div class="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-tertiary" style="width: 18%"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Community Feed -->
+<div>
+<h3 class="text-2xl font-black mb-6">Community-Feed</h3>
+<div class="space-y-4">
+<div class="glass-card p-6 rounded-3xl">
+<div class="flex gap-4">
+<img alt="" class="w-12 h-12 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnUDEtQ1vyXjdL1K6TcLA5QXSH_COsMj5fofilGF522gnnJsCNTQB_01806BM-LU2tand3LxrObTCaF6Enmd1voSRvYk0JBjTZrujI5WZ3IEek4BWeV9-xueP1tM525KteRmX5R5U7MoFOMMZa6dEl98GKB5PhUVBmM6rwQkCsiH6n68UxurqcrkzQ8Wn2ij0HPggm94KdrEIDJkbNyAvWGaO-GImFQdwn1fpP4nififC79-6Y4H01bjT1QGimIusetk25y5oX_5k"/>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h5 class="font-bold">Sarah J.</h5>
+<p class="text-[10px] text-on-surface-variant">vor 15 Min.</p>
+</div>
+<button class="text-on-surface-variant"><span class="material-symbols-outlined">more_horiz</span></button>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed mb-4">Habe gerade das erste Modul über Ethik in der KI abgeschlossen. Die Vorlesung über autonome Fahrzeuge war wahnsinnig spannend! Möchte jemand darüber diskutieren?</p>
+<div class="flex gap-6">
+<button class="flex items-center gap-1.5 text-xs text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">favorite</span> 24
+                                                </button>
+<button class="flex items-center gap-1.5 text-xs text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">chat_bubble</span> 8
+                                                </button>
+</div>
+</div>
+</div>
+</div>
+<div class="glass-card p-6 rounded-3xl">
+<div class="flex gap-4">
+<img alt="" class="w-12 h-12 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAD-5vB8sW5inE_3HxwlZ5tsTCnrUA7WCjqiMhqDH-GMmx-OoYgHr6qJ177VITm55bGtywjkOQZS0C8KbEUoIGvG0LPYpo3gb6iAbshzPgZdj-KrYlmJHgnEBh037-lSN9qfxUtu7Mx1Y289fR3t-rTYTm699yBO8mPqQ64kiGPzqbaFqxEEzQpckO1KJsdkQz-uwyATF2m8kp7iOxhH6iubc4ic5LzTcZAsOIGoC4lQJ2F0B5c0YaZFgkuWNKTXm1BaT7DKi05-xI"/>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h5 class="font-bold">Marc L.</h5>
+<p class="text-[10px] text-on-surface-variant">vor 1 Std.</p>
+</div>
+<button class="text-on-surface-variant"><span class="material-symbols-outlined">more_horiz</span></button>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed mb-4">Habe eine tolle Lernhilfe für die Statistik-Klausur nächste Woche gefunden. Schaut im Bibliotheksportal unter "MATH-302-PREP" nach.</p>
+<div class="flex gap-6">
+<button class="flex items-center gap-1.5 text-xs text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">favorite</span> 56
+                                                </button>
+<button class="flex items-center gap-1.5 text-xs text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">chat_bubble</span> 12
+                                                </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right: Radar & Tutors -->
+<div class="lg:col-span-4 space-y-8">
+<!-- Deadline Radar -->
+<div class="glass-card p-8 rounded-[2.5rem]">
+<h3 class="text-xl font-black mb-8 flex items-center justify-between">
+                                Deadline-Radar
+                                <span class="p-2 bg-error/10 text-error rounded-xl"><span class="material-symbols-outlined">notification_important</span></span>
+</h3>
+<div class="space-y-6">
+<div class="flex gap-5">
+<div class="flex flex-col items-center justify-center min-w-[56px] h-14 bg-surface-container-highest rounded-2xl">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase">Okt</span>
+<span class="text-xl font-black">24</span>
+</div>
+<div class="flex-1">
+<h5 class="font-bold text-sm">Projekt Web-Design</h5>
+<p class="text-[10px] text-on-surface-variant uppercase mb-2">Abgabe finaler Prototyp</p>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+<span class="text-[10px] font-bold text-error uppercase">Noch 2 Tage</span>
+</div>
+</div>
+</div>
+<div class="flex gap-5">
+<div class="flex flex-col items-center justify-center min-w-[56px] h-14 bg-surface-container-highest rounded-2xl">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase">Okt</span>
+<span class="text-xl font-black">28</span>
+</div>
+<div class="flex-1">
+<h5 class="font-bold text-sm">Ethik in der KI</h5>
+<p class="text-[10px] text-on-surface-variant uppercase mb-2">Reflexions-Essay</p>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="text-[10px] font-bold text-secondary uppercase">Noch 6 Tage</span>
+</div>
+</div>
+</div>
+</div>
+<button class="w-full mt-10 py-3 bg-surface-container-highest rounded-2xl text-xs font-bold hover:bg-surface-bright transition-all">Alle Fristen</button>
+</div>
+<!-- Tutors -->
+<div class="glass-card p-8 rounded-[2.5rem]">
+<h3 class="text-xl font-black mb-8">Empfohlene Tutoren</h3>
+<div class="space-y-6">
+<div class="flex items-center justify-between group cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="relative">
+<img alt="" class="w-12 h-12 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCu6W3SSZvNMv5RO8WqWUngOyU1SXN1QXo1wY2AeswD1cc7iULvs7Du5IDEao_nZOhXwgTA4X6Tswclml8u1QP5x4sDIl2Gf5jgxvEE96hcyOXBPSRL_FsNp4LWhtVk07nvuPdJ0q8gYVu8AI1_OxaKvGGC3l5yXA7wJMZIsMho7wI4WqIBmtwi0IlybT0mkmpqABjEnfaY-yhpwWPMuwloikFKwyBR0U7DOjczbFxW_rN1zKLAs_t5aOh9aJOMCFaXC6nW7DEMxd4"/>
+<span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-surface rounded-full"></span>
+</div>
+<div>
+<p class="font-bold text-sm">Lisa M.</p>
+<div class="flex items-center gap-1 text-[10px] text-on-surface-variant font-bold">
+<span class="material-symbols-outlined text-xs text-yellow-500 fill-1">star</span>
+                                                4.9 (124 Bewertungen)
+                                            </div>
+</div>
+</div>
+<button class="text-primary opacity-0 group-hover:opacity-100 transition-opacity"><span class="material-symbols-outlined">arrow_forward</span></button>
+</div>
+<div class="flex items-center justify-between group cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="relative">
+<img alt="" class="w-12 h-12 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWq_baIkT-hWSAC_VX3rAskgfCngeygVeAh6bDzAv5k5UEUyHHIj5l7w9LZhXSadf8T1raZmwLboDCT6vCpTaEyL0TW69rn4Ge29_md3TcVkqNclRXkFHHzSwWm9_5WFb1hN-bBhOg96-6Duon3x0vrOjlyR-4ujebRDH6tOjXP94-YcUHauwrLo8dmH7QUxkigFbgl8VB8vd0tNr45_QWpbk_aiDISMeh8GK-Q0h-o2nKH_iGTkEO96X3yifdTR22KW9p6jxAdbY"/>
+<span class="absolute bottom-0 right-0 w-3 h-3 bg-gray-500 border-2 border-surface rounded-full"></span>
+</div>
+<div>
+<p class="font-bold text-sm">Jonas R.</p>
+<div class="flex items-center gap-1 text-[10px] text-on-surface-variant font-bold">
+<span class="material-symbols-outlined text-xs text-yellow-500 fill-1">star</span>
+                                                4.8 (92 Bewertungen)
+                                            </div>
+</div>
+</div>
+<button class="text-primary opacity-0 group-hover:opacity-100 transition-opacity"><span class="material-symbols-outlined">arrow_forward</span></button>
+</div>
+</div>
+</div>
+<!-- Campus Life -->
+<div class="bg-gradient-to-br from-primary/20 to-surface-container p-8 rounded-[2.5rem] border border-white/5 relative overflow-hidden">
+<span class="material-symbols-outlined absolute -right-4 -bottom-4 text-8xl text-white/5">celebration</span>
+<h3 class="text-xl font-black mb-6">Campus-Leben</h3>
+<div class="space-y-4 relative z-10">
+<div class="p-4 bg-surface/40 backdrop-blur-md rounded-2xl border-l-4 border-primary">
+<h5 class="font-bold text-sm mb-1">Welcome Party 2024</h5>
+<p class="text-[10px] text-on-surface-variant mb-3 uppercase tracking-widest">Aula • Morgen, 20:00 Uhr</p>
+<button class="text-[10px] font-black text-primary uppercase tracking-widest hover:underline">Vormerken</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Dashboard FAB -->
+<button class="fixed bottom-10 right-10 w-16 h-16 bg-primary text-white rounded-full shadow-2xl shadow-primary/40 flex items-center justify-center hover:scale-110 active:scale-90 transition-all z-50">
+<span class="material-symbols-outlined text-3xl font-black">add</span>
+</button>
+</section>
+</main>
+<!-- =============================================
+     COOKIE-BANNER (DSGVO / TTDSG-konform) – v2
+     Pflicht: Einwilligung vor nicht-notwendigen Cookies/
+     externen Ressourcen. Google Fonts = externer Server
+     (Drittland-Transfer nach DSGVO Art. 46).
+     Empfehlung: Fonts lokal hosten ODER explizite
+     Einwilligung einholen (dieser Banner tut letzteres).
+     ============================================= -->
+<div
+  id="cookie-banner"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="cookie-banner-title"
+  aria-describedby="cookie-banner-desc"
+  class="fixed bottom-0 left-0 right-0 z-[9999] p-4 md:p-6 translate-y-full transition-transform duration-500"
+>
+  <div class="max-w-5xl mx-auto glass-card rounded-2xl p-6 md:p-8 shadow-2xl border border-white/10 flex flex-col md:flex-row items-start md:items-center gap-6">
+    <div class="flex-1">
+      <h2 id="cookie-banner-title" class="font-headline font-black text-lg text-white mb-2 flex items-center gap-2">
+        <span aria-hidden="true">🍪</span> Deine Datenschutz-Einstellungen
+      </h2>
+      <p id="cookie-banner-desc" class="text-sm text-on-surface-variant leading-relaxed">
+        Wir verwenden Cookies und externe Dienste (z.&nbsp;B. Google Fonts, Analytics), um dir das beste Erlebnis zu bieten.
+        Mehr dazu in unserer <a href="/datenschutz" class="text-primary hover:underline">Datenschutzerklärung</a>.
+      </p>
+      <div id="cookie-details" class="hidden mt-4 space-y-3 text-sm">
+        <label class="flex items-center gap-3 cursor-default text-on-surface-variant">
+          <input type="checkbox" checked disabled class="accent-primary rounded w-4 h-4" aria-label="Notwendige Cookies (immer aktiv)"/>
+          <span><strong class="text-white">Notwendig</strong> – Session, Sicherheit (immer aktiv)</span>
+        </label>
+        <label class="flex items-center gap-3 cursor-pointer text-on-surface-variant">
+          <input type="checkbox" id="cookie-analytics" class="accent-primary rounded w-4 h-4" aria-label="Analyse-Cookies erlauben"/>
+          <span><strong class="text-white">Analyse</strong> – Nutzungsstatistiken (anonymisiert)</span>
+        </label>
+        <label class="flex items-center gap-3 cursor-pointer text-on-surface-variant">
+          <input type="checkbox" id="cookie-marketing" class="accent-primary rounded w-4 h-4" aria-label="Marketing-Cookies erlauben"/>
+          <span><strong class="text-white">Marketing</strong> – Personalisierte Inhalte &amp; externe Dienste</span>
+        </label>
+      </div>
+    </div>
+    <div class="flex flex-col sm:flex-row gap-3 shrink-0 w-full md:w-auto">
+      <button
+        onclick="toggleCookieDetails()"
+        id="btn-cookie-toggle"
+        class="text-sm px-5 py-2.5 rounded-lg border border-white/10 text-on-surface-variant hover:text-white hover:border-white/30 transition-all"
+        aria-expanded="false"
+        aria-controls="cookie-details"
+      >Einstellungen</button>
+      <button
+        onclick="saveCookieConsent('essential')"
+        class="text-sm px-5 py-2.5 rounded-lg border border-white/10 text-on-surface-variant hover:text-white hover:border-white/30 transition-all"
+        aria-label="Nur notwendige Cookies akzeptieren"
+      >Nur Notwendige</button>
+      <button
+        onclick="saveCookieConsent('custom')"
+        id="btn-save-custom"
+        class="hidden text-sm px-5 py-2.5 rounded-lg border border-white/10 text-on-surface hover:text-white transition-all"
+        aria-label="Ausgewählte Cookies speichern"
+      >Auswahl speichern</button>
+      <button
+        onclick="saveCookieConsent('all')"
+        class="text-sm px-6 py-2.5 rounded-lg bg-primary text-white font-bold hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-primary/20"
+        aria-label="Allen Cookies zustimmen"
+      >Alle akzeptieren</button>
+    </div>
+  </div>
+</div>
+
+<script>
+        /**
+         * Core Navigation Logic
+         * @param {string} viewId - The ID of the section to show (e.g., 'landing', 'login', 'dashboard')
+         */
+        function navigate(viewId) {
+            // 1. Hide all main sections
+            document.querySelectorAll('.view-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // 2. Show the target section
+            const targetSection = document.getElementById('view-' + viewId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+
+            // 3. UI Adjustments based on the view
+            const globalHeader = document.getElementById('global-header');
+            const dashboardSidebar = document.getElementById('dashboard-sidebar');
+            const mainContent = document.getElementById('content-canvas');
+
+            if (viewId === 'dashboard') {
+                // Dashboard layout: sidebar, no global header, no padding-top on main
+                globalHeader.classList.add('hidden');
+                dashboardSidebar.classList.remove('hidden');
+            } else {
+                // Other layouts: global header, no sidebar
+                globalHeader.classList.remove('hidden');
+                dashboardSidebar.classList.add('hidden');
+            }
+
+            // 4. Scroll to top on navigation
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // 5. Update URL Hash for back/forward support
+            window.location.hash = viewId;
+        }
+
+        /**
+         * Routing Initializer
+         */
+        function initApp() {
+            // Initialize based on current hash
+            const currentHash = window.location.hash.replace('#', '');
+            if (currentHash && document.getElementById('view-' + currentHash)) {
+                navigate(currentHash);
+            } else {
+                navigate('landing');
+            }
+
+            // Listen for hash changes
+            window.addEventListener('hashchange', () => {
+                const newHash = window.location.hash.replace('#', '');
+                if (newHash && document.getElementById('view-' + newHash)) {
+                    navigate(newHash);
+                }
+            });
+        }
+
+        // Run on load
+        window.addEventListener('load', initApp);
+
+        /* ─── Cookie Consent Logic (DSGVO/TTDSG) ─── */
+
+        /**
+         * Zeigt den Cookie-Banner an, wenn noch keine Einwilligung gespeichert.
+         * Hinweis: Bei Launch gegen Cookiebot/Usercentrics austauschen,
+         * da localStorage nach Browser-Einstellungen gelöscht werden kann.
+         */
+        function initCookieBanner() {
+            const consent = localStorage.getItem('academify_cookie_consent');
+            if (!consent) {
+                const banner = document.getElementById('cookie-banner');
+                // Slide-in-Animation
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        banner.classList.remove('translate-y-full');
+                    });
+                });
+            }
+        }
+
+        /**
+         * Speichert die Cookie-Einwilligung und blendet den Banner aus.
+         * @param {'all'|'essential'|'custom'} choice
+         */
+        function saveCookieConsent(choice) {
+            const analyticsEl = document.getElementById('cookie-analytics');
+            const marketingEl = document.getElementById('cookie-marketing');
+            const consent = {
+                timestamp: new Date().toISOString(),
+                essential: true,
+                analytics: choice === 'all' || (choice === 'custom' && analyticsEl && analyticsEl.checked),
+                marketing: choice === 'all' || (choice === 'custom' && marketingEl && marketingEl.checked),
+            };
+            localStorage.setItem('academify_cookie_consent', JSON.stringify(consent));
+            const banner = document.getElementById('cookie-banner');
+            banner.classList.add('translate-y-full');
+            banner.addEventListener('transitionend', () => {
+                banner.style.display = 'none';
+            }, { once: true });
+        }
+
+        /**
+         * Erweiterte Optionen ein-/ausklappen.
+         */
+        function toggleCookieDetails() {
+            const details = document.getElementById('cookie-details');
+            const btn = document.getElementById('btn-cookie-toggle');
+            const saveBtn = document.getElementById('btn-save-custom');
+            const isNowHidden = details.classList.toggle('hidden');
+            btn.setAttribute('aria-expanded', String(!isNowHidden));
+            btn.textContent = isNowHidden ? 'Einstellungen' : 'Schließen';
+            if (saveBtn) saveBtn.classList.toggle('hidden', isNowHidden);
+        }
+
+        /**
+         * Aus dem Footer erneut öffnen (Cookie-Einstellungen-Button).
+         */
+        function openCookieSettings() {
+            localStorage.removeItem('academify_cookie_consent');
+            const banner = document.getElementById('cookie-banner');
+            if (banner) {
+                banner.style.display = 'block';
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        banner.classList.remove('translate-y-full');
+                    });
+                });
+            }
+        }
+
+        /* Dynamisches Copyright-Jahr im Footer */
+        const yearEl = document.getElementById('footer-year');
+        if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+        /* Cookie-Banner mit leichter Verzögerung starten */
+        setTimeout(initCookieBanner, 900);
+    </script>
+</body></html>

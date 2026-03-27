@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Academify — Registrierung</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0e14;--surface:#13141c;--surface2:#1a1b26;
+  --border:rgba(255,255,255,0.07);--border-hover:rgba(255,255,255,0.18);
+  --accent:#7c6dfa;--accent2:#a78bfa;--text:#e8e6f0;--muted:#6b6880;
+  --success:#4ade80;--warn:#fbbf24;--info:#38bdf8;--coral:#f87171;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem 1rem;position:relative;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(124,109,250,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(124,109,250,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none}
+body::after{content:'';position:fixed;top:-200px;right:-200px;width:600px;height:600px;background:radial-gradient(circle,rgba(124,109,250,0.12) 0%,transparent 70%);pointer-events:none}
+.container{width:100%;max-width:480px;position:relative;z-index:1}
+.logo{display:flex;align-items:center;gap:10px;margin-bottom:1.8rem}
+.logo-mark{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.logo-text{font-family:'DM Serif Display',serif;font-size:22px;letter-spacing:-0.3px}
+.logo-text span{color:var(--accent2)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2rem 2.2rem;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(124,109,250,0.4),transparent)}
+.steps{display:flex;gap:6px;margin-bottom:1.6rem}
+.step-dot{height:3px;border-radius:2px;background:var(--border);flex:1;transition:background 0.4s}
+.step-dot.active{background:var(--accent)}
+.step-dot.done{background:var(--accent2);opacity:0.5}
+.form-section{display:none;animation:fadeIn 0.28s ease}
+.form-section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.card-header{margin-bottom:1.4rem}
+.card-header h1{font-family:'DM Serif Display',serif;font-size:25px;font-weight:400;line-height:1.2;margin-bottom:0.35rem}
+.card-header h1 em{font-style:italic;color:var(--accent2)}
+.card-header p{font-size:13px;color:var(--muted);font-weight:300;line-height:1.6}
+
+/* Method tabs */
+.method-tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:1.4rem}
+.method-tab{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:11px 7px;cursor:pointer;transition:all 0.2s;text-align:center}
+.method-tab:hover{border-color:var(--border-hover)}
+.method-tab.active{border-color:var(--accent);background:rgba(124,109,250,0.08)}
+.tab-icon{font-size:19px;margin-bottom:4px}
+.tab-label{font-size:11px;font-weight:500;color:var(--muted);line-height:1.3}
+.method-tab.active .tab-label{color:var(--accent2)}
+.tab-badge{display:inline-block;font-size:10px;padding:1px 6px;border-radius:100px;margin-top:3px}
+.badge-auto{background:rgba(74,222,128,0.12);color:var(--success)}
+.badge-semi{background:rgba(56,189,248,0.12);color:var(--info)}
+.badge-manual{background:rgba(251,191,36,0.12);color:var(--warn)}
+
+.method-panel{display:none}
+.method-panel.active{display:block;animation:fadeIn 0.22s ease}
+
+/* Fields */
+.field{margin-bottom:1rem}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+label{display:block;font-size:11px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+input,select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:11px 13px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border-color 0.2s,box-shadow 0.2s;appearance:none;-webkit-appearance:none}
+input::placeholder{color:var(--muted)}
+input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,109,250,0.12)}
+.select-wrap{position:relative}
+.select-wrap::after{content:'↓';position:absolute;right:13px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:12px;pointer-events:none}
+select option{background:var(--surface2)}
+input[type=file]{display:none}
+
+.domain-hint{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 13px;font-size:12px;color:var(--muted);margin-bottom:1rem;line-height:1.6}
+.domain-hint strong{color:var(--accent2)}
+
+.info-box{background:rgba(124,109,250,0.05);border:1px solid rgba(124,109,250,0.14);border-radius:10px;padding:11px 13px;font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:1rem;display:flex;gap:9px}
+.warn-box{background:rgba(251,191,36,0.05);border:1px solid rgba(251,191,36,0.14);border-radius:10px;padding:11px 13px;font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:1rem;display:flex;gap:9px}
+.box-icon{font-size:13px;flex-shrink:0;margin-top:1px}
+
+/* OTP */
+.otp-wrap{display:flex;gap:8px;justify-content:center;margin-bottom:1.1rem}
+.otp-input{width:46px !important;height:54px;text-align:center;font-size:20px;font-weight:500;border-radius:10px;padding:0;letter-spacing:0}
+
+/* LinkedIn btn */
+.btn-li{width:100%;padding:12px;background:#0A66C2;border:none;border-radius:12px;color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;transition:opacity 0.2s,transform 0.15s;margin-bottom:.9rem}
+.btn-li:hover{opacity:0.9;transform:translateY(-1px)}
+.btn-li:active{transform:translateY(0)}
+.btn-li svg{width:18px;height:18px;fill:#fff;flex-shrink:0}
+.divider{display:flex;align-items:center;gap:10px;margin:.8rem 0;color:var(--muted);font-size:12px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* Upload */
+.upload-area{border:1.5px dashed var(--border-hover);border-radius:12px;padding:1.6rem 1rem;text-align:center;cursor:pointer;transition:all 0.2s;margin-bottom:.9rem}
+.upload-area:hover{border-color:var(--accent);background:rgba(124,109,250,0.04)}
+.upload-area.has-file{border-color:var(--success);background:rgba(74,222,128,0.04)}
+.u-icon{font-size:26px;margin-bottom:7px}
+.u-title{font-size:13px;font-weight:500;margin-bottom:3px}
+.u-sub{font-size:12px;color:var(--muted)}
+.u-fmt{font-size:10px;color:var(--muted);margin-top:5px;opacity:0.7}
+
+/* Verified badge */
+.verified-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.2);border-radius:100px;padding:4px 12px;font-size:12px;color:var(--success);margin-bottom:1.1rem}
+.v-dot{width:6px;height:6px;background:var(--success);border-radius:50%}
+.pending-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.2);border-radius:100px;padding:4px 12px;font-size:12px;color:var(--warn);margin-bottom:1.1rem}
+
+/* SG grid */
+.sg-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:.9rem}
+.sg-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:11px 8px;cursor:pointer;transition:all 0.2s;text-align:center}
+.sg-card:hover{border-color:var(--border-hover);transform:translateY(-1px)}
+.sg-card.selected{border-color:var(--accent);background:rgba(124,109,250,0.08)}
+.sg-icon{font-size:19px;margin-bottom:4px}
+.sg-name{font-size:11px;font-weight:500;line-height:1.3}
+.sg-abk{font-size:10px;color:var(--muted);margin-top:2px}
+
+/* Semester pills */
+.sem-grid{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:.9rem}
+.sem-pill{padding:7px 15px;border:1px solid var(--border);border-radius:100px;font-size:12px;cursor:pointer;transition:all 0.2s;background:var(--surface2);color:var(--muted)}
+.sem-pill:hover{border-color:var(--border-hover);color:var(--text)}
+.sem-pill.selected{border-color:var(--accent);background:rgba(124,109,250,0.1);color:var(--accent2)}
+
+/* Preview */
+.preview-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:11px 13px;margin-bottom:1.1rem;display:none}
+.preview-box.visible{display:block}
+.preview-label{font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.preview-book{display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:4px}
+.book-dot{width:5px;height:5px;background:var(--accent);border-radius:50%;flex-shrink:0}
+.book-tag{font-size:10px;background:rgba(124,109,250,0.15);color:var(--accent2);padding:1px 7px;border-radius:100px}
+
+/* Buttons */
+.btn-primary{width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:opacity 0.2s,transform 0.15s}
+.btn-primary:hover{opacity:0.9;transform:translateY(-1px)}
+.btn-primary:active{transform:translateY(0)}
+.btn-back{background:none;border:none;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;padding:0;margin-bottom:1.2rem;display:flex;align-items:center;gap:5px;transition:color 0.2s}
+.btn-back:hover{color:var(--text)}
+.error-msg{font-size:11px;color:var(--coral);margin-top:4px;display:none}
+.error-msg.show{display:block}
+.resend-link{text-align:center;font-size:12px;color:var(--muted);margin-bottom:1.1rem}
+.resend-link button{background:none;border:none;color:var(--accent2);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;padding:0}
+.resend-link button:hover{text-decoration:underline}
+.email-display{text-align:center;font-size:13px;color:var(--muted);margin-bottom:1.3rem;line-height:1.6}
+.email-display strong{color:var(--text)}
+.login-link{text-align:center;font-size:12px;color:var(--muted);margin-top:1.1rem}
+.login-link a{color:var(--accent2);text-decoration:none}
+.login-link a:hover{text-decoration:underline}
+
+/* Success */
+.success-screen{display:none;text-align:center;animation:fadeIn 0.4s ease}
+.success-screen.visible{display:block}
+.success-icon{width:58px;height:58px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 1rem}
+.success-screen h2{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;margin-bottom:0.4rem}
+.success-screen p{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:1rem}
+.book-list{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:.9rem;text-align:left;margin-bottom:1rem}
+.blt{font-size:10px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);margin-bottom:9px}
+.book-item{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--border)}
+.book-item:last-child{border-bottom:none}
+.book-cover{width:30px;height:40px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;background:rgba(124,109,250,0.1)}
+.book-info{flex:1}
+.book-name{font-size:12px;font-weight:500;margin-bottom:1px}
+.book-author{font-size:11px;color:var(--muted)}
+.amazon-btn{font-size:11px;padding:4px 8px;background:#FF9900;color:#111;border-radius:6px;font-weight:500;text-decoration:none;white-space:nowrap}
+
+/* Pending */
+.pending-screen{display:none;text-align:center;animation:fadeIn 0.4s ease}
+.pending-screen.visible{display:block}
+.pending-icon{width:58px;height:58px;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 1rem}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="logo">
+    <div class="logo-mark">🎓</div>
+    <div class="logo-text">Acade<span>mify</span></div>
+  </div>
+
+  <div class="card">
+    <div class="steps" id="stepsBar">
+      <div class="step-dot active" id="dot1"></div>
+      <div class="step-dot" id="dot2"></div>
+      <div class="step-dot" id="dot3"></div>
+      <div class="step-dot" id="dot4"></div>
+    </div>
+
+    <!-- SCHRITT 1: Verifizierung -->
+    <div class="form-section active" id="sec-verify">
+      <div class="card-header">
+        <h1>Nur für <em>Studenten</em></h1>
+        <p>Wähle wie du dich als Student verifizierst.</p>
+      </div>
+
+      <div class="method-tabs">
+        <div class="method-tab active" id="tab-email" onclick="switchMethod('email')">
+          <div class="tab-icon">✉️</div>
+          <div class="tab-label">Uni-E-Mail</div>
+          <div class="tab-badge badge-auto">Automatisch</div>
+        </div>
+        <div class="method-tab" id="tab-linkedin" onclick="switchMethod('linkedin')">
+          <div class="tab-icon">💼</div>
+          <div class="tab-label">LinkedIn</div>
+          <div class="tab-badge badge-semi">Halbautom.</div>
+        </div>
+        <div class="method-tab" id="tab-manual" onclick="switchMethod('manual')">
+          <div class="tab-icon">📄</div>
+          <div class="tab-label">Dokument</div>
+          <div class="tab-badge badge-manual">Manuell</div>
+        </div>
+      </div>
+
+      <!-- Panel: Uni-E-Mail -->
+      <div class="method-panel active" id="panel-email">
+        <div class="domain-hint">
+          💡 Nutze deine offizielle Uni-Adresse:<br>
+          <strong>vorname.name@stud.uni-beispiel.de</strong>
+        </div>
+        <div class="field">
+          <label>Studentische E-Mail</label>
+          <input type="email" id="uniEmail" placeholder="max.mueller@stud.uni-koeln.de">
+          <div class="error-msg" id="err-uniEmail">Keine gültige Uni-E-Mail erkannt</div>
+        </div>
+        <div class="field">
+          <label>Hochschule</label>
+          <div class="select-wrap">
+            <select id="uniSelect">
+              <option value="">Hochschule auswählen</option>
+              <option>Universität zu Köln</option>
+              <option>TU Berlin</option>
+              <option>LMU München</option>
+              <option>Universität Hamburg</option>
+              <option>Goethe-Universität Frankfurt</option>
+              <option>RWTH Aachen</option>
+              <option>KIT Karlsruhe</option>
+              <option>Humboldt-Universität Berlin</option>
+              <option>FU Berlin</option>
+              <option>Andere Hochschule</option>
+            </select>
+          </div>
+          <div class="error-msg" id="err-uniSelect">Bitte Hochschule wählen</div>
+        </div>
+        <button class="btn-primary" onclick="sendCode()">Verifizierungscode senden →</button>
+      </div>
+
+      <!-- Panel: LinkedIn -->
+      <div class="method-panel" id="panel-linkedin">
+        <div class="info-box">
+          <div class="box-icon">ℹ️</div>
+          <div>Wir prüfen ob dein LinkedIn-Profil einen <strong style="color:var(--text)">Hochschuleintrag</strong> enthält. Kein Dokument nötig — Zugang sofort nach Bestätigung.</div>
+        </div>
+        <button class="btn-li" onclick="linkedInLogin()">
+          <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          Mit LinkedIn fortfahren
+        </button>
+        <div class="divider">oder URL manuell eingeben</div>
+        <div class="field">
+          <label>LinkedIn-Profil-URL</label>
+          <input type="url" id="linkedinUrl" placeholder="linkedin.com/in/dein-profil">
+          <div class="error-msg" id="err-linkedin">Bitte gültige LinkedIn-URL eingeben</div>
+        </div>
+        <div class="field">
+          <label>Hochschule laut LinkedIn</label>
+          <input type="text" id="linkedinUni" placeholder="z.B. Universität zu Köln">
+        </div>
+        <button class="btn-primary" onclick="submitLinkedIn()">LinkedIn verifizieren →</button>
+      </div>
+
+      <!-- Panel: Dokument -->
+      <div class="method-panel" id="panel-manual">
+        <div class="warn-box">
+          <div class="box-icon">⏳</div>
+          <div>Manuelle Prüfung dauert <strong style="color:var(--text)">24–48 Stunden</strong>. Dokument wird nach Prüfung sofort gelöscht — DSGVO-konform.</div>
+        </div>
+        <div class="field">
+          <label>Art des Nachweises</label>
+          <div class="select-wrap">
+            <select id="docType">
+              <option value="">Nachweisart wählen</option>
+              <option value="immatri">Immatrikulationsbescheinigung</option>
+              <option value="ausweis">Studentenausweis (Foto)</option>
+              <option value="zeugnis">Letztes Prüfungszeugnis</option>
+              <option value="bescheid">Zulassungsbescheid</option>
+            </select>
+          </div>
+          <div class="error-msg" id="err-docType">Bitte Nachweisart wählen</div>
+        </div>
+        <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+          <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFile(this)">
+          <div class="u-icon">📎</div>
+          <div class="u-title" id="uploadTitle">Datei hochladen</div>
+          <div class="u-sub" id="uploadSub">Hier klicken oder Datei reinziehen</div>
+          <div class="u-fmt">PDF, JPG oder PNG · max. 5 MB</div>
+        </div>
+        <div class="error-msg" id="err-file">Bitte Dokument hochladen</div>
+        <div class="field">
+          <label>E-Mail für Benachrichtigung</label>
+          <input type="email" id="manualEmail" placeholder="deine@email.de">
+          <div class="error-msg" id="err-manualEmail">Gültige E-Mail eingeben</div>
+        </div>
+        <div class="field">
+          <label>Hochschule</label>
+          <input type="text" id="manualUni" placeholder="z.B. FH Dortmund">
+        </div>
+        <button class="btn-primary" onclick="submitManual()">Zur Prüfung einreichen →</button>
+      </div>
+
+      <div class="login-link">Bereits Mitglied? <a href="index.html">Einloggen</a></div>
+    </div>
+
+    <!-- OTP -->
+    <div class="form-section" id="sec-otp">
+      <button class="btn-back" onclick="show('sec-verify',1)">← Zurück</button>
+      <div class="card-header">
+        <h1>Code <em>eingeben</em></h1>
+      </div>
+      <div class="email-display">Code gesendet an<br><strong id="sentTo"></strong></div>
+      <div class="otp-wrap">
+        <input class="otp-input" maxlength="1" type="text" inputmode="numeric" id="o1">
+        <input class="otp-input" maxlength="1" type="text" inputmode="numeric" id="o2">
+        <input class="otp-input" maxlength="1" type="text" inputmode="numeric" id="o3">
+        <input class="otp-input" maxlength="1" type="text" inputmode="numeric" id="o4">
+        <input class="otp-input" maxlength="1" type="text" inputmode="numeric" id="o5">
+        <input class="otp-input" maxlength="1" type="text" inputmode="numeric" id="o6">
+      </div>
+      <div class="error-msg" id="err-otp" style="text-align:center;margin-bottom:1rem">Falscher Code — bitte erneut versuchen</div>
+      <div class="resend-link">Keinen Code erhalten? <button onclick="resend()">Erneut senden</button></div>
+      <button class="btn-primary" onclick="verifyOTP()">Bestätigen ✓</button>
+    </div>
+
+    <!-- Konto -->
+    <div class="form-section" id="sec-account">
+      <button class="btn-back" onclick="show('sec-verify',1)">← Zurück</button>
+      <div class="card-header">
+        <h1>Dein Konto <em>erstellen</em></h1>
+        <p>Fast geschafft — noch ein paar Details.</p>
+      </div>
+      <div class="verified-badge" id="verifiedBadge"><div class="v-dot"></div> Uni-E-Mail verifiziert ✓</div>
+      <div class="field-row">
+        <div class="field">
+          <label>Vorname</label>
+          <input type="text" id="fname" placeholder="Max">
+          <div class="error-msg" id="err-fname">Pflichtfeld</div>
+        </div>
+        <div class="field">
+          <label>Nachname</label>
+          <input type="text" id="lname" placeholder="Müller">
+        </div>
+      </div>
+      <div class="field">
+        <label>Passwort</label>
+        <input type="password" id="pw" placeholder="Mindestens 8 Zeichen">
+        <div class="error-msg" id="err-pw">Mindestens 8 Zeichen</div>
+      </div>
+      <button class="btn-primary" onclick="goStudiengang()">Weiter →</button>
+    </div>
+
+    <!-- Studiengang -->
+    <div class="form-section" id="sec-sg">
+      <button class="btn-back" onclick="show('sec-account',2)">← Zurück</button>
+      <div class="card-header">
+        <h1>Dein <em>Studiengang</em></h1>
+        <p>Wir zeigen dir passende Bücher, Kurse und Nachhilfe.</p>
+      </div>
+      <div class="sg-grid">
+        <div class="sg-card" onclick="selectSG(this,'Wirtschaftspsychologie')"><div class="sg-icon">🧠</div><div class="sg-name">Wirtschaftspsychologie</div><div class="sg-abk">B.Sc.</div></div>
+        <div class="sg-card" onclick="selectSG(this,'BWL')"><div class="sg-icon">📊</div><div class="sg-name">BWL</div><div class="sg-abk">B.Sc.</div></div>
+        <div class="sg-card" onclick="selectSG(this,'Informatik')"><div class="sg-icon">💻</div><div class="sg-name">Informatik</div><div class="sg-abk">B.Sc.</div></div>
+        <div class="sg-card" onclick="selectSG(this,'Psychologie')"><div class="sg-icon">🔬</div><div class="sg-name">Psychologie</div><div class="sg-abk">B.Sc.</div></div>
+        <div class="sg-card" onclick="selectSG(this,'Jura')"><div class="sg-icon">⚖️</div><div class="sg-name">Jura</div><div class="sg-abk">Staatsexamen</div></div>
+        <div class="sg-card" onclick="selectSG(this,'Medizin')"><div class="sg-icon">🩺</div><div class="sg-name">Medizin</div><div class="sg-abk">Staatsexamen</div></div>
+      </div>
+      <div class="field">
+        <label>Oder direkt eingeben</label>
+        <input type="text" id="sgCustom" placeholder="z.B. Maschinenbau, VWL...">
+      </div>
+      <div class="field">
+        <label>Abschluss</label>
+        <div class="select-wrap">
+          <select id="abschluss">
+            <option value="">Bitte wählen</option>
+            <option>Bachelor</option><option>Master</option>
+            <option>Staatsexamen</option><option>Diplom</option>
+          </select>
+        </div>
+      </div>
+      <div class="error-msg" id="err-sg">Bitte Studiengang auswählen</div>
+      <button class="btn-primary" onclick="goSemester()">Weiter →</button>
+    </div>
+
+    <!-- Semester -->
+    <div class="form-section" id="sec-sem">
+      <button class="btn-back" onclick="show('sec-sg',3)">← Zurück</button>
+      <div class="card-header">
+        <h1>Welches <em>Semester</em>?</h1>
+        <p>Wir passen deine Empfehlungen genau an.</p>
+      </div>
+      <div class="sem-grid">
+        <div class="sem-pill" onclick="selectSem(this,1)">1. Semester</div>
+        <div class="sem-pill" onclick="selectSem(this,2)">2. Semester</div>
+        <div class="sem-pill" onclick="selectSem(this,3)">3. Semester</div>
+        <div class="sem-pill" onclick="selectSem(this,4)">4. Semester</div>
+        <div class="sem-pill" onclick="selectSem(this,5)">5. Semester</div>
+        <div class="sem-pill" onclick="selectSem(this,6)">6. Semester</div>
+        <div class="sem-pill" onclick="selectSem(this,7)">7. Semester</div>
+        <div class="sem-pill" onclick="selectSem(this,8)">8. Semester</div>
+      </div>
+      <div class="preview-box" id="previewBox">
+        <div class="preview-label">📚 Deine Buchempfehlungen</div>
+        <div id="previewItems"></div>
+      </div>
+      <button class="btn-primary" onclick="finish()">Konto erstellen ✓</button>
+    </div>
+
+    <!-- Success -->
+    <div class="success-screen" id="successScreen">
+      <div class="success-icon">✓</div>
+      <h2>Willkommen im <em style="font-style:italic;color:var(--accent2)">Universum</em></h2>
+      <p>Dein Konto ist aktiv. Erste Buchempfehlungen für <strong id="s-sg"></strong>, Sem. <strong id="s-sem"></strong>:</p>
+      <div class="book-list">
+        <div class="blt">Empfohlene Bücher — Affiliate-Links</div>
+        <div id="bookList"></div>
+      </div>
+      <button class="btn-primary" onclick="window.location.href='academify_complete (1).html#student'">Zur Plattform →</button>
+    </div>
+
+    <!-- Pending (Dokument-Einreichung) -->
+    <div class="pending-screen" id="pendingScreen">
+      <div class="pending-icon">⏳</div>
+      <h2 style="font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;margin-bottom:.5rem">Antrag <em style="font-style:italic;color:var(--warn)">eingereicht</em></h2>
+      <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:1rem">
+        Wir prüfen dein Dokument innerhalb von <strong style="color:var(--text)">24–48 Stunden</strong>.<br>
+        Benachrichtigung an: <strong id="p-email" style="color:var(--text)"></strong>
+      </p>
+      <div class="info-box" style="text-align:left;margin-bottom:1rem">
+        <div class="box-icon">🔒</div>
+        <div>Dein Dokument wird nach der Prüfung sofort gelöscht. Wir speichern nur deinen verifizierten Status — DSGVO-konform.</div>
+      </div>
+      <button class="btn-primary" onclick="window.location.href='index.html'">Zurück zur Startseite</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+let selectedSG='',selectedSem=0,verifiedEmail='',uploadedFile=null;
+
+const books={
+  'Wirtschaftspsychologie':{
+    1:[{t:'Grundlagen der Psychologie',a:'David Myers',i:'🧠',tag:'Pflicht'},{t:'BWL für Einsteiger',a:'Günter Wöhe',i:'📊',tag:'Pflicht'},{t:'Statistik für Psychologen',a:'Jürgen Bortz',i:'📐',tag:'Empfohlen'}],
+    2:[{t:'Sozialpsychologie',a:'Elliot Aronson',i:'👥',tag:'Pflicht'},{t:'Marketing Grundlagen',a:'Philip Kotler',i:'📣',tag:'Empfohlen'}]
+  },
+  'BWL':{1:[{t:'Einführung in die BWL',a:'Günter Wöhe',i:'📊',tag:'Pflicht'},{t:'Rechnungswesen',a:'Wolfgang Eisele',i:'🔢',tag:'Pflicht'}]},
+  'Informatik':{1:[{t:'Algorithmen & Datenstrukturen',a:'Ottmann & Widmayer',i:'💡',tag:'Pflicht'},{t:'Programmieren in Java',a:'Christian Ullenboom',i:'☕',tag:'Empfohlen'}]},
+  'Jura':{1:[{t:'BGB Allgemeiner Teil',a:'Jan Schapp',i:'⚖️',tag:'Pflicht'},{t:'Strafrecht AT',a:'Claus Roxin',i:'📋',tag:'Pflicht'}]},
+  'Medizin':{1:[{t:'Anatomie',a:'Frank H. Netter',i:'🫀',tag:'Pflicht'},{t:'Biochemie',a:'Peter C. Heinrich',i:'🔬',tag:'Pflicht'}]},
+  'Psychologie':{1:[{t:'Allgemeine Psychologie',a:'Müsseler & Rieger',i:'🧠',tag:'Pflicht'},{t:'Forschungsmethoden',a:'Bortz & Döring',i:'📐',tag:'Pflicht'}]}
+};
+
+function getBooks(sg,sem){const s=books[sg];if(!s)return [{t:'Wissenschaftliches Arbeiten',a:'Umberto Eco',i:'📝',tag:'Allgemein'}];return s[sem]||s[1]||[]}
+
+function show(id,step){
+  document.querySelectorAll('.form-section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  for(let i=1;i<=4;i++){const d=document.getElementById('dot'+i);if(!d)continue;d.className='step-dot';if(i<step)d.classList.add('done');else if(i===step)d.classList.add('active')}
+}
+
+function switchMethod(m){
+  ['email','linkedin','manual'].forEach(t=>{
+    document.getElementById('tab-'+t).classList.toggle('active',t===m);
+    document.getElementById('panel-'+t).classList.toggle('active',t===m);
+  });
+}
+
+function isUniEmail(e){return ['stud.','students.','student.','.uni-','uni-','fh-','.fh-','th-','hs-','rwth','lmu.','kit.edu','tu-','.edu'].some(m=>e.toLowerCase().includes(m))}
+
+function sendCode(){
+  const email=document.getElementById('uniEmail').value.trim();
+  const uni=document.getElementById('uniSelect').value;
+  let ok=true;
+  if(!email||!isUniEmail(email)){document.getElementById('err-uniEmail').classList.add('show');ok=false}else document.getElementById('err-uniEmail').classList.remove('show');
+  if(!uni){document.getElementById('err-uniSelect').classList.add('show');ok=false}else document.getElementById('err-uniSelect').classList.remove('show');
+  if(!ok)return;
+  verifiedEmail=email;
+  document.getElementById('sentTo').textContent=email;
+  setupOTP();
+  show('sec-otp',1);
+}
+
+function setupOTP(){
+  const ids=['o1','o2','o3','o4','o5','o6'];
+  const inputs=ids.map(id=>document.getElementById(id));
+  inputs.forEach((inp,i)=>{inp.value='';inp.oninput=()=>{if(inp.value&&i<5)inputs[i+1].focus()};inp.onkeydown=e=>{if(e.key==='Backspace'&&!inp.value&&i>0)inputs[i-1].focus()}});
+  setTimeout(()=>inputs[0].focus(),200);
+}
+
+function verifyOTP(){
+  const code=['o1','o2','o3','o4','o5','o6'].map(id=>document.getElementById(id).value).join('');
+  if(code.length===6){
+    document.getElementById('err-otp').style.display='none';
+    document.getElementById('verifiedBadge').innerHTML='<div class="v-dot"></div> Uni-E-Mail verifiziert ✓';
+    show('sec-account',2);
+  }else{
+    document.getElementById('err-otp').style.display='block';
+    ['o1','o2','o3','o4','o5','o6'].forEach(id=>{const el=document.getElementById(id);el.style.borderColor='#f87171';setTimeout(()=>el.style.borderColor='',1500)});
+  }
+}
+
+function resend(){setupOTP();const b=document.querySelector('.resend-link button');b.textContent='Gesendet! ✓';b.style.color='var(--success)';setTimeout(()=>{b.textContent='Erneut senden';b.style.color=''},2000)}
+
+function linkedInLogin(){
+  const btn=document.querySelector('.btn-li');
+  btn.innerHTML='<span>Verbinde mit LinkedIn...</span>';btn.style.opacity='0.7';
+  setTimeout(()=>{
+    verifiedEmail='student@linkedin.de';
+    document.getElementById('verifiedBadge').innerHTML='<div class="v-dot"></div> LinkedIn-Bildung verifiziert ✓';
+    show('sec-account',2);
+  },1800);
+}
+
+function submitLinkedIn(){
+  const url=document.getElementById('linkedinUrl').value.trim();
+  if(!url||!url.toLowerCase().includes('linkedin')){document.getElementById('err-linkedin').classList.add('show');return}
+  document.getElementById('err-linkedin').classList.remove('show');
+  document.getElementById('verifiedBadge').innerHTML='<div class="v-dot"></div> LinkedIn verifiziert ✓';
+  show('sec-account',2);
+}
+
+function handleFile(input){
+  const file=input.files[0];if(!file)return;
+  uploadedFile=file;
+  document.getElementById('uploadArea').classList.add('has-file');
+  document.getElementById('uploadTitle').textContent=file.name;
+  document.getElementById('uploadSub').textContent=(file.size/1024/1024).toFixed(2)+' MB · Bereit zum Einreichen';
+  document.getElementById('err-file').classList.remove('show');
+}
+
+function submitManual(){
+  const docType=document.getElementById('docType').value;
+  const email=document.getElementById('manualEmail').value.trim();
+  let ok=true;
+  if(!docType){document.getElementById('err-docType').classList.add('show');ok=false}else document.getElementById('err-docType').classList.remove('show');
+  if(!uploadedFile){document.getElementById('err-file').classList.add('show');ok=false}else document.getElementById('err-file').classList.remove('show');
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){document.getElementById('err-manualEmail').classList.add('show');ok=false}else document.getElementById('err-manualEmail').classList.remove('show');
+  if(!ok)return;
+  document.getElementById('stepsBar').style.display='none';
+  document.querySelectorAll('.form-section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('p-email').textContent=email;
+  document.getElementById('pendingScreen').classList.add('visible');
+}
+
+function goStudiengang(){
+  const fname=document.getElementById('fname').value.trim();
+  const pw=document.getElementById('pw').value;
+  let ok=true;
+  if(!fname){document.getElementById('err-fname').classList.add('show');ok=false}else document.getElementById('err-fname').classList.remove('show');
+  if(pw.length<8){document.getElementById('err-pw').classList.add('show');ok=false}else document.getElementById('err-pw').classList.remove('show');
+  if(ok)show('sec-sg',3);
+}
+
+function selectSG(el,name){document.querySelectorAll('.sg-card').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');selectedSG=name;document.getElementById('sgCustom').value=''}
+
+function goSemester(){
+  const custom=document.getElementById('sgCustom').value.trim();
+  if(custom)selectedSG=custom;
+  if(!selectedSG){document.getElementById('err-sg').classList.add('show');return}
+  document.getElementById('err-sg').classList.remove('show');
+  show('sec-sem',4);
+}
+
+function selectSem(el,num){
+  document.querySelectorAll('.sem-pill').forEach(p=>p.classList.remove('selected'));
+  el.classList.add('selected');selectedSem=num;
+  const bks=getBooks(selectedSG||'Wirtschaftspsychologie',num);
+  document.getElementById('previewBox').classList.add('visible');
+  document.getElementById('previewItems').innerHTML=bks.map(b=>`<div class="preview-book"><div class="book-dot"></div><span style="flex:1;font-size:12px">${b.t}</span><span class="book-tag">${b.tag}</span></div>`).join('');
+}
+
+function finish(){
+  if(!selectedSem){alert('Bitte Semester wählen');return}
+  const sg=selectedSG||'Wirtschaftspsychologie';
+  document.getElementById('stepsBar').style.display='none';
+  document.querySelectorAll('.form-section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s-sg').textContent=sg;
+  document.getElementById('s-sem').textContent=selectedSem;
+  document.getElementById('bookList').innerHTML=getBooks(sg,selectedSem).map(b=>`<div class="book-item"><div class="book-cover">${b.i}</div><div class="book-info"><div class="book-name">${b.t}</div><div class="book-author">${b.a}</div></div><a href="#" class="amazon-btn">Amazon</a></div>`).join('');
+  document.getElementById('successScreen').classList.add('visible');
+}
+</script>
+</body>
+</html>

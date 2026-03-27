@@ -1,0 +1,2032 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Academify — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0e14;--surface:#13141c;--surface2:#1a1b26;--surface3:#1f2030;
+  --border:rgba(255,255,255,0.06);--border-hover:rgba(255,255,255,0.13);
+  --accent:#7c6dfa;--accent2:#a78bfa;--text:#e8e6f0;--muted:#6b6880;--muted2:#4a4860;
+  --success:#4ade80;--warn:#fbbf24;--info:#38bdf8;--coral:#f87171;
+  --sidebar-w:220px;--chat-list-w:260px;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);display:flex}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;position:relative;z-index:10}
+.sidebar::after{content:'';position:absolute;top:0;right:0;width:1px;height:100%;background:linear-gradient(to bottom,transparent,rgba(124,109,250,0.3) 40%,rgba(124,109,250,0.1) 70%,transparent)}
+.sidebar-logo{padding:1.2rem 1.2rem .9rem;display:flex;align-items:center;gap:9px;border-bottom:1px solid var(--border);margin-bottom:.4rem}
+.logo-mark{width:30px;height:30px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.logo-text{font-family:'DM Serif Display',serif;font-size:17px;letter-spacing:-.3px}
+.logo-text span{color:var(--accent2)}
+.nav-section{padding:0 .7rem;margin-bottom:.4rem}
+.nav-label{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted2);padding:.4rem .6rem;margin-bottom:.1rem}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:8px;cursor:pointer;transition:all .18s;font-size:12px;font-weight:400;color:var(--muted);margin-bottom:1px;position:relative;user-select:none}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:rgba(124,109,250,0.1);color:var(--accent2)}
+.nav-item.active::before{content:'';position:absolute;left:0;top:20%;height:60%;width:2.5px;background:var(--accent);border-radius:0 2px 2px 0}
+.nav-icon{font-size:14px;width:17px;text-align:center;flex-shrink:0}
+.nav-badge{margin-left:auto;font-size:9px;padding:1px 6px;background:rgba(124,109,250,0.15);color:var(--accent2);border-radius:100px}
+.nav-badge.red{background:rgba(248,113,113,0.15);color:var(--coral)}
+.sidebar-footer{margin-top:auto;padding:.8rem .7rem;border-top:1px solid var(--border)}
+.user-card{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:9px;cursor:pointer;transition:background .18s}
+.user-card:hover{background:var(--surface2)}
+.avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:#fff;flex-shrink:0}
+.user-info{flex:1;min-width:0}
+.user-name{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-role{font-size:10px;color:var(--muted)}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{display:flex;align-items:center;gap:10px;padding:.85rem 1.5rem;border-bottom:1px solid var(--border);flex-shrink:0}
+.topbar-title{font-family:'DM Serif Display',serif;font-size:18px;font-weight:400}
+.topbar-title em{font-style:italic;color:var(--accent2)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.search-bar{display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 11px;font-size:12px;color:var(--muted);cursor:text;transition:border-color .2s;width:180px}
+.search-bar:hover{border-color:var(--border-hover)}
+.icon-btn{width:32px;height:32px;background:var(--surface);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;transition:all .18s;position:relative}
+.icon-btn:hover{border-color:var(--border-hover);background:var(--surface2)}
+.notif-dot{position:absolute;top:5px;right:5px;width:6px;height:6px;background:var(--coral);border-radius:50%;border:1.5px solid var(--surface);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.verified-pill{display:flex;align-items:center;gap:5px;background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.18);border-radius:100px;padding:3px 9px;font-size:10px;color:var(--success)}
+.v-dot{width:5px;height:5px;background:var(--success);border-radius:50%}
+.content{flex:1;overflow-y:auto;padding:1.4rem 1.5rem}
+.content::-webkit-scrollbar{width:3px}
+.content::-webkit-scrollbar-thumb{background:var(--muted2);border-radius:2px}
+.page{display:none}
+.page.active{display:block;animation:fadeIn .22s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* CHAT LAYOUT */
+.chat-layout{display:flex;height:calc(100vh - 53px);overflow:hidden}
+
+/* Chat list panel */
+.chat-list-panel{width:var(--chat-list-w);flex-shrink:0;border-right:1px solid var(--border);display:flex;flex-direction:column;background:var(--surface);overflow:hidden}
+.chat-list-header{padding:.9rem 1rem .7rem;border-bottom:1px solid var(--border);flex-shrink:0}
+.chat-list-header h3{font-size:13px;font-weight:500;margin-bottom:.6rem}
+.chat-search{display:flex;align-items:center;gap:7px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--muted)}
+.chat-tabs{display:flex;gap:4px;padding:.6rem .8rem;border-bottom:1px solid var(--border);flex-shrink:0}
+.chat-tab{padding:5px 10px;border-radius:7px;font-size:11px;cursor:pointer;color:var(--muted);transition:all .18s;user-select:none}
+.chat-tab:hover{color:var(--text)}
+.chat-tab.active{background:rgba(124,109,250,0.1);color:var(--accent2)}
+.chat-list{flex:1;overflow-y:auto;padding:.4rem}
+.chat-list::-webkit-scrollbar{width:2px}
+.chat-list::-webkit-scrollbar-thumb{background:var(--muted2)}
+
+/* Chat list item */
+.chat-list-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:9px;cursor:pointer;transition:background .15s;margin-bottom:2px;position:relative}
+.chat-list-item:hover{background:var(--surface2)}
+.chat-list-item.active{background:rgba(124,109,250,0.1)}
+.chat-list-item .cli-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.chat-list-item .cli-avatar.group{border-radius:10px}
+.cli-info{flex:1;min-width:0}
+.cli-name{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+.cli-preview{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cli-meta{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0}
+.cli-time{font-size:10px;color:var(--muted)}
+.cli-unread{width:17px;height:17px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:500;color:#fff}
+
+/* Group badges */
+.group-tag{display:inline-flex;align-items:center;gap:4px;font-size:9px;padding:2px 6px;border-radius:100px;margin-top:2px}
+.group-tag.sg{background:rgba(124,109,250,0.12);color:var(--accent2)}
+.group-tag.sem{background:rgba(56,189,248,0.1);color:var(--info)}
+.group-tag.uni{background:rgba(74,222,128,0.1);color:var(--success)}
+.group-tag.dm{background:rgba(251,191,36,0.1);color:var(--warn)}
+
+/* Chat window */
+.chat-window{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.chat-window-header{display:flex;align-items:center;gap:10px;padding:.8rem 1.2rem;border-bottom:1px solid var(--border);flex-shrink:0}
+.chat-window-header .cw-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.chat-window-header .cw-avatar.group{border-radius:9px}
+.cw-info{flex:1}
+.cw-name{font-size:13px;font-weight:500}
+.cw-status{font-size:11px;color:var(--muted)}
+.cw-actions{display:flex;gap:6px;margin-left:auto}
+.cw-btn{width:30px;height:30px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;transition:border-color .2s}
+.cw-btn:hover{border-color:var(--border-hover)}
+
+/* Messages */
+.messages-area{flex:1;overflow-y:auto;padding:1rem 1.2rem;display:flex;flex-direction:column;gap:6px}
+.messages-area::-webkit-scrollbar{width:3px}
+.messages-area::-webkit-scrollbar-thumb{background:var(--muted2);border-radius:2px}
+.msg-date-sep{text-align:center;font-size:10px;color:var(--muted);padding:6px 0;letter-spacing:.04em}
+.msg-row{display:flex;gap:8px;align-items:flex-end;max-width:75%}
+.msg-row.own{align-self:flex-end;flex-direction:row-reverse}
+.msg-row .msg-avatar{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;color:#fff;flex-shrink:0;margin-bottom:2px}
+.msg-bubble-wrap{display:flex;flex-direction:column;gap:2px}
+.msg-row.own .msg-bubble-wrap{align-items:flex-end}
+.msg-sender{font-size:10px;color:var(--muted);padding:0 4px}
+.msg-bubble{padding:8px 11px;border-radius:12px;font-size:12px;line-height:1.5;word-break:break-word}
+.msg-bubble.other{background:var(--surface2);border:1px solid var(--border);border-bottom-left-radius:4px;color:var(--text)}
+.msg-bubble.own{background:rgba(124,109,250,0.18);border:1px solid rgba(124,109,250,0.25);border-bottom-right-radius:4px;color:var(--text)}
+.msg-time{font-size:9px;color:var(--muted);padding:0 4px}
+.system-msg{text-align:center;font-size:10px;color:var(--muted2);padding:4px 0;font-style:italic}
+
+/* Typing indicator */
+.typing-indicator{display:flex;gap:3px;align-items:center;padding:8px 11px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;border-bottom-left-radius:4px;width:fit-content}
+.typing-dot{width:5px;height:5px;background:var(--muted);border-radius:50%;animation:typingBounce 1.2s ease-in-out infinite}
+.typing-dot:nth-child(2){animation-delay:.2s}
+.typing-dot:nth-child(3){animation-delay:.4s}
+@keyframes typingBounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-4px)}}
+
+/* Input area */
+.chat-input-area{padding:.7rem 1rem;border-top:1px solid var(--border);flex-shrink:0}
+.chat-input-row{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:6px 10px;transition:border-color .2s}
+.chat-input-row:focus-within{border-color:rgba(124,109,250,0.4)}
+.chat-attach{font-size:15px;cursor:pointer;color:var(--muted);transition:color .2s;padding:2px 4px;flex-shrink:0}
+.chat-attach:hover{color:var(--text)}
+.chat-input{flex:1;background:none;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);resize:none;max-height:80px;line-height:1.4}
+.chat-input::placeholder{color:var(--muted)}
+.send-btn{width:30px;height:30px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;transition:opacity .2s,transform .15s;flex-shrink:0;border:none}
+.send-btn:hover{opacity:.85;transform:scale(1.05)}
+
+/* Empty chat state */
+.empty-chat{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);text-align:center;padding:2rem}
+.empty-chat-icon{font-size:40px;margin-bottom:1rem;opacity:.4}
+.empty-chat h3{font-size:14px;font-weight:500;margin-bottom:.4rem;color:var(--text);opacity:.5}
+.empty-chat p{font-size:12px;line-height:1.6;opacity:.6}
+
+/* Group info panel */
+.group-info-panel{width:240px;flex-shrink:0;border-left:1px solid var(--border);background:var(--surface);overflow-y:auto;display:none}
+.group-info-panel.visible{display:block}
+.group-info-panel::-webkit-scrollbar{width:3px}
+.gip-header{padding:1rem;border-bottom:1px solid var(--border)}
+.gip-avatar{width:52px;height:52px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto .7rem;background:rgba(124,109,250,0.12)}
+.gip-name{font-size:13px;font-weight:500;text-align:center;margin-bottom:.3rem}
+.gip-desc{font-size:11px;color:var(--muted);text-align:center;line-height:1.5}
+.gip-tags{display:flex;flex-wrap:wrap;justify-content:center;gap:4px;margin-top:.6rem}
+.gip-section{padding:.8rem 1rem;border-bottom:1px solid var(--border)}
+.gip-section-title{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+.gip-member{display:flex;align-items:center;gap:8px;padding:5px 0}
+.gip-member .gm-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;color:#fff;flex-shrink:0}
+.gip-member .gm-name{font-size:12px}
+.gip-member .gm-role{font-size:10px;color:var(--muted)}
+.online-dot{width:7px;height:7px;background:var(--success);border-radius:50%;margin-left:auto;flex-shrink:0}
+
+/* DASHBOARD styles */
+.welcome-banner{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.2rem 1.4rem;margin-bottom:1.2rem;position:relative;overflow:hidden;display:flex;align-items:center;gap:1.2rem}
+.welcome-banner::before{content:'';position:absolute;top:-50px;right:-50px;width:180px;height:180px;background:radial-gradient(circle,rgba(124,109,250,0.1) 0%,transparent 70%);pointer-events:none}
+.welcome-emoji{font-size:32px;flex-shrink:0}
+.welcome-text h2{font-family:'DM Serif Display',serif;font-size:18px;font-weight:400;margin-bottom:2px}
+.welcome-text h2 em{font-style:italic;color:var(--accent2)}
+.welcome-text p{font-size:12px;color:var(--muted);line-height:1.5}
+.welcome-meta{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
+.meta-pill{font-size:10px;padding:2px 9px;border-radius:100px;border:1px solid var(--border);color:var(--muted);white-space:nowrap}
+.meta-pill.accent{background:rgba(124,109,250,0.08);border-color:rgba(124,109,250,0.2);color:var(--accent2)}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:1.2rem}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem;transition:border-color .2s,transform .15s;cursor:default}
+.stat-card:hover{border-color:var(--border-hover);transform:translateY(-1px)}
+.stat-icon{font-size:16px;margin-bottom:.4rem}
+.stat-value{font-family:'DM Serif Display',serif;font-size:20px;font-weight:400;line-height:1;margin-bottom:2px}
+.stat-label{font-size:10px;color:var(--muted)}
+.stat-delta{font-size:10px;margin-top:4px}
+.stat-delta.up{color:var(--success)}.stat-delta.warn{color:var(--warn)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:1.1rem 1.2rem}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem}
+.card-title{font-size:12px;font-weight:500}
+.card-action{font-size:11px;color:var(--accent2);cursor:pointer}
+.card-action:hover{opacity:.7}
+.grid-3{display:grid;grid-template-columns:2fr 1fr;gap:11px;margin-bottom:1.2rem}
+.book-item{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;border-radius:5px;padding-left:3px;padding-right:3px}
+.book-item:last-child{border-bottom:none}
+.book-item:hover{background:var(--surface2)}
+.book-cover{width:30px;height:40px;border-radius:4px;background:rgba(124,109,250,0.1);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.book-info{flex:1;min-width:0}
+.book-name{font-size:11px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.book-auth{font-size:10px;color:var(--muted)}
+.amazon-btn{font-size:10px;padding:3px 7px;background:#FF9900;color:#111;border-radius:4px;font-weight:500;text-decoration:none;white-space:nowrap;flex-shrink:0}
+.book-tag{font-size:9px;padding:2px 6px;background:rgba(124,109,250,0.12);color:var(--accent2);border-radius:100px;flex-shrink:0}
+.activity-item{display:flex;gap:9px;padding:8px 0;border-bottom:1px solid var(--border)}
+.activity-item:last-child{border-bottom:none}
+.act-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.act-text{font-size:11px;line-height:1.5;flex:1}
+.act-text strong{color:var(--text);font-weight:500}
+.act-time{font-size:10px;color:var(--muted);white-space:nowrap;margin-top:2px}
+.progress-row{margin-bottom:.7rem}
+.progress-head{display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px}
+.progress-head span:last-child{color:var(--muted)}
+.progress-track{height:4px;background:var(--surface2);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;border-radius:2px;transition:width .8s ease}
+.quick-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.2rem}
+.quick-btn{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:.9rem .7rem;text-align:center;cursor:pointer;transition:all .18s}
+.quick-btn:hover{border-color:var(--accent);background:rgba(124,109,250,0.05);transform:translateY(-1px)}
+.quick-icon{font-size:20px;margin-bottom:5px}
+.quick-label{font-size:10px;color:var(--muted);line-height:1.3}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo" onclick="window.location.href='index.html'" style="cursor:pointer" title="Abmelden">
+    <div class="logo-mark">🎓</div>
+    <div class="logo-text">Acade<span>mify</span></div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Übersicht</div>
+    <div class="nav-item active" onclick="navigate('dashboard',this)"><span class="nav-icon">⊞</span>Dashboard</div>
+    <div class="nav-item" onclick="navigate('chat',this)"><span class="nav-icon">💬</span>Nachrichten<span class="nav-badge red">5</span></div>
+    <div class="nav-item" onclick="navigate('freunde',this)"><span class="nav-icon">👤</span>Profil & Freunde<span class="nav-badge red">2</span></div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Lernen</div>
+    <div class="nav-item" onclick="navigate('kurse',this)"><span class="nav-icon">📚</span>Online-Kurse</div>
+    <div class="nav-item" onclick="navigate('nachhilfe',this)"><span class="nav-icon">🎓</span>Nachhilfe<span class="nav-badge red">3</span></div>
+    <div class="nav-item" onclick="navigate('docs',this)"><span class="nav-icon">📄</span>StudyDocs</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Campus & Leben</div>
+    <div class="nav-item" onclick="navigate('campus',this)"><span class="nav-icon">🏛️</span>CampusLeben</div>
+    <div class="nav-item" onclick="navigate('karte',this)"><span class="nav-icon">🗺️</span>Community-Karte<span class="nav-badge">6</span></div>
+    <div class="nav-item" onclick="navigate('ride',this)"><span class="nav-icon">🚗</span>StudyRide</div>
+    <div class="nav-item" onclick="navigate('merch',this)"><span class="nav-icon">👕</span>Merch-Shop</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Karriere</div>
+    <div class="nav-item" onclick="navigate('jobs',this)"><span class="nav-icon">💼</span>Jobs & Praktika</div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-card" onclick="navigate('freunde',null)" style="margin-bottom:4px">
+      <div class="avatar">MM</div>
+      <div class="user-info">
+        <div class="user-name">Max Müller</div>
+        <div class="user-role">WiPsy B.Sc. · Sem.1 · Köln</div>
+      </div>
+      <span style="color:var(--muted);font-size:12px">···</span>
+    </div>
+    <div style="text-align:center;padding-top:4px;border-top:1px solid var(--border)">
+      <a href="index.html" style="font-size:11px;color:var(--muted);text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--coral)'" onmouseout="this.style.color='var(--muted)'">← Abmelden</a>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topbarTitle">Guten Morgen, <em>Max</em> 👋</div>
+    <div class="topbar-right">
+      <div class="search-bar">🔍 &nbsp;Suchen...</div>
+      <div class="verified-pill"><div class="v-dot"></div>Verifiziert</div>
+      <div class="icon-btn">🔔<div class="notif-dot"></div></div>
+      <div class="icon-btn">⚙️</div>
+    </div>
+  </div>
+
+  <div class="content" id="mainContent">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="welcome-banner">
+        <div class="welcome-emoji">🎓</div>
+        <div class="welcome-text">
+          <h2>Willkommen im <em>Universum</em></h2>
+          <p>Dein personalisierter Studentenbereich — alles an einem Ort.</p>
+        </div>
+        <div class="welcome-meta">
+          <div class="meta-pill accent">Wirtschaftspsychologie B.Sc.</div>
+          <div class="meta-pill">1. Semester · Uni Köln</div>
+        </div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-icon">📚</div><div class="stat-value">3</div><div class="stat-label">Bücher empfohlen</div><div class="stat-delta up">↑ Neu</div></div>
+        <div class="stat-card"><div class="stat-icon">💬</div><div class="stat-value">5</div><div class="stat-label">Neue Nachrichten</div><div class="stat-delta warn">⏳ Ungelesen</div></div>
+        <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-value">847</div><div class="stat-label">Community-Mitglieder</div><div class="stat-delta up">↑ +23</div></div>
+        <div class="stat-card"><div class="stat-icon">🚗</div><div class="stat-value">5</div><div class="stat-label">Fahrten verfügbar</div><div class="stat-delta up">→ Köln ↔ FFM</div></div>
+      </div>
+      <div class="quick-actions">
+        <div class="quick-btn" onclick="navigate('chat',null)"><div class="quick-icon">💬</div><div class="quick-label">Gruppe öffnen</div></div>
+        <div class="quick-btn" onclick="navigate('nachhilfe',null)"><div class="quick-icon">🙋</div><div class="quick-label">Nachhilfe buchen</div></div>
+        <div class="quick-btn" onclick="navigate('docs',null)"><div class="quick-icon">📑</div><div class="quick-label">Skript hochladen</div></div>
+        <div class="quick-btn" onclick="navigate('ride',null)"><div class="quick-icon">🗺️</div><div class="quick-label">Fahrt finden</div></div>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-head"><span class="card-title">📚 Bücher — Semester 1</span><span class="card-action">Alle →</span></div>
+          <div class="book-item"><div class="book-cover">🧠</div><div class="book-info"><div class="book-name">Grundlagen der Psychologie</div><div class="book-auth">David Myers</div></div><span class="book-tag">Pflicht</span><a href="#" class="amazon-btn">Amazon</a></div>
+          <div class="book-item"><div class="book-cover">📊</div><div class="book-info"><div class="book-name">BWL für Einsteiger</div><div class="book-auth">Günter Wöhe</div></div><span class="book-tag">Pflicht</span><a href="#" class="amazon-btn">Amazon</a></div>
+          <div class="book-item"><div class="book-cover">📐</div><div class="book-info"><div class="book-name">Statistik für Psychologen</div><div class="book-auth">Jürgen Bortz</div></div><span class="book-tag">Empfohlen</span><a href="#" class="amazon-btn">Amazon</a></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:11px">
+          <div class="card">
+            <div class="card-head"><span class="card-title">⚡ Aktivität</span></div>
+            <div class="activity-item"><div class="act-dot" style="background:var(--success)"></div><div style="flex:1"><div class="act-text"><strong>Lisa M.</strong> schreibt in WiPsy Sem.1</div><div class="act-time">vor 2min</div></div></div>
+            <div class="activity-item"><div class="act-dot" style="background:var(--accent)"></div><div style="flex:1"><div class="act-text"><strong>Neue Fahrt</strong> Köln→Berlin Fr.</div><div class="act-time">vor 1h</div></div></div>
+            <div class="activity-item"><div class="act-dot" style="background:var(--warn)"></div><div style="flex:1"><div class="act-text"><strong>Tutor</strong> Statistik verfügbar</div><div class="act-time">vor 3h</div></div></div>
+          </div>
+          <div class="card" style="padding:.8rem 1rem">
+            <div style="font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted2);margin-bottom:.5rem">Gesponsert</div>
+            <div style="display:flex;align-items:center;gap:9px"><div style="width:34px;height:34px;background:rgba(0,119,181,0.12);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">💼</div><div><div style="font-size:11px;font-weight:500;margin-bottom:1px">Microsoft 365 — 65% Rabatt</div><div style="font-size:10px;color:var(--muted)">Word, Excel, Teams gratis</div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-title">📖 Meine Kurse</span><span class="card-action">Alle →</span></div>
+        <div class="progress-row"><div class="progress-head"><span>Einführung in die Psychologie</span><span>68%</span></div><div class="progress-track"><div class="progress-fill" style="width:68%;background:var(--accent)"></div></div></div>
+        <div class="progress-row"><div class="progress-head"><span>BWL Grundlagen</span><span>34%</span></div><div class="progress-track"><div class="progress-fill" style="width:34%;background:var(--info)"></div></div></div>
+        <div class="progress-row" style="margin-bottom:0"><div class="progress-head"><span>Statistik I</span><span>12%</span></div><div class="progress-track"><div class="progress-fill" style="width:12%;background:var(--warn)"></div></div></div>
+      </div>
+    </div>
+
+    <!-- ONLINE KURSE -->
+    <div class="page" id="page-kurse">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem">
+        <div style="font-family:'DM Serif Display',serif;font-size:18px;font-weight:400">Online-<em style="font-style:italic;color:var(--accent2)">Kurse</em></div>
+        <div style="display:flex;gap:7px">
+          <div style="padding:6px 12px;background:rgba(124,109,250,0.1);border:1px solid rgba(124,109,250,0.2);border-radius:8px;font-size:11px;color:var(--accent2);cursor:pointer">🔍 Alle Kurse</div>
+        </div>
+      </div>
+
+      <!-- Meine laufenden Kurse -->
+      <div class="card" style="margin-bottom:1.1rem">
+        <div class="card-head"><span class="card-title">📖 Meine laufenden Kurse</span><span class="card-action">Alle ansehen →</span></div>
+        <div class="progress-row"><div class="progress-head"><span>Einführung in die Psychologie</span><span style="color:var(--accent2)">68%</span></div><div class="progress-track"><div class="progress-fill" style="width:68%;background:var(--accent)"></div></div></div>
+        <div style="display:flex;gap:8px;margin-bottom:1rem">
+          <div style="background:var(--surface2);border-radius:6px;padding:5px 10px;font-size:10px;color:var(--muted)">▶ Lektion 14/21</div>
+          <div style="background:var(--surface2);border-radius:6px;padding:5px 10px;font-size:10px;color:var(--muted)">⏱ ~3h verbleibend</div>
+          <div style="background:rgba(74,222,128,0.1);border-radius:6px;padding:5px 10px;font-size:10px;color:var(--success)">✓ Zertifikat möglich</div>
+        </div>
+        <div class="progress-row"><div class="progress-head"><span>BWL Grundlagen</span><span style="color:var(--info)">34%</span></div><div class="progress-track"><div class="progress-fill" style="width:34%;background:var(--info)"></div></div></div>
+        <div style="display:flex;gap:8px;margin-bottom:1rem">
+          <div style="background:var(--surface2);border-radius:6px;padding:5px 10px;font-size:10px;color:var(--muted)">▶ Lektion 7/20</div>
+          <div style="background:var(--surface2);border-radius:6px;padding:5px 10px;font-size:10px;color:var(--muted)">⏱ ~6h verbleibend</div>
+        </div>
+        <div class="progress-row" style="margin-bottom:0"><div class="progress-head"><span>Statistik I</span><span style="color:var(--warn)">12%</span></div><div class="progress-track"><div class="progress-fill" style="width:12%;background:var(--warn)"></div></div></div>
+        <div style="display:flex;gap:8px">
+          <div style="background:var(--surface2);border-radius:6px;padding:5px 10px;font-size:10px;color:var(--muted)">▶ Lektion 2/18</div>
+          <div style="background:rgba(251,191,36,0.1);border-radius:6px;padding:5px 10px;font-size:10px;color:var(--warn)">⚠ Rückstand</div>
+        </div>
+      </div>
+
+      <!-- Gesponserte Firmenkurse -->
+      <div class="card" style="margin-bottom:1.1rem">
+        <div class="card-head">
+          <span class="card-title">🏢 Gesponserte Kurse von Unternehmen</span>
+          <span style="font-size:10px;color:var(--muted);padding:2px 8px;background:var(--surface2);border-radius:100px;border:1px solid var(--border)">Kostenlos · Mit Zertifikat</span>
+        </div>
+        <!-- McKinsey Kurs -->
+        <div style="display:flex;gap:12px;padding:11px;background:var(--surface2);border:1px solid rgba(56,189,248,0.15);border-radius:11px;margin-bottom:8px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='rgba(56,189,248,0.3)';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='rgba(56,189,248,0.15)';this.style.transform=''">
+          <div style="width:52px;height:52px;border-radius:10px;background:rgba(56,189,248,0.1);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">🧠</div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:3px">
+              <div style="font-size:12px;font-weight:500">Problem Solving für Studenten</div>
+              <span style="font-size:9px;padding:1px 7px;border-radius:100px;background:rgba(251,191,36,0.1);color:var(--warn)">Gesponsert</span>
+              <span style="font-size:9px;padding:1px 7px;border-radius:100px;background:rgba(74,222,128,0.1);color:var(--success)">Kostenlos</span>
+            </div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:5px">von McKinsey & Company · 6h · Zertifikat · ⭐ 4,9 (2.418 Teilnehmer)</div>
+            <div style="font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:7px">Lerne echte Beratungsmethoden kennen. Entwickelt von McKinsey-Consultants, speziell für BWL- und WiPsy-Studenten.</div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="display:flex;gap:4px">
+                <span style="font-size:9px;padding:1px 7px;border-radius:100px;background:var(--surface3);color:var(--muted);border:1px solid var(--border)">BWL</span>
+                <span style="font-size:9px;padding:1px 7px;border-radius:100px;background:var(--surface3);color:var(--muted);border:1px solid var(--border)">WiPsy</span>
+                <span style="font-size:9px;padding:1px 7px;border-radius:100px;background:var(--surface3);color:var(--muted);border:1px solid var(--border)">Karriere</span>
+              </div>
+              <div style="margin-left:auto;padding:5px 13px;background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.2);color:var(--info);border-radius:7px;font-size:11px">Jetzt starten →</div>
+            </div>
+          </div>
+        </div>
+        <!-- McKinsey Kurs 2 -->
+        <div style="display:flex;gap:12px;padding:11px;background:var(--surface2);border:1px solid rgba(56,189,248,0.15);border-radius:11px;margin-bottom:8px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='rgba(56,189,248,0.3)';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='rgba(56,189,248,0.15)';this.style.transform=''">
+          <div style="width:52px;height:52px;border-radius:10px;background:rgba(56,189,248,0.1);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">📊</div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:3px">
+              <div style="font-size:12px;font-weight:500">Excel & Datenanalyse für Berater</div>
+              <span style="font-size:9px;padding:1px 7px;border-radius:100px;background:rgba(251,191,36,0.1);color:var(--warn)">Gesponsert</span>
+              <span style="font-size:9px;padding:1px 7px;border-radius:100px;background:rgba(74,222,128,0.1);color:var(--success)">Kostenlos</span>
+            </div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:5px">von McKinsey & Company · 4h · Zertifikat · ⭐ 4,7 (891 Teilnehmer)</div>
+            <div style="font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:7px">Von Excel-Grundlagen bis zu professionellen Dashboards — so arbeitest du in einer Top-Unternehmensberatung.</div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="display:flex;gap:4px">
+                <span style="font-size:9px;padding:1px 7px;border-radius:100px;background:var(--surface3);color:var(--muted);border:1px solid var(--border)">Sem. 3+</span>
+                <span style="font-size:9px;padding:1px 7px;border-radius:100px;background:var(--surface3);color:var(--muted);border:1px solid var(--border)">Excel</span>
+              </div>
+              <div style="margin-left:auto;padding:5px 13px;background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.2);color:var(--info);border-radius:7px;font-size:11px">Jetzt starten →</div>
+            </div>
+          </div>
+        </div>
+        <!-- KPMG Kurs -->
+        <div style="display:flex;gap:12px;padding:11px;background:var(--surface2);border:1px solid rgba(251,191,36,0.12);border-radius:11px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='rgba(251,191,36,0.25)';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='rgba(251,191,36,0.12)';this.style.transform=''">
+          <div style="width:52px;height:52px;border-radius:10px;background:rgba(251,191,36,0.1);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">📈</div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:3px">
+              <div style="font-size:12px;font-weight:500">Grundlagen der Wirtschaftsprüfung</div>
+              <span style="font-size:9px;padding:1px 7px;border-radius:100px;background:rgba(251,191,36,0.1);color:var(--warn)">Gesponsert</span>
+              <span style="font-size:9px;padding:1px 7px;border-radius:100px;background:rgba(74,222,128,0.1);color:var(--success)">Kostenlos</span>
+            </div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:5px">von KPMG · 3h · Zertifikat · ⭐ 4,5 (443 Teilnehmer)</div>
+            <div style="font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:7px">Einblick in die Arbeit eines Big-4-Wirtschaftsprüfers. Ideal als Vorbereitung für dein Pflichtpraktikum.</div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="display:flex;gap:4px">
+                <span style="font-size:9px;padding:1px 7px;border-radius:100px;background:var(--surface3);color:var(--muted);border:1px solid var(--border)">BWL</span>
+                <span style="font-size:9px;padding:1px 7px;border-radius:100px;background:var(--surface3);color:var(--muted);border:1px solid var(--border)">Praktikum</span>
+              </div>
+              <div style="margin-left:auto;padding:5px 13px;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.2);color:var(--warn);border-radius:7px;font-size:11px">Jetzt starten →</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Weitere Kursempfehlungen -->
+      <div class="card">
+        <div class="card-head"><span class="card-title">✨ Weitere Empfehlungen</span></div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:10px;padding:9px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(255,255,255,0.13)'" onmouseout="this.style.borderColor='var(--border)'">
+            <div style="width:38px;height:38px;background:rgba(74,222,128,0.1);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">📊</div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:500;margin-bottom:2px">Statistik mit SPSS — Grundkurs</div><div style="font-size:11px;color:var(--muted)">★★★★☆ 4.6 · 890 Teilnehmer · 5h · 29€</div></div>
+            <div style="font-size:10px;padding:2px 8px;background:rgba(74,222,128,0.1);color:var(--success);border-radius:100px;flex-shrink:0">Neu</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:9px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(255,255,255,0.13)'" onmouseout="this.style.borderColor='var(--border)'">
+            <div style="width:38px;height:38px;background:rgba(124,109,250,0.1);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🧠</div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:500;margin-bottom:2px">Wissenschaftliches Arbeiten</div><div style="font-size:11px;color:var(--muted)">★★★★★ 4.9 · 1.200 Teilnehmer · 4h · 19€</div></div>
+            <div style="font-size:10px;padding:2px 8px;background:rgba(124,109,250,0.1);color:var(--accent2);border-radius:100px;flex-shrink:0">Beliebt</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NACHHILFE -->
+    <div class="page" id="page-nachhilfe">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem">
+        <div style="font-family:'DM Serif Display',serif;font-size:18px;font-weight:400">Online-<em style="font-style:italic;color:var(--accent2)">Nachhilfe</em></div>
+        <div style="padding:6px 12px;background:rgba(124,109,250,0.1);border:1px solid rgba(124,109,250,0.2);border-radius:8px;font-size:11px;color:var(--accent2);cursor:pointer">+ Als Tutor anmelden</div>
+      </div>
+      <div class="card" style="margin-bottom:1.1rem">
+        <div class="card-head"><span class="card-title">⏳ Meine Buchungen</span></div>
+        <div style="background:var(--surface2);border:1px solid rgba(124,109,250,0.2);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:10px">
+          <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7c6dfa,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;color:#fff;flex-shrink:0">AS</div>
+          <div style="flex:1"><div style="font-size:12px;font-weight:500">Anna Schmidt — Statistik</div><div style="font-size:11px;color:var(--muted)">Do. 27.03 · 15:00 Uhr · Online via Zoom</div></div>
+          <div style="font-size:10px;padding:3px 9px;background:rgba(74,222,128,0.1);color:var(--success);border-radius:100px">Bestätigt</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-title">🎓 Verfügbare Tutoren — Wirtschaftspsychologie</span></div>
+        <div style="display:flex;flex-direction:column">
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
+            <div style="width:36px;height:36px;border-radius:50%;background:rgba(124,109,250,0.12);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">👩‍🎓</div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:500">Anna Schmidt</div><div style="font-size:11px;color:var(--muted)">Statistik, Psychologie · Sem. 6</div><div style="font-size:11px;color:var(--warn)">★★★★★ 4.9 (38 Bewertungen)</div></div>
+            <div style="font-size:13px;font-weight:500;color:var(--accent2);margin-right:8px">18€/h</div>
+            <div style="font-size:11px;padding:5px 10px;background:rgba(124,109,250,0.1);border:1px solid rgba(124,109,250,0.2);color:var(--accent2);border-radius:7px;cursor:pointer">Buchen</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
+            <div style="width:36px;height:36px;border-radius:50%;background:rgba(74,222,128,0.1);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">👨‍💻</div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:500">Felix Wagner</div><div style="font-size:11px;color:var(--muted)">BWL, Rechnungswesen · Sem. 5</div><div style="font-size:11px;color:var(--warn)">★★★★☆ 4.6 (21 Bewertungen)</div></div>
+            <div style="font-size:13px;font-weight:500;color:var(--accent2);margin-right:8px">15€/h</div>
+            <div style="font-size:11px;padding:5px 10px;background:rgba(124,109,250,0.1);border:1px solid rgba(124,109,250,0.2);color:var(--accent2);border-radius:7px;cursor:pointer">Buchen</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 0">
+            <div style="width:36px;height:36px;border-radius:50%;background:rgba(251,191,36,0.1);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">👩‍🏫</div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:500">Mia Hoffmann</div><div style="font-size:11px;color:var(--muted)">Wirtschaftspsych., Marketing · Sem. 7</div><div style="font-size:11px;color:var(--warn)">★★★★★ 5.0 (12 Bewertungen)</div></div>
+            <div style="font-size:13px;font-weight:500;color:var(--accent2);margin-right:8px">22€/h</div>
+            <div style="font-size:11px;padding:5px 10px;background:rgba(124,109,250,0.1);border:1px solid rgba(124,109,250,0.2);color:var(--accent2);border-radius:7px;cursor:pointer">Buchen</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STUDYDOCS -->
+    <div class="page" id="page-docs">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem">
+        <div style="font-family:'DM Serif Display',serif;font-size:18px;font-weight:400">Study<em style="font-style:italic;color:var(--accent2)">Docs</em></div>
+        <div style="padding:6px 12px;background:rgba(124,109,250,0.1);border:1px solid rgba(124,109,250,0.2);border-radius:8px;font-size:11px;color:var(--accent2);cursor:pointer">+ Dokument teilen</div>
+      </div>
+      <div class="card" style="margin-bottom:1.1rem">
+        <div class="card-head"><span class="card-title">📂 Wirtschaftspsychologie B.Sc. — Semester 1</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div style="display:flex;align-items:center;gap:9px;padding:9px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(255,255,255,0.13)'" onmouseout="this.style.borderColor='var(--border)'">
+            <div style="font-size:20px;flex-shrink:0">📄</div>
+            <div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Psychologie Zusammenfassung</div><div style="font-size:10px;color:var(--muted)">PDF · 2.3 MB · Lisa M.</div></div>
+            <div style="font-size:11px;color:var(--success)">↓ 234</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:9px;padding:9px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(255,255,255,0.13)'" onmouseout="this.style.borderColor='var(--border)'">
+            <div style="font-size:20px;flex-shrink:0">📊</div>
+            <div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">BWL Altklausur 2023</div><div style="font-size:10px;color:var(--muted)">PDF · 1.1 MB · Jonas K.</div></div>
+            <div style="font-size:11px;color:var(--success)">↓ 187</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:9px;padding:9px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(255,255,255,0.13)'" onmouseout="this.style.borderColor='var(--border)'">
+            <div style="font-size:20px;flex-shrink:0">📐</div>
+            <div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Statistik Formelsammlung</div><div style="font-size:10px;color:var(--muted)">PDF · 0.8 MB · Anna S.</div></div>
+            <div style="font-size:11px;color:var(--success)">↓ 412</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:9px;padding:9px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(255,255,255,0.13)'" onmouseout="this.style.borderColor='var(--border)'">
+            <div style="font-size:20px;flex-shrink:0">📝</div>
+            <div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Lernkarten Semester 1</div><div style="font-size:10px;color:var(--muted)">Anki · 156 Karten · Felix W.</div></div>
+            <div style="font-size:11px;color:var(--success)">↓ 98</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:9px;padding:9px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(255,255,255,0.13)'" onmouseout="this.style.borderColor='var(--border)'">
+            <div style="font-size:20px;flex-shrink:0">🎙️</div>
+            <div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">VL-Mitschnitt Psychologie</div><div style="font-size:10px;color:var(--muted)">MP4 · 1.2 GB · Hochgeladen</div></div>
+            <div style="font-size:11px;color:var(--success)">↓ 56</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:9px;padding:9px 10px;background:var(--surface2);border:1px dashed var(--border-hover);border-radius:9px;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border-hover)'">
+            <div style="font-size:20px;flex-shrink:0">➕</div>
+            <div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:500;color:var(--muted)">Dokument hochladen</div><div style="font-size:10px;color:var(--muted2)">PDF, DOCX, Anki...</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-title">🔥 Beliebt in deiner Gruppe</span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div style="display:flex;align-items:center;gap:8px;font-size:11px"><span style="font-size:13px">🥇</span><span style="flex:1">Statistik Formelsammlung</span><span style="color:var(--muted)">↓ 412 mal</span></div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:11px"><span style="font-size:13px">🥈</span><span style="flex:1">Psychologie Zusammenfassung</span><span style="color:var(--muted)">↓ 234 mal</span></div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:11px"><span style="font-size:13px">🥉</span><span style="flex:1">BWL Altklausur 2023</span><span style="color:var(--muted)">↓ 187 mal</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAMPUSLEBEN -->
+    <div class="page" id="page-campus">
+      <!-- Header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem">
+        <div style="font-family:'DM Serif Display',serif;font-size:18px;font-weight:400">Campus<em style="font-style:italic;color:var(--accent2)">Leben</em></div>
+        <div style="display:flex;gap:8px">
+          <div style="display:flex;gap:4px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:3px">
+            <div id="campusTabMap" onclick="switchCampusTab('map')" style="padding:4px 10px;border-radius:5px;font-size:11px;cursor:pointer;background:var(--accent);color:#fff;transition:all .18s">🗺️ Karte</div>
+            <div id="campusTabEvents" onclick="switchCampusTab('events')" style="padding:4px 10px;border-radius:5px;font-size:11px;cursor:pointer;color:var(--muted);transition:all .18s">📅 Events</div>
+            <div id="campusTabWg" onclick="switchCampusTab('wg')" style="padding:4px 10px;border-radius:5px;font-size:11px;cursor:pointer;color:var(--muted);transition:all .18s">🏠 WG</div>
+            <div id="campusTabMensa" onclick="switchCampusTab('mensa')" style="padding:4px 10px;border-radius:5px;font-size:11px;cursor:pointer;color:var(--muted);transition:all .18s">🍽️ Mensa</div>
+          </div>
+          <div onclick="openAddPlace()" style="padding:5px 12px;background:rgba(124,109,250,0.1);border:1px solid rgba(124,109,250,0.2);border-radius:8px;font-size:11px;color:var(--accent2);cursor:pointer;transition:all .2s" onmouseover="this.style.background='rgba(124,109,250,0.18)'" onmouseout="this.style.background='rgba(124,109,250,0.1)'">+ Ort hinzufügen</div>
+        </div>
+      </div>
+
+      <!-- MAP TAB -->
+      <div id="campusPanelMap">
+        <!-- Filter bar -->
+        <div style="display:flex;gap:6px;margin-bottom:.9rem;flex-wrap:wrap">
+          <div id="filterAll" onclick="filterPlaces('all')" style="padding:4px 12px;border-radius:100px;font-size:11px;cursor:pointer;background:var(--accent);color:#fff;border:1px solid transparent;transition:all .18s">Alle</div>
+          <div id="filterCafe" onclick="filterPlaces('cafe')" style="padding:4px 12px;border-radius:100px;font-size:11px;cursor:pointer;background:var(--surface2);color:var(--muted);border:1px solid var(--border);transition:all .18s">☕ Cafés</div>
+          <div id="filterBiblio" onclick="filterPlaces('biblio')" style="padding:4px 12px;border-radius:100px;font-size:11px;cursor:pointer;background:var(--surface2);color:var(--muted);border:1px solid var(--border);transition:all .18s">📚 Lernorte</div>
+          <div id="filterFood" onclick="filterPlaces('food')" style="padding:4px 12px;border-radius:100px;font-size:11px;cursor:pointer;background:var(--surface2);color:var(--muted);border:1px solid var(--border);transition:all .18s">🍕 Essen</div>
+          <div id="filterBar" onclick="filterPlaces('bar')" style="padding:4px 12px;border-radius:100px;font-size:11px;cursor:pointer;background:var(--surface2);color:var(--muted);border:1px solid var(--border);transition:all .18s">🍺 Bars</div>
+          <div id="filterAbroad" onclick="filterPlaces('abroad')" style="padding:4px 12px;border-radius:100px;font-size:11px;cursor:pointer;background:var(--surface2);color:var(--muted);border:1px solid var(--border);transition:all .18s">✈️ Ausland</div>
+        </div>
+
+        <!-- Map + Sidebar layout -->
+        <div style="display:grid;grid-template-columns:1fr 300px;gap:10px;margin-bottom:1rem">
+
+          <!-- Interactive Map -->
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:13px;overflow:hidden;position:relative">
+            <canvas id="mapCanvas" style="width:100%;display:block;cursor:crosshair"></canvas>
+            <div style="position:absolute;bottom:8px;right:8px;display:flex;flex-direction:column;gap:4px">
+              <div onclick="zoomMap(1.2)" style="width:28px;height:28px;background:var(--surface);border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;font-weight:500;color:var(--text)">+</div>
+              <div onclick="zoomMap(0.8)" style="width:28px;height:28px;background:var(--surface);border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;font-weight:500;color:var(--text)">−</div>
+            </div>
+            <div style="position:absolute;top:8px;left:8px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:4px 10px;font-size:10px;color:var(--muted)">📍 Köln & Umgebung · <span id="mapPlaceCount">6</span> Orte</div>
+          </div>
+
+          <!-- Place list sidebar -->
+          <div style="display:flex;flex-direction:column;gap:7px;max-height:340px;overflow-y:auto;padding-right:2px" id="placeList"></div>
+        </div>
+
+        <!-- Selected place detail -->
+        <div id="placeDetail" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:1.1rem 1.2rem;margin-bottom:1rem;animation:fadeIn .2s ease">
+          <div style="display:flex;align-items:flex-start;gap:12px">
+            <div id="pdIcon" style="font-size:28px;flex-shrink:0;width:48px;height:48px;background:var(--surface2);border-radius:11px;display:flex;align-items:center;justify-content:center"></div>
+            <div style="flex:1">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+                <div id="pdName" style="font-size:14px;font-weight:500"></div>
+                <div id="pdCategory" style="font-size:10px;padding:2px 8px;border-radius:100px"></div>
+              </div>
+              <div id="pdStars" style="font-size:13px;margin-bottom:4px"></div>
+              <div id="pdAddress" style="font-size:11px;color:var(--muted);margin-bottom:6px"></div>
+              <div id="pdDesc" style="font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:8px"></div>
+              <div id="pdReviews" style="display:flex;flex-direction:column;gap:5px"></div>
+            </div>
+            <div onclick="document.getElementById('placeDetail').style.display='none'" style="color:var(--muted);cursor:pointer;font-size:16px;flex-shrink:0">✕</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EVENTS TAB -->
+      <div id="campusPanelEvents" style="display:none">
+        <div class="card">
+          <div class="card-head"><span class="card-title">📅 Kommende Events</span></div>
+          <div style="display:flex;flex-direction:column">
+            <div style="display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)">
+              <div style="width:36px;flex-shrink:0;text-align:center;background:var(--surface2);border-radius:7px;padding:4px"><div style="font-family:'DM Serif Display',serif;font-size:17px;line-height:1">21</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase">Mär</div></div>
+              <div style="flex:1"><div style="font-size:12px;font-weight:500;margin-bottom:1px">Erstsemester-Networking</div><div style="font-size:11px;color:var(--muted)">📍 Mensa Hauptgebäude</div></div>
+              <div style="font-size:9px;padding:2px 7px;height:fit-content;background:rgba(74,222,128,0.1);color:var(--success);border-radius:100px;margin-top:3px">Kostenlos</div>
+            </div>
+            <div style="display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)">
+              <div style="width:36px;flex-shrink:0;text-align:center;background:var(--surface2);border-radius:7px;padding:4px"><div style="font-family:'DM Serif Display',serif;font-size:17px;line-height:1">25</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase">Mär</div></div>
+              <div style="flex:1"><div style="font-size:12px;font-weight:500;margin-bottom:1px">Karrieremesse Köln</div><div style="font-size:11px;color:var(--muted)">📍 Messehalle 7</div></div>
+              <div style="font-size:9px;padding:2px 7px;height:fit-content;background:rgba(56,189,248,0.1);color:var(--info);border-radius:100px;margin-top:3px">Anmeldung</div>
+            </div>
+            <div style="display:flex;gap:10px;padding:9px 0">
+              <div style="width:36px;flex-shrink:0;text-align:center;background:var(--surface2);border-radius:7px;padding:4px"><div style="font-family:'DM Serif Display',serif;font-size:17px;line-height:1">02</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase">Apr</div></div>
+              <div style="flex:1"><div style="font-size:12px;font-weight:500;margin-bottom:1px">Lerngruppe Statistik</div><div style="font-size:11px;color:var(--muted)">📍 Bibliothek, Raum 3.14</div></div>
+              <div style="font-size:9px;padding:2px 7px;height:fit-content;background:rgba(124,109,250,0.1);color:var(--accent2);border-radius:100px;margin-top:3px">Offen</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WG TAB -->
+      <div id="campusPanelWg" style="display:none">
+        <div class="card">
+          <div class="card-head"><span class="card-title">🏠 WG-Angebote in der Nähe</span></div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px 11px;cursor:pointer"><div style="font-size:12px;font-weight:500;margin-bottom:2px">WG-Zimmer · Köln-Sülz</div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">18m² · 450€/Monat · ab sofort · 3er WG</div><div style="font-size:11px;color:var(--accent2)">WG-Gesucht ansehen →</div></div>
+            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px 11px;cursor:pointer"><div style="font-size:12px;font-weight:500;margin-bottom:2px">1-Zi-Apartment · Ehrenfeld</div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">24m² · 620€/Monat · ab 01.04</div><div style="font-size:11px;color:var(--accent2)">WG-Gesucht ansehen →</div></div>
+            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px 11px;cursor:pointer"><div style="font-size:12px;font-weight:500;margin-bottom:2px">WG-Zimmer · Köln-Lindenthal</div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">15m² · 390€/Monat · ab sofort</div><div style="font-size:11px;color:var(--accent2)">WG-Gesucht ansehen →</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MENSA TAB -->
+      <div id="campusPanelMensa" style="display:none">
+        <div class="card">
+          <div class="card-head"><span class="card-title">🍽️ Mensen heute</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px"><div style="font-size:12px;font-weight:500;margin-bottom:3px">Mensa Philosophikum</div><div style="font-size:11px;color:var(--success);margin-bottom:3px">● Geöffnet bis 15:00</div><div style="font-size:10px;color:var(--muted)">Tagesessen ab 2,60€</div></div>
+            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px"><div style="font-size:12px;font-weight:500;margin-bottom:3px">Mensa Dachterrasse</div><div style="font-size:11px;color:var(--success);margin-bottom:3px">● Geöffnet bis 14:30</div><div style="font-size:10px;color:var(--muted)">Tagesessen ab 3,10€</div></div>
+            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px"><div style="font-size:12px;font-weight:500;margin-bottom:3px">Café Zentralmensa</div><div style="font-size:11px;color:var(--coral);margin-bottom:3px">● Heute geschlossen</div><div style="font-size:10px;color:var(--muted)">Renovierung</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADD PLACE MODAL -->
+      <div id="addPlaceModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:999;display:none;align-items:center;justify-content:center">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.6rem;width:420px;max-width:95vw;position:relative;animation:fadeIn .2s ease">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem">
+            <div style="font-family:'DM Serif Display',serif;font-size:18px;font-weight:400">Ort <em style="font-style:italic;color:var(--accent2)">hinzufügen</em></div>
+            <div onclick="closeAddPlace()" style="color:var(--muted);cursor:pointer;font-size:18px">✕</div>
+          </div>
+          <div style="margin-bottom:.9rem">
+            <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Name des Ortes *</div>
+            <input id="newPlaceName" type="text" placeholder="z.B. Kaffeebar Zülpicher Str." style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;transition:border-color .2s" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:.9rem">
+            <div>
+              <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Kategorie *</div>
+              <select id="newPlaceCat" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;appearance:none">
+                <option value="">Wählen...</option>
+                <option value="cafe">☕ Café</option>
+                <option value="food">🍕 Essen</option>
+                <option value="biblio">📚 Lernort</option>
+                <option value="bar">🍺 Bar</option>
+                <option value="abroad">✈️ Ausland</option>
+              </select>
+            </div>
+            <div>
+              <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Stadt *</div>
+              <input id="newPlaceCity" type="text" placeholder="z.B. Köln, Barcelona..." style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;transition:border-color .2s" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+            </div>
+          </div>
+          <div style="margin-bottom:.9rem">
+            <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Adresse</div>
+            <input id="newPlaceAddr" type="text" placeholder="z.B. Zülpicher Str. 12, 50937 Köln" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;transition:border-color .2s" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+          </div>
+          <div style="margin-bottom:.9rem">
+            <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Beschreibung / Geheimtipp</div>
+            <textarea id="newPlaceDesc" placeholder="Was macht diesen Ort besonders? Insider-Tipps für andere Studenten..." style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;resize:none;height:68px;line-height:1.5;transition:border-color .2s" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+          </div>
+          <div style="margin-bottom:1.1rem">
+            <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:7px">Bewertung *</div>
+            <div style="display:flex;gap:6px" id="starRating">
+              <span onclick="setRating(1)" style="font-size:22px;cursor:pointer;transition:transform .15s" onmouseover="hoverRating(1)" onmouseout="resetHover()">⭐</span>
+              <span onclick="setRating(2)" style="font-size:22px;cursor:pointer;transition:transform .15s" onmouseover="hoverRating(2)" onmouseout="resetHover()">⭐</span>
+              <span onclick="setRating(3)" style="font-size:22px;cursor:pointer;transition:transform .15s" onmouseover="hoverRating(3)" onmouseout="resetHover()">⭐</span>
+              <span onclick="setRating(4)" style="font-size:22px;cursor:pointer;transition:transform .15s" onmouseover="hoverRating(4)" onmouseout="resetHover()">⭐</span>
+              <span onclick="setRating(5)" style="font-size:22px;cursor:pointer;transition:transform .15s" onmouseover="hoverRating(5)" onmouseout="resetHover()">⭐</span>
+            </div>
+            <div id="ratingLabel" style="font-size:11px;color:var(--muted);margin-top:4px">Noch keine Bewertung</div>
+          </div>
+          <div id="addPlaceErr" style="font-size:11px;color:var(--coral);margin-bottom:.7rem;display:none">Bitte Name, Kategorie und Stadt ausfüllen.</div>
+          <button onclick="submitPlace()" style="width:100%;padding:11px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:10px;color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer">Ort veröffentlichen ✓</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- COMMUNITY KARTE -->
+    <div class="page" id="page-karte">
+      <!-- Header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+        <div>
+          <div style="font-family:'DM Serif Display',serif;font-size:18px;font-weight:400;margin-bottom:2px">Community-<em style="font-style:italic;color:var(--accent2)">Karte</em></div>
+          <div style="font-size:11px;color:var(--muted)">Geheimtipps von Studenten — weltweit</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <div style="font-size:11px;color:var(--muted);padding:4px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px" id="karteCount">6 Orte</div>
+          <div onclick="openAddPlace()" style="padding:6px 13px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:8px;font-size:11px;color:#fff;cursor:pointer;font-weight:500;transition:opacity .2s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">+ Ort hinzufügen</div>
+        </div>
+      </div>
+
+      <!-- Filter pills -->
+      <div style="display:flex;gap:6px;margin-bottom:.9rem;flex-wrap:wrap">
+        <div id="kfilterAll"    onclick="karteFilter('all')"    style="padding:5px 13px;border-radius:100px;font-size:11px;cursor:pointer;background:var(--accent);color:#fff;border:1px solid transparent;transition:all .18s">Alle</div>
+        <div id="kfilterCafe"   onclick="karteFilter('cafe')"   style="padding:5px 13px;border-radius:100px;font-size:11px;cursor:pointer;background:var(--surface2);color:var(--muted);border:1px solid var(--border);transition:all .18s">☕ Cafés</div>
+        <div id="kfilterBiblio" onclick="karteFilter('biblio')" style="padding:5px 13px;border-radius:100px;font-size:11px;cursor:pointer;background:var(--surface2);color:var(--muted);border:1px solid var(--border);transition:all .18s">📚 Lernorte</div>
+        <div id="kfilterFood"   onclick="karteFilter('food')"   style="padding:5px 13px;border-radius:100px;font-size:11px;cursor:pointer;background:var(--surface2);color:var(--muted);border:1px solid var(--border);transition:all .18s">🍕 Essen</div>
+        <div id="kfilterBar"    onclick="karteFilter('bar')"    style="padding:5px 13px;border-radius:100px;font-size:11px;cursor:pointer;background:var(--surface2);color:var(--muted);border:1px solid var(--border);transition:all .18s">🍺 Bars</div>
+        <div id="kfilterAbroad" onclick="karteFilter('abroad')" style="padding:5px 13px;border-radius:100px;font-size:11px;cursor:pointer;background:var(--surface2);color:var(--muted);border:1px solid var(--border);transition:all .18s">✈️ Ausland</div>
+      </div>
+
+      <!-- Map + list -->
+      <div style="display:grid;grid-template-columns:1fr 290px;gap:11px;margin-bottom:1rem">
+
+        <!-- Map canvas -->
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;position:relative">
+          <canvas id="karteCanvas" style="width:100%;display:block;cursor:crosshair"></canvas>
+          <div style="position:absolute;bottom:8px;right:8px;display:flex;flex-direction:column;gap:4px">
+            <div onclick="karteZoom(1.2)" style="width:28px;height:28px;background:var(--surface);border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;font-weight:600;color:var(--text);user-select:none">+</div>
+            <div onclick="karteZoom(0.83)" style="width:28px;height:28px;background:var(--surface);border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;font-weight:600;color:var(--text);user-select:none">−</div>
+          </div>
+          <div style="position:absolute;top:8px;left:8px;background:rgba(13,14,20,0.85);border:1px solid var(--border);border-radius:8px;padding:4px 10px;font-size:10px;color:var(--muted)">📍 Studentische Geheimtipps · <span id="kartePinCount">6</span> Orte</div>
+        </div>
+
+        <!-- Sidebar list -->
+        <div style="display:flex;flex-direction:column;gap:7px;overflow-y:auto;max-height:370px;padding-right:2px" id="kartePlaceList"></div>
+      </div>
+
+      <!-- Detail card -->
+      <div id="karteDetail" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.1rem 1.3rem;animation:fadeIn .2s ease">
+        <div style="display:flex;gap:12px">
+          <div id="kdIcon" style="width:48px;height:48px;border-radius:12px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0"></div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+              <div id="kdName" style="font-size:14px;font-weight:500"></div>
+              <div id="kdCat" style="font-size:9px;padding:2px 8px;border-radius:100px"></div>
+              <div id="kdCity" style="font-size:10px;color:var(--muted)"></div>
+            </div>
+            <div id="kdStars" style="font-size:13px;margin-bottom:5px"></div>
+            <div id="kdAddr" style="font-size:11px;color:var(--muted);margin-bottom:6px"></div>
+            <div id="kdDesc" style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px;padding:8px 10px;background:var(--surface2);border-radius:8px;border-left:2px solid var(--accent)"></div>
+            <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted2);margin-bottom:7px">Bewertungen</div>
+            <div id="kdReviews" style="display:flex;flex-direction:column;gap:6px"></div>
+          </div>
+          <div onclick="document.getElementById('karteDetail').style.display='none';karteSelectedPlace=null;drawKarte()" style="color:var(--muted);cursor:pointer;font-size:16px;flex-shrink:0;padding:2px">✕</div>
+        </div>
+      </div>
+
+      <!-- ADD PLACE MODAL (shared) -->
+      <div id="addPlaceModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:999;align-items:center;justify-content:center">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.6rem;width:420px;max-width:95vw;position:relative;animation:fadeIn .2s ease">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem">
+            <div style="font-family:'DM Serif Display',serif;font-size:18px;font-weight:400">Ort <em style="font-style:italic;color:var(--accent2)">hinzufügen</em></div>
+            <div onclick="closeAddPlaceModal()" style="color:var(--muted);cursor:pointer;font-size:18px;line-height:1">✕</div>
+          </div>
+          <div style="margin-bottom:.85rem">
+            <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Name des Ortes *</div>
+            <input id="apName" type="text" placeholder="z.B. Kaffeebar Zülpicher Str." style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:.85rem">
+            <div>
+              <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Kategorie *</div>
+              <select id="apCat" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;appearance:none">
+                <option value="">Wählen...</option>
+                <option value="cafe">☕ Café</option>
+                <option value="food">🍕 Essen</option>
+                <option value="biblio">📚 Lernort</option>
+                <option value="bar">🍺 Bar</option>
+                <option value="abroad">✈️ Ausland</option>
+              </select>
+            </div>
+            <div>
+              <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Stadt *</div>
+              <input id="apCity" type="text" placeholder="z.B. Köln, Barcelona..." style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+            </div>
+          </div>
+          <div style="margin-bottom:.85rem">
+            <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Adresse</div>
+            <input id="apAddr" type="text" placeholder="z.B. Zülpicher Str. 12, 50937 Köln" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+          </div>
+          <div style="margin-bottom:.85rem">
+            <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Geheimtipp / Beschreibung</div>
+            <textarea id="apDesc" placeholder="Was macht diesen Ort besonders? Insider-Tipps für andere Studenten..." style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;resize:none;height:64px;line-height:1.5" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+          </div>
+          <div style="margin-bottom:1rem">
+            <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:7px">Bewertung *</div>
+            <div style="display:flex;gap:5px" id="apStars">
+              <span onclick="apSetRating(1)" onmouseover="apHover(1)" onmouseout="apResetHover()" style="font-size:24px;cursor:pointer;opacity:.3;transition:all .15s">★</span>
+              <span onclick="apSetRating(2)" onmouseover="apHover(2)" onmouseout="apResetHover()" style="font-size:24px;cursor:pointer;opacity:.3;transition:all .15s">★</span>
+              <span onclick="apSetRating(3)" onmouseover="apHover(3)" onmouseout="apResetHover()" style="font-size:24px;cursor:pointer;opacity:.3;transition:all .15s">★</span>
+              <span onclick="apSetRating(4)" onmouseover="apHover(4)" onmouseout="apResetHover()" style="font-size:24px;cursor:pointer;opacity:.3;transition:all .15s">★</span>
+              <span onclick="apSetRating(5)" onmouseover="apHover(5)" onmouseout="apResetHover()" style="font-size:24px;cursor:pointer;opacity:.3;transition:all .15s">★</span>
+            </div>
+            <div id="apRatingLabel" style="font-size:11px;color:var(--muted);margin-top:4px">Noch keine Bewertung</div>
+          </div>
+          <div id="apErr" style="font-size:11px;color:var(--coral);margin-bottom:.7rem;display:none">Bitte Name, Kategorie und Stadt ausfüllen.</div>
+          <button onclick="apSubmit()" style="width:100%;padding:11px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:10px;color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:opacity .2s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">Ort veröffentlichen ✓</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STUDYRIDE -->
+    <div class="page" id="page-ride">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem">
+        <div style="font-family:'DM Serif Display',serif;font-size:18px;font-weight:400">Study<em style="font-style:italic;color:var(--accent2)">Ride</em></div>
+        <div style="padding:6px 12px;background:rgba(124,109,250,0.1);border:1px solid rgba(124,109,250,0.2);border-radius:8px;font-size:11px;color:var(--accent2);cursor:pointer">+ Fahrt anbieten</div>
+      </div>
+      <div class="card" style="margin-bottom:1.1rem">
+        <div class="card-head"><span class="card-title">🔍 Fahrt suchen</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;align-items:end">
+          <div><div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Von</div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 11px;font-size:12px;color:var(--text)">Köln</div></div>
+          <div><div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Nach</div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 11px;font-size:12px;color:var(--muted)">Ziel eingeben</div></div>
+          <div><div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Datum</div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 11px;font-size:12px;color:var(--muted)">Beliebig</div></div>
+          <div style="padding:8px 14px;background:var(--accent);border-radius:8px;font-size:12px;color:#fff;cursor:pointer;white-space:nowrap">Suchen →</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-title">🚗 Verfügbare Fahrten</span></div>
+        <div style="display:flex;flex-direction:column">
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
+            <div style="font-size:18px;width:30px;text-align:center">🚗</div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:500">Köln → Frankfurt</div><div style="font-size:11px;color:var(--muted)">Fr. 21.03 · 08:00 Uhr · 2 Plätze frei · Felix W.</div></div>
+            <div style="font-size:13px;font-weight:500;color:var(--success);margin-right:8px">12€</div>
+            <div style="font-size:11px;padding:5px 10px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.2);color:var(--success);border-radius:7px;cursor:pointer">Mitfahren</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
+            <div style="font-size:18px;width:30px;text-align:center">🚗</div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:500">Köln → Berlin</div><div style="font-size:11px;color:var(--muted)">Sa. 22.03 · 07:30 Uhr · 3 Plätze frei · Jonas K.</div></div>
+            <div style="font-size:13px;font-weight:500;color:var(--success);margin-right:8px">28€</div>
+            <div style="font-size:11px;padding:5px 10px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.2);color:var(--success);border-radius:7px;cursor:pointer">Mitfahren</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
+            <div style="font-size:18px;width:30px;text-align:center">🚗</div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:500">Bonn → Köln</div><div style="font-size:11px;color:var(--muted)">Mo. 24.03 · 08:15 Uhr · 1 Platz frei · Nina F.</div></div>
+            <div style="font-size:13px;font-weight:500;color:var(--success);margin-right:8px">5€</div>
+            <div style="font-size:11px;padding:5px 10px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.2);color:var(--success);border-radius:7px;cursor:pointer">Mitfahren</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 0">
+            <div style="font-size:18px;width:30px;text-align:center">🚗</div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:500">Köln → München</div><div style="font-size:11px;color:var(--muted)">Di. 25.03 · 06:00 Uhr · 2 Plätze frei · Tom W.</div></div>
+            <div style="font-size:13px;font-weight:500;color:var(--success);margin-right:8px">45€</div>
+            <div style="font-size:11px;padding:5px 10px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.2);color:var(--success);border-radius:7px;cursor:pointer">Mitfahren</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MERCH -->
+    <div class="page" id="page-merch">
+      <div style="font-family:'DM Serif Display',serif;font-size:18px;font-weight:400;margin-bottom:1.2rem">Academify <em style="font-style:italic;color:var(--accent2)">Merch</em></div>
+      <div class="card">
+        <div class="card-head"><span class="card-title">🆕 Neue Kollektion</span></div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px">
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:11px;overflow:hidden;cursor:pointer;transition:all .18s" onmouseover="this.style.borderColor='var(--border-hover)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform=''">
+            <div style="height:88px;display:flex;align-items:center;justify-content:center;font-size:34px;background:var(--surface3)">👕</div>
+            <div style="padding:8px 10px"><div style="font-size:11px;font-weight:500;margin-bottom:2px">Academify Hoodie</div><div style="font-size:12px;color:var(--accent2)">39,99€</div></div>
+          </div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:11px;overflow:hidden;cursor:pointer;transition:all .18s" onmouseover="this.style.borderColor='var(--border-hover)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform=''">
+            <div style="height:88px;display:flex;align-items:center;justify-content:center;font-size:34px;background:var(--surface3)">🎒</div>
+            <div style="padding:8px 10px"><div style="font-size:11px;font-weight:500;margin-bottom:2px">Uni-Rucksack</div><div style="font-size:12px;color:var(--accent2)">54,99€</div></div>
+          </div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:11px;overflow:hidden;cursor:pointer;transition:all .18s" onmouseover="this.style.borderColor='var(--border-hover)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform=''">
+            <div style="height:88px;display:flex;align-items:center;justify-content:center;font-size:34px;background:var(--surface3)">🖊️</div>
+            <div style="padding:8px 10px"><div style="font-size:11px;font-weight:500;margin-bottom:2px">Notizbuch Set</div><div style="font-size:12px;color:var(--accent2)">14,99€</div></div>
+          </div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:11px;overflow:hidden;cursor:pointer;transition:all .18s" onmouseover="this.style.borderColor='var(--border-hover)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform=''">
+            <div style="height:88px;display:flex;align-items:center;justify-content:center;font-size:34px;background:var(--surface3)">☕</div>
+            <div style="padding:8px 10px"><div style="font-size:11px;font-weight:500;margin-bottom:2px">Thermobecher</div><div style="font-size:12px;color:var(--accent2)">19,99€</div></div>
+          </div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:11px;overflow:hidden;cursor:pointer;transition:all .18s" onmouseover="this.style.borderColor='var(--border-hover)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform=''">
+            <div style="height:88px;display:flex;align-items:center;justify-content:center;font-size:34px;background:var(--surface3)">🧢</div>
+            <div style="padding:8px 10px"><div style="font-size:11px;font-weight:500;margin-bottom:2px">Cap — Logo</div><div style="font-size:12px;color:var(--accent2)">24,99€</div></div>
+          </div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:11px;overflow:hidden;cursor:pointer;transition:all .18s" onmouseover="this.style.borderColor='var(--border-hover)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform=''">
+            <div style="height:88px;display:flex;align-items:center;justify-content:center;font-size:34px;background:var(--surface3)">📱</div>
+            <div style="padding:8px 10px"><div style="font-size:11px;font-weight:500;margin-bottom:2px">Phone Case</div><div style="font-size:12px;color:var(--accent2)">12,99€</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JOBS -->
+    <div class="page" id="page-jobs">
+      <!-- Header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+        <div style="font-family:'DM Serif Display',serif;font-size:18px;font-weight:400">Jobs & <em style="font-style:italic;color:var(--accent2)">Praktika</em></div>
+        <div style="font-size:11px;color:var(--muted)">Personalisiert für <span style="color:var(--accent2)">Wirtschaftspsychologie B.Sc.</span></div>
+      </div>
+
+      <!-- Filter -->
+      <div style="display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap">
+        <div style="padding:5px 13px;border-radius:100px;font-size:11px;cursor:pointer;background:var(--accent);color:#fff;border:1px solid transparent">Alle</div>
+        <div style="padding:5px 13px;border-radius:100px;font-size:11px;cursor:pointer;background:var(--surface2);color:var(--muted);border:1px solid var(--border)">💼 Werkstudent</div>
+        <div style="padding:5px 13px;border-radius:100px;font-size:11px;cursor:pointer;background:var(--surface2);color:var(--muted);border:1px solid var(--border)">🎯 Praktikum</div>
+        <div style="padding:5px 13px;border-radius:100px;font-size:11px;cursor:pointer;background:var(--surface2);color:var(--muted);border:1px solid var(--border)">🚀 Direkteinstieg</div>
+        <div style="padding:5px 13px;border-radius:100px;font-size:11px;cursor:pointer;background:var(--surface2);color:var(--muted);border:1px solid var(--border)">📝 Thesis-Partner</div>
+        <div style="padding:5px 13px;border-radius:100px;font-size:11px;cursor:pointer;background:var(--surface2);color:var(--muted);border:1px solid var(--border)">🌐 Remote</div>
+      </div>
+
+      <!-- Featured company job -->
+      <div style="background:var(--surface);border:1px solid rgba(56,189,248,0.2);border-radius:14px;padding:1.2rem;margin-bottom:1rem;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='rgba(56,189,248,0.4)';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='rgba(56,189,248,0.2)';this.style.transform=''">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:.8rem">
+          <div style="width:44px;height:44px;border-radius:10px;background:rgba(56,189,248,0.1);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">🏢</div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:2px">
+              <div style="font-size:13px;font-weight:500">Werkstudent Strategy & Analytics</div>
+              <span style="font-size:9px;padding:1px 7px;border-radius:100px;background:rgba(74,222,128,0.1);color:var(--success)">Neu</span>
+              <span style="font-size:9px;padding:1px 7px;border-radius:100px;background:rgba(56,189,248,0.1);color:var(--info)">Top Match</span>
+            </div>
+            <div style="font-size:11px;color:var(--muted)">McKinsey & Company · Frankfurt · 20h/Woche · 20€/h · ab sofort</div>
+          </div>
+          <div style="font-size:10px;padding:2px 9px;border-radius:100px;background:rgba(251,191,36,0.1);color:var(--warn);flex-shrink:0">Gesponsert</div>
+        </div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:.8rem">Arbeite in echten Beratungsprojekten mit, entwickle Strategien für DAX-Konzerne und erlebe, wie McKinsey arbeitet — alles neben dem Studium.</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="display:flex;gap:4px">
+            <span style="font-size:9px;padding:2px 8px;border-radius:100px;background:var(--surface2);border:1px solid var(--border);color:var(--muted)">BWL</span>
+            <span style="font-size:9px;padding:2px 8px;border-radius:100px;background:var(--surface2);border:1px solid var(--border);color:var(--muted)">WiPsy</span>
+            <span style="font-size:9px;padding:2px 8px;border-radius:100px;background:var(--surface2);border:1px solid var(--border);color:var(--muted)">Sem. 3+</span>
+            <span style="font-size:9px;padding:2px 8px;border-radius:100px;background:var(--surface2);border:1px solid var(--border);color:var(--muted)">Excel</span>
+          </div>
+          <div style="margin-left:auto;display:flex;gap:7px">
+            <div style="padding:6px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--muted);cursor:pointer">Profil ansehen</div>
+            <div style="padding:6px 13px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.2);border-radius:8px;font-size:11px;color:var(--success);cursor:pointer" onclick="showToast('✓ Bewerbung gesendet! McKinsey wird sich bei dir melden.','success');this.textContent='✓ Beworben';this.style.opacity='.6';this.style.pointerEvents='none'">Jetzt bewerben →</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Jobs list -->
+      <div class="card">
+        <div class="card-head"><span class="card-title">💼 Alle passenden Stellen (12)</span><span class="card-action">Sortieren ↕</span></div>
+        <div style="display:flex;flex-direction:column;gap:0">
+
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:11px 0;border-bottom:1px solid var(--border);cursor:pointer" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''">
+            <div style="width:38px;height:38px;border-radius:9px;background:rgba(251,191,36,0.1);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">📈</div>
+            <div style="flex:1">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">
+                <div style="font-size:12px;font-weight:500">Praktikum Consulting</div>
+                <span style="font-size:9px;padding:1px 6px;border-radius:100px;background:rgba(251,191,36,0.1);color:var(--warn)">Gesponsert</span>
+              </div>
+              <div style="font-size:10px;color:var(--muted);margin-bottom:4px">McKinsey & Company · München · 6 Monate · Pflichtpraktikum</div>
+              <div style="display:flex;gap:4px">
+                <span style="font-size:9px;padding:1px 6px;border-radius:100px;background:var(--surface2);border:1px solid var(--border);color:var(--muted)">WiPsy</span>
+                <span style="font-size:9px;padding:1px 6px;border-radius:100px;background:var(--surface2);border:1px solid var(--border);color:var(--muted)">Sem.4+</span>
+              </div>
+            </div>
+            <div style="padding:4px 10px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.15);border-radius:6px;font-size:10px;color:var(--success);flex-shrink:0;cursor:pointer">Bewerben</div>
+          </div>
+
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:11px 0;border-bottom:1px solid var(--border);cursor:pointer" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''">
+            <div style="width:38px;height:38px;border-radius:9px;background:rgba(124,109,250,0.1);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">🧠</div>
+            <div style="flex:1">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">
+                <div style="font-size:12px;font-weight:500">UX Research Intern</div>
+                <span style="font-size:9px;padding:1px 6px;border-radius:100px;background:rgba(56,189,248,0.1);color:var(--info)">Remote</span>
+              </div>
+              <div style="font-size:10px;color:var(--muted);margin-bottom:4px">Zalando · Berlin/Remote · 3 Monate · vergütet · 1.600€/Monat</div>
+              <div style="display:flex;gap:4px">
+                <span style="font-size:9px;padding:1px 6px;border-radius:100px;background:var(--surface2);border:1px solid var(--border);color:var(--muted)">WiPsy</span>
+                <span style="font-size:9px;padding:1px 6px;border-radius:100px;background:var(--surface2);border:1px solid var(--border);color:var(--muted)">UX</span>
+              </div>
+            </div>
+            <div style="padding:4px 10px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.15);border-radius:6px;font-size:10px;color:var(--success);flex-shrink:0;cursor:pointer">Bewerben</div>
+          </div>
+
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:11px 0;border-bottom:1px solid var(--border);cursor:pointer" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''">
+            <div style="width:38px;height:38px;border-radius:9px;background:rgba(248,113,113,0.1);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">🎯</div>
+            <div style="flex:1">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">
+                <div style="font-size:12px;font-weight:500">Werkstudent Marktforschung</div>
+                <span style="font-size:9px;padding:1px 6px;border-radius:100px;background:rgba(74,222,128,0.1);color:var(--success)">Neu</span>
+              </div>
+              <div style="font-size:10px;color:var(--muted);margin-bottom:4px">GfK · Köln · 15h/Woche · 15€/h · ab sofort</div>
+              <div style="display:flex;gap:4px">
+                <span style="font-size:9px;padding:1px 6px;border-radius:100px;background:var(--surface2);border:1px solid var(--border);color:var(--muted)">Marktforschung</span>
+                <span style="font-size:9px;padding:1px 6px;border-radius:100px;background:var(--surface2);border:1px solid var(--border);color:var(--muted)">Sem.2+</span>
+              </div>
+            </div>
+            <div style="padding:4px 10px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.15);border-radius:6px;font-size:10px;color:var(--success);flex-shrink:0;cursor:pointer">Bewerben</div>
+          </div>
+
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:11px 0;cursor:pointer" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''">
+            <div style="width:38px;height:38px;border-radius:9px;background:rgba(74,222,128,0.1);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">🧪</div>
+            <div style="flex:1">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">
+                <div style="font-size:12px;font-weight:500">Thesis-Partner: Organisationspsychologie</div>
+                <span style="font-size:9px;padding:1px 6px;border-radius:100px;background:rgba(251,191,36,0.1);color:var(--warn)">Gesponsert</span>
+              </div>
+              <div style="font-size:10px;color:var(--muted);margin-bottom:4px">McKinsey & Company · Remote · Bachelorarbeit · Betreuung inklusive</div>
+              <div style="display:flex;gap:4px">
+                <span style="font-size:9px;padding:1px 6px;border-radius:100px;background:var(--surface2);border:1px solid var(--border);color:var(--muted)">WiPsy</span>
+                <span style="font-size:9px;padding:1px 6px;border-radius:100px;background:var(--surface2);border:1px solid var(--border);color:var(--muted)">Sem.5+</span>
+                <span style="font-size:9px;padding:1px 6px;border-radius:100px;background:var(--surface2);border:1px solid var(--border);color:var(--muted)">Thesis</span>
+              </div>
+            </div>
+            <div style="padding:4px 10px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.15);border-radius:6px;font-size:10px;color:var(--success);flex-shrink:0;cursor:pointer">Bewerben</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFIL & FREUNDE -->
+    <div class="page" id="page-freunde">
+
+      <!-- Profile tabs -->
+      <div style="display:flex;gap:6px;margin-bottom:1.1rem;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:3px;width:fit-content">
+        <div id="ptabProfil" onclick="switchProfileTab('profil')" style="padding:5px 14px;border-radius:7px;font-size:11px;cursor:pointer;background:var(--accent);color:#fff;transition:all .18s;user-select:none">👤 Mein Profil</div>
+        <div id="ptabFreunde" onclick="switchProfileTab('freunde')" style="padding:5px 14px;border-radius:7px;font-size:11px;cursor:pointer;color:var(--muted);transition:all .18s;user-select:none">👥 Freunde</div>
+        <div id="ptabAnfragen" onclick="switchProfileTab('anfragen')" style="padding:5px 14px;border-radius:7px;font-size:11px;cursor:pointer;color:var(--muted);transition:all .18s;position:relative;user-select:none">🔔 Anfragen <span style="background:var(--coral);color:#fff;font-size:9px;padding:1px 5px;border-radius:100px;margin-left:2px">2</span></div>
+        <div id="ptabSuche" onclick="switchProfileTab('suche')" style="padding:5px 14px;border-radius:7px;font-size:11px;cursor:pointer;color:var(--muted);transition:all .18s;user-select:none">🔍 Studenten finden</div>
+      </div>
+
+      <!-- MEIN PROFIL -->
+      <div id="pprofil">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px">
+
+          <!-- Left: Profile card -->
+          <div>
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:10px">
+              <!-- Cover -->
+              <div style="height:80px;background:linear-gradient(135deg,rgba(124,109,250,0.3),rgba(167,139,250,0.15));position:relative">
+                <div style="position:absolute;bottom:-22px;left:1.2rem;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:600;color:#fff;border:3px solid var(--surface)">MM</div>
+              </div>
+              <div style="padding:1.5rem 1.2rem 1.1rem">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.6rem">
+                  <div>
+                    <div style="font-family:'DM Serif Display',serif;font-size:18px;font-weight:400">Max Müller</div>
+                    <div style="font-size:11px;color:var(--muted);margin-top:1px">@max.mueller · Mitglied seit März 2025</div>
+                  </div>
+                  <div onclick="switchProfileTab('editprofil')" style="padding:5px 11px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--muted);cursor:pointer;transition:all .18s" onmouseover="this.style.borderColor='var(--border-hover)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">✏️ Bearbeiten</div>
+                </div>
+                <div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:.9rem;padding:9px 11px;background:var(--surface2);border-radius:8px;border-left:2px solid var(--accent)">
+                  Erstsemester Wirtschaftspsychologie in Köln 🎓 Leidenschaft für Verhaltensökonomie & UX Research. Suche Lerngruppe für Statistik!
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:.9rem">
+                  <span style="font-size:10px;padding:3px 9px;border-radius:100px;background:rgba(124,109,250,0.1);color:var(--accent2);border:1px solid rgba(124,109,250,0.2)">Wirtschaftspsychologie</span>
+                  <span style="font-size:10px;padding:3px 9px;border-radius:100px;background:rgba(56,189,248,0.1);color:var(--info);border:1px solid rgba(56,189,248,0.2)">Bachelor · Sem. 1</span>
+                  <span style="font-size:10px;padding:3px 9px;border-radius:100px;background:rgba(74,222,128,0.1);color:var(--success);border:1px solid rgba(74,222,128,0.2)">Uni Köln</span>
+                  <span style="font-size:10px;padding:3px 9px;border-radius:100px;background:rgba(251,191,36,0.1);color:var(--warn);border:1px solid rgba(251,191,36,0.2)">Verhaltensökonomie</span>
+                  <span style="font-size:10px;padding:3px 9px;border-radius:100px;background:rgba(248,113,113,0.1);color:var(--coral);border:1px solid rgba(248,113,113,0.2)">UX Research</span>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;text-align:center">
+                  <div style="background:var(--surface2);border-radius:9px;padding:8px 6px">
+                    <div style="font-family:'DM Serif Display',serif;font-size:18px">12</div>
+                    <div style="font-size:10px;color:var(--muted)">Freunde</div>
+                  </div>
+                  <div style="background:var(--surface2);border-radius:9px;padding:8px 6px">
+                    <div style="font-family:'DM Serif Display',serif;font-size:18px">3</div>
+                    <div style="font-size:10px;color:var(--muted)">Kurse</div>
+                  </div>
+                  <div style="background:var(--surface2);border-radius:9px;padding:8px 6px">
+                    <div style="font-family:'DM Serif Display',serif;font-size:18px">5</div>
+                    <div style="font-size:10px;color:var(--muted)">Orte</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Kontaktinfos -->
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1rem 1.1rem">
+              <div style="font-size:11px;font-weight:500;margin-bottom:.7rem">Kontakt & Links</div>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div style="display:flex;align-items:center;gap:9px;font-size:11px;color:var(--muted)">
+                  <span style="font-size:13px">✉️</span> max.mueller@stud.uni-koeln.de
+                  <span style="margin-left:auto;font-size:9px;background:rgba(74,222,128,0.1);color:var(--success);padding:1px 7px;border-radius:100px">Verifiziert</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:9px;font-size:11px;color:var(--muted)"><span style="font-size:13px">💼</span> linkedin.com/in/max-mueller</div>
+                <div style="display:flex;align-items:center;gap:9px;font-size:11px;color:var(--muted)"><span style="font-size:13px">📍</span> Köln, Deutschland</div>
+                <div style="display:flex;align-items:center;gap:9px;font-size:11px;color:var(--muted)"><span style="font-size:13px">🗣️</span> Deutsch, Englisch</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Akademisch + Interessen -->
+          <div style="display:flex;flex-direction:column;gap:10px">
+
+            <!-- Akademisches Profil -->
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1rem 1.1rem">
+              <div style="font-size:11px;font-weight:500;margin-bottom:.8rem">🎓 Akademisches Profil</div>
+              <div style="display:flex;flex-direction:column;gap:7px">
+                <div style="background:var(--surface2);border-radius:9px;padding:9px 11px">
+                  <div style="font-size:11px;font-weight:500;margin-bottom:2px">Wirtschaftspsychologie B.Sc.</div>
+                  <div style="font-size:10px;color:var(--muted)">Universität zu Köln · 1. Semester · seit WS 2024/25</div>
+                  <div style="margin-top:5px;display:flex;gap:5px">
+                    <span style="font-size:9px;padding:1px 7px;border-radius:100px;background:rgba(124,109,250,0.1);color:var(--accent2)">Regelstudienzeit: 6 Sem.</span>
+                    <span style="font-size:9px;padding:1px 7px;border-radius:100px;background:rgba(74,222,128,0.1);color:var(--success)">Aktiv</span>
+                  </div>
+                </div>
+                <div style="font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted2);margin-top:2px">Aktuelle Kurse</div>
+                <div style="display:flex;flex-direction:column;gap:4px">
+                  <div style="display:flex;align-items:center;gap:8px;font-size:11px"><span style="color:var(--accent2)">▸</span><span style="flex:1">Einführung in die Psychologie</span><span style="color:var(--muted)">68%</span></div>
+                  <div style="display:flex;align-items:center;gap:8px;font-size:11px"><span style="color:var(--info)">▸</span><span style="flex:1">BWL Grundlagen</span><span style="color:var(--muted)">34%</span></div>
+                  <div style="display:flex;align-items:center;gap:8px;font-size:11px"><span style="color:var(--warn)">▸</span><span style="flex:1">Statistik I</span><span style="color:var(--muted)">12%</span></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Interessen & Skills -->
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1rem 1.1rem">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem">
+                <div style="font-size:11px;font-weight:500">🔥 Interessen & Skills</div>
+                <div style="font-size:10px;color:var(--accent2);cursor:pointer">+ hinzufügen</div>
+              </div>
+              <div style="display:flex;flex-wrap:wrap;gap:5px">
+                <span style="font-size:10px;padding:3px 9px;border-radius:100px;background:var(--surface2);border:1px solid var(--border);color:var(--text)">📊 Statistik</span>
+                <span style="font-size:10px;padding:3px 9px;border-radius:100px;background:var(--surface2);border:1px solid var(--border);color:var(--text)">🧠 Kognitionspsych.</span>
+                <span style="font-size:10px;padding:3px 9px;border-radius:100px;background:var(--surface2);border:1px solid var(--border);color:var(--text)">💡 UX Design</span>
+                <span style="font-size:10px;padding:3px 9px;border-radius:100px;background:var(--surface2);border:1px solid var(--border);color:var(--text)">📈 Marketing</span>
+                <span style="font-size:10px;padding:3px 9px;border-radius:100px;background:var(--surface2);border:1px solid var(--border);color:var(--text)">🎸 Gitarre</span>
+                <span style="font-size:10px;padding:3px 9px;border-radius:100px;background:var(--surface2);border:1px solid var(--border);color:var(--text)">🏃 Laufen</span>
+                <span style="font-size:10px;padding:3px 9px;border-radius:100px;background:var(--surface2);border:1px solid var(--border);color:var(--text)">🎬 Dokumentarfilme</span>
+              </div>
+            </div>
+
+            <!-- Suche / Biete -->
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1rem 1.1rem">
+              <div style="font-size:11px;font-weight:500;margin-bottom:.8rem">🤝 Suche & Biete</div>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div style="background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.15);border-radius:8px;padding:7px 10px">
+                  <div style="font-size:10px;color:var(--success);font-weight:500;margin-bottom:2px">✅ Ich biete</div>
+                  <div style="font-size:11px;color:var(--muted)">Nachhilfe in BWL Grundlagen · Lerngruppen</div>
+                </div>
+                <div style="background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.15);border-radius:8px;padding:7px 10px">
+                  <div style="font-size:10px;color:var(--coral);font-weight:500;margin-bottom:2px">🔍 Ich suche</div>
+                  <div style="font-size:11px;color:var(--muted)">Lerngruppe Statistik · Mitfahrer Köln↔Berlin</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROFIL BEARBEITEN -->
+      <div id="peditprofil" style="display:none">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.3rem 1.4rem">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.2rem">
+            <div onclick="switchProfileTab('profil')" style="color:var(--muted);cursor:pointer;font-size:13px">← Zurück</div>
+            <div style="font-family:'DM Serif Display',serif;font-size:16px;font-weight:400">Profil <em style="font-style:italic;color:var(--accent2)">bearbeiten</em></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px">
+            <div>
+              <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Vorname</div>
+              <input value="Max" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;margin-bottom:10px" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+            </div>
+            <div>
+              <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Nachname</div>
+              <input value="Müller" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;margin-bottom:10px" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+            </div>
+          </div>
+          <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Bio / Kurzbeschreibung</div>
+          <textarea style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;resize:none;height:72px;margin-bottom:10px;line-height:1.5" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">Erstsemester Wirtschaftspsychologie in Köln 🎓 Leidenschaft für Verhaltensökonomie & UX Research. Suche Lerngruppe für Statistik!</textarea>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:10px">
+            <div>
+              <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">LinkedIn URL</div>
+              <input value="linkedin.com/in/max-mueller" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+            </div>
+            <div>
+              <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Sprachen</div>
+              <input value="Deutsch, Englisch" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+            </div>
+          </div>
+          <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Ich biete an</div>
+          <input value="Nachhilfe in BWL Grundlagen · Lerngruppen" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;margin-bottom:10px" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+          <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Ich suche</div>
+          <input value="Lerngruppe Statistik · Mitfahrer Köln↔Berlin" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;margin-bottom:1.1rem" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+          <button onclick="switchProfileTab('profil')" style="width:100%;padding:11px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:10px;color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer">Änderungen speichern ✓</button>
+        </div>
+      </div>
+
+      <!-- FREUNDE -->
+      <div id="pfreunde" style="display:none">
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:9px" id="friendsList"></div>
+      </div>
+
+      <!-- ANFRAGEN -->
+      <div id="panfragen" style="display:none">
+        <div style="margin-bottom:.8rem;font-size:12px;color:var(--muted)">2 ausstehende Freundschaftsanfragen</div>
+        <div style="display:flex;flex-direction:column;gap:9px" id="requestsList"></div>
+      </div>
+
+      <!-- SUCHE -->
+      <div id="psuche" style="display:none">
+        <div style="display:flex;gap:8px;margin-bottom:1rem">
+          <input id="studentSearchInput" type="text" placeholder="Name, Studiengang oder Uni suchen..." oninput="searchStudents(this.value)" style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 13px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+          <div style="padding:9px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;font-size:12px;color:var(--muted);cursor:pointer;white-space:nowrap">🎓 Gleicher Studiengang</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:9px" id="searchResults"></div>
+      </div>
+
+    </div>
+
+  </div>
+
+  </div><!-- end mainContent -->
+  <div id="page-chat" style="display:none;flex:1;overflow:hidden">
+    <div class="chat-layout">
+
+      <!-- Chat List -->
+      <div class="chat-list-panel">
+        <div class="chat-list-header">
+          <h3>Nachrichten</h3>
+          <div class="chat-search">🔍 &nbsp;Chats durchsuchen</div>
+        </div>
+        <div class="chat-tabs">
+          <div class="chat-tab active" onclick="switchChatTab('all',this)">Alle</div>
+          <div class="chat-tab" onclick="switchChatTab('groups',this)">Gruppen</div>
+          <div class="chat-tab" onclick="switchChatTab('dm',this)">Direkt</div>
+        </div>
+        <div class="chat-list" id="chatList">
+          <!-- filled by JS -->
+        </div>
+      </div>
+
+      <!-- Chat Window -->
+      <div class="chat-window" id="chatWindow">
+        <div class="empty-chat" id="emptyChatState">
+          <div class="empty-chat-icon">💬</div>
+          <h3>Kein Chat geöffnet</h3>
+          <p>Wähle eine Gruppe oder einen Kontakt<br>aus der Liste links.</p>
+        </div>
+        <div id="activeChatView" style="display:none;flex:1;flex-direction:column;overflow:hidden;height:100%">
+          <div class="chat-window-header">
+            <div class="cw-avatar group" id="cwAvatar" style="background:rgba(124,109,250,0.12)">👥</div>
+            <div class="cw-info">
+              <div class="cw-name" id="cwName">Gruppe</div>
+              <div class="cw-status" id="cwStatus">...</div>
+            </div>
+            <div class="cw-actions">
+              <div class="cw-btn" onclick="toggleGroupInfo()" title="Gruppeninfo">ℹ️</div>
+              <div class="cw-btn" title="Suchen">🔍</div>
+            </div>
+          </div>
+          <div class="messages-area" id="messagesArea"></div>
+          <div class="chat-input-area">
+            <div class="chat-input-row">
+              <span class="chat-attach">📎</span>
+              <textarea class="chat-input" id="chatInput" placeholder="Nachricht schreiben..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+              <span class="chat-attach">😊</span>
+              <div class="send-btn" onclick="sendMessage()">➤</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Group Info Panel -->
+      <div class="group-info-panel" id="groupInfoPanel">
+        <div class="gip-header">
+          <div class="gip-avatar" id="gipAvatar">👥</div>
+          <div class="gip-name" id="gipName">Gruppenname</div>
+          <div class="gip-desc" id="gipDesc">Beschreibung</div>
+          <div class="gip-tags" id="gipTags"></div>
+        </div>
+        <div class="gip-section">
+          <div class="gip-section-title">Mitglieder (Online)</div>
+          <div id="gipMembers"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<script>
+// ── DATA ─────────────────────────────────────────────────────────────────
+const ME = { name:'Max Müller', initials:'MM', sg:'Wirtschaftspsychologie', abschluss:'Bachelor', sem:1, uni:'Uni Köln' };
+
+const GROUPS = [
+  {
+    id:'g1', type:'group', level:'sg',
+    icon:'🧠', color:'rgba(124,109,250,0.15)',
+    name:'WiPsy Bachelor',
+    desc:'Alle Wirtschaftspsychologie Bachelor-Studenten',
+    tags:[{label:'Wirtschaftspsychologie',cls:'sg'},{label:'Bachelor',cls:'sg'}],
+    members:312, online:47,
+    preview:'Lisa: Hat jemand Notizen zu Kapitel 4?',
+    time:'2min', unread:3,
+    memberList:[
+      {initials:'LM',name:'Lisa Meier',role:'Sem. 3',color:'#7c6dfa',online:true},
+      {initials:'JK',name:'Jonas Klein',role:'Sem. 2',color:'#4ade80',online:true},
+      {initials:'SA',name:'Sara Aydın',role:'Sem. 1',color:'#f87171',online:true},
+      {initials:'TW',name:'Tom Weber',role:'Sem. 4',color:'#fbbf24',online:false},
+      {initials:'MH',name:'Mia Hoffmann',role:'Sem. 7',color:'#38bdf8',online:true},
+    ],
+    messages:[
+      {from:'Lisa Meier',init:'LM',color:'#7c6dfa',text:'Hey alle! Hat jemand gute Notizen zu Kapitel 4 der Einführungsvorlesung?',time:'10:12',own:false},
+      {from:'Jonas Klein',init:'JK',color:'#4ade80',text:'Ich hab letzte Woche eine Zusammenfassung gemacht, kann ich gleich in StudyDocs hochladen 📄',time:'10:14',own:false},
+      {from:'me',text:'Super danke! Ich such schon seit Stunden 😅',time:'10:15',own:true},
+      {from:'Sara Aydın',init:'SA',color:'#f87171',text:'Ich hab auch welche, die sind aber handschriftlich.. kann ich abfotografieren wenn ihr wollt',time:'10:17',own:false},
+      {from:'me',text:'Ja bitte! Alles hilft gerade 🙏',time:'10:18',own:true},
+      {from:'Lisa Meier',init:'LM',color:'#7c6dfa',text:'Wann ist eigentlich nächstes Tutorium? Hat das jemand im Kopf?',time:'10:22',own:false},
+    ]
+  },
+  {
+    id:'g2', type:'group', level:'sem',
+    icon:'📘', color:'rgba(56,189,248,0.12)',
+    name:'WiPsy B.Sc. — Sem. 1',
+    desc:'Wirtschaftspsychologie Bachelor, 1. Semester',
+    tags:[{label:'WiPsy',cls:'sg'},{label:'Bachelor',cls:'sg'},{label:'Semester 1',cls:'sem'}],
+    members:68, online:19,
+    preview:'Tom: Klausurvorbereitung Statistik?',
+    time:'15min', unread:1,
+    memberList:[
+      {initials:'TW',name:'Tom Weber',role:'Sem. 1',color:'#fbbf24',online:true},
+      {initials:'SA',name:'Sara Aydın',role:'Sem. 1',color:'#f87171',online:true},
+      {initials:'PL',name:'Paul Lang',role:'Sem. 1',color:'#a78bfa',online:false},
+      {initials:'NF',name:'Nina Fischer',role:'Sem. 1',color:'#4ade80',online:true},
+    ],
+    messages:[
+      {from:'Tom Weber',init:'TW',color:'#fbbf24',text:'Macht jemand Klausurvorbereitung für Statistik? Würde gerne eine Lerngruppe gründen 📊',time:'09:30',own:false},
+      {from:'Sara Aydın',init:'SA',color:'#f87171',text:'Ja sehr gerne! Ich bin auch total überfordert mit den ganzen Formeln 😭',time:'09:32',own:false},
+      {from:'me',text:'Ich auch! Wann und wo?',time:'09:33',own:true},
+      {from:'Tom Weber',init:'TW',color:'#fbbf24',text:'Wie wäre Donnerstag Bibliothek Raum 3.14? So gegen 14 Uhr?',time:'09:35',own:false},
+      {from:'me',text:'Perfekt, bin dabei! 👍',time:'09:36',own:true},
+    ]
+  },
+  {
+    id:'g3', type:'group', level:'uni',
+    icon:'🏛️', color:'rgba(74,222,128,0.1)',
+    name:'WiPsy B.Sc. Sem. 1 — Köln',
+    desc:'WiPsy Bachelor Sem. 1 an der Universität zu Köln',
+    tags:[{label:'WiPsy',cls:'sg'},{label:'Bachelor',cls:'sg'},{label:'Sem. 1',cls:'sem'},{label:'Uni Köln',cls:'uni'}],
+    members:24, online:11,
+    preview:'Nina: Mensa heute offen?',
+    time:'1h', unread:0,
+    memberList:[
+      {initials:'NF',name:'Nina Fischer',role:'Sem. 1 · Köln',color:'#4ade80',online:true},
+      {initials:'PL',name:'Paul Lang',role:'Sem. 1 · Köln',color:'#a78bfa',online:true},
+      {initials:'KS',name:'Kai Schulz',role:'Sem. 1 · Köln',color:'#38bdf8',online:false},
+      {initials:'MM',name:'Max Müller',role:'Sem. 1 · Köln',color:'#7c6dfa',online:true},
+    ],
+    messages:[
+      {from:'Nina Fischer',init:'NF',color:'#4ade80',text:'Hey Kölner! Ist die Mensa Hauptgebäude heute offen? Hab irgendwas von Renovierung gehört',time:'08:50',own:false},
+      {from:'Paul Lang',init:'PL',color:'#a78bfa',text:'Die philosophische Mensa ist auf jeden Fall offen, hab ich heute Morgen gesehen',time:'08:53',own:false},
+      {from:'me',text:'Gut zu wissen danke! Treffen wir uns da zum Mittagessen?',time:'08:55',own:true},
+      {from:'Nina Fischer',init:'NF',color:'#4ade80',text:'Ja gerne! 12:30 Uhr?',time:'08:56',own:false},
+    ]
+  },
+  {
+    id:'dm1', type:'dm', level:'dm',
+    icon:'👩‍🎓', color:'rgba(124,109,250,0.12)',
+    name:'Anna Schmidt',
+    desc:'Statistik-Tutorin · Sem. 6',
+    tags:[{label:'Nachhilfe',cls:'dm'}],
+    members:2, online:1,
+    preview:'Anna: Wann passt dir ein Termin?',
+    time:'3h', unread:1,
+    memberList:[
+      {initials:'AS',name:'Anna Schmidt',role:'Statistik-Tutorin',color:'#7c6dfa',online:true},
+    ],
+    messages:[
+      {from:'Anna Schmidt',init:'AS',color:'#7c6dfa',text:'Hallo Max! Du hast mich als Nachhilfe-Tutorin für Statistik gebucht 😊',time:'11:00',own:false},
+      {from:'me',text:'Hi Anna! Ja genau, ich brauche dringend Hilfe bei Kapitel 3 zur Normalverteilung',time:'11:02',own:true},
+      {from:'Anna Schmidt',init:'AS',color:'#7c6dfa',text:'Kein Problem, das ist eigentlich gar nicht so schwer wenn man es einmal verstanden hat. Wann passt dir ein Termin diese Woche?',time:'11:03',own:false},
+    ]
+  },
+  {
+    id:'dm2', type:'dm', level:'dm',
+    icon:'👨‍💻', color:'rgba(74,222,128,0.1)',
+    name:'Jonas Klein',
+    desc:'Informatik B.Sc. · Sem. 2',
+    tags:[],
+    members:2, online:0,
+    preview:'Jonas: Die Zusammenfassung ist jetzt auf StudyDocs',
+    time:'gestern', unread:0,
+    memberList:[
+      {initials:'JK',name:'Jonas Klein',role:'Informatik Sem. 2',color:'#4ade80',online:false},
+    ],
+    messages:[
+      {from:'Jonas Klein',init:'JK',color:'#4ade80',text:'Hey Max! Ich hab die BWL-Zusammenfassung jetzt auf StudyDocs hochgeladen 📄',time:'gestern 16:30',own:false},
+      {from:'me',text:'Krass danke!! Du rettest mein Studium 😂',time:'gestern 16:45',own:true},
+      {from:'Jonas Klein',init:'JK',color:'#4ade80',text:'Haha kein Stress, teilen macht stark 💪 Viel Erfolg!',time:'gestern 16:46',own:false},
+    ]
+  }
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────────
+let currentChat = null;
+let currentTab = 'all';
+let groupInfoOpen = false;
+
+// ── NAV ─────────────────────────────────────────────────────────────────
+const titles = {
+  dashboard:'Guten Morgen, <em>Max</em> 👋',
+  chat:'<em>Nachrichten</em>',
+  freunde:'Profil & <em>Freunde</em>',
+  kurse:'Online-<em>Kurse</em>',
+  nachhilfe:'Online-<em>Nachhilfe</em>',
+  docs:'Study<em>Docs</em>',
+  campus:'Campus<em>Leben</em>',
+  karte:'Community-<em>Karte</em>',
+  ride:'Study<em>Ride</em>',
+  merch:'Academify <em>Merch</em>',
+  jobs:'Jobs & <em>Praktika</em>',
+};
+
+function navigate(key, navEl) {
+  document.getElementById('mainContent').style.display = key === 'chat' ? 'none' : '';
+  document.getElementById('page-chat').style.display = key === 'chat' ? 'flex' : 'none';
+
+  if (key !== 'chat') {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const pg = document.getElementById('page-' + key);
+    if (pg) pg.classList.add('active');
+  } else {
+    renderChatList();
+  }
+
+  document.getElementById('topbarTitle').innerHTML = titles[key] || key;
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (navEl) navEl.classList.add('active');
+
+  if (key === 'freunde') {
+    setTimeout(() => switchProfileTab('profil'), 50);
+  }
+  if (key === 'campus') {
+    setTimeout(() => { switchCampusTab('events'); }, 80);
+  }
+  if (key === 'karte') {
+    setTimeout(() => { initKarte(); renderKartePlaceList(); }, 80);
+  }
+}
+
+// ── CHAT LIST ─────────────────────────────────────────────────────────────
+function switchChatTab(tab, el) {
+  currentTab = tab;
+  document.querySelectorAll('.chat-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderChatList();
+}
+
+function renderChatList() {
+  const list = document.getElementById('chatList');
+  let items = GROUPS;
+  if (currentTab === 'groups') items = GROUPS.filter(g => g.type === 'group');
+  if (currentTab === 'dm') items = GROUPS.filter(g => g.type === 'dm');
+
+  list.innerHTML = items.map(g => `
+    <div class="chat-list-item${currentChat && currentChat.id === g.id ? ' active' : ''}" onclick="openChat('${g.id}')">
+      <div class="cli-avatar${g.type === 'group' ? ' group' : ''}" style="background:${g.color};font-size:${g.type==='dm'?'16px':'13px'}">${g.icon}</div>
+      <div class="cli-info">
+        <div class="cli-name">${g.name}</div>
+        <div class="cli-preview">${g.preview}</div>
+        ${g.type === 'group' ? `<div style="margin-top:2px">${g.tags.map(t=>`<span class="group-tag ${t.cls}">${t.label}</span>`).join(' ')}</div>` : ''}
+      </div>
+      <div class="cli-meta">
+        <div class="cli-time">${g.time}</div>
+        ${g.unread > 0 ? `<div class="cli-unread">${g.unread}</div>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── OPEN CHAT ─────────────────────────────────────────────────────────────
+function openChat(id) {
+  currentChat = GROUPS.find(g => g.id === id);
+  if (!currentChat) return;
+  // clear unread
+  currentChat.unread = 0;
+  renderChatList();
+
+  document.getElementById('emptyChatState').style.display = 'none';
+  const view = document.getElementById('activeChatView');
+  view.style.display = 'flex';
+
+  // Header
+  document.getElementById('cwAvatar').textContent = currentChat.icon;
+  document.getElementById('cwAvatar').style.background = currentChat.color;
+  document.getElementById('cwAvatar').className = 'cw-avatar' + (currentChat.type==='group'?' group':'');
+  document.getElementById('cwName').textContent = currentChat.name;
+  document.getElementById('cwStatus').textContent = currentChat.type === 'group'
+    ? `${currentChat.members} Mitglieder · ${currentChat.online} online`
+    : (currentChat.online > 0 ? '🟢 Online' : '⚫ Offline');
+
+  // Messages
+  renderMessages();
+
+  // Group info
+  renderGroupInfo();
+}
+
+function renderMessages() {
+  const area = document.getElementById('messagesArea');
+  area.innerHTML = `<div class="msg-date-sep">Heute</div>`;
+  const msgs = currentChat.messages;
+  let lastFrom = null;
+
+  msgs.forEach(m => {
+    if (m.own) {
+      area.innerHTML += `
+        <div class="msg-row own">
+          <div class="msg-bubble-wrap">
+            <div class="msg-bubble own">${m.text}</div>
+            <div class="msg-time">${m.time} · Gesendet ✓✓</div>
+          </div>
+        </div>`;
+    } else {
+      const showSender = currentChat.type === 'group' && m.from !== lastFrom;
+      area.innerHTML += `
+        <div class="msg-row">
+          <div class="msg-avatar" style="background:${m.color||'var(--accent)'}">${m.init||m.from[0]}</div>
+          <div class="msg-bubble-wrap">
+            ${showSender ? `<div class="msg-sender">${m.from}</div>` : ''}
+            <div class="msg-bubble other">${m.text}</div>
+            <div class="msg-time">${m.time}</div>
+          </div>
+        </div>`;
+    }
+    lastFrom = m.from;
+  });
+
+  // typing indicator occasionally
+  if (currentChat.online > 0 && currentChat.type !== 'dm') {
+    area.innerHTML += `
+      <div class="msg-row">
+        <div class="msg-avatar" style="background:${currentChat.memberList[0]?.color||'var(--muted)'}">
+          ${currentChat.memberList[0]?.initials||'?'}
+        </div>
+        <div class="msg-bubble-wrap">
+          <div class="msg-sender">${currentChat.memberList[0]?.name||''}</div>
+          <div class="typing-indicator">
+            <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  area.scrollTop = area.scrollHeight;
+}
+
+function renderGroupInfo() {
+  const g = currentChat;
+  document.getElementById('gipAvatar').textContent = g.icon;
+  document.getElementById('gipAvatar').style.background = g.color;
+  document.getElementById('gipName').textContent = g.name;
+  document.getElementById('gipDesc').textContent = g.desc;
+  document.getElementById('gipTags').innerHTML = g.tags.map(t=>`<span class="group-tag ${t.cls}">${t.label}</span>`).join('');
+  document.getElementById('gipMembers').innerHTML = g.memberList.map(m=>`
+    <div class="gip-member">
+      <div class="gm-av" style="background:${m.color}">${m.initials}</div>
+      <div style="flex:1"><div class="gm-name">${m.name}</div><div class="gm-role">${m.role}</div></div>
+      ${m.online ? '<div class="online-dot"></div>' : '<div style="width:7px;height:7px;background:var(--muted2);border-radius:50%;margin-left:auto;flex-shrink:0"></div>'}
+    </div>`).join('');
+}
+
+function toggleGroupInfo() {
+  groupInfoOpen = !groupInfoOpen;
+  document.getElementById('groupInfoPanel').classList.toggle('visible', groupInfoOpen);
+}
+
+// ── SEND ─────────────────────────────────────────────────────────────────
+function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text || !currentChat) return;
+
+  currentChat.messages.push({ own:true, text, time: new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}) });
+  currentChat.preview = 'Du: ' + text;
+  input.value = '';
+  input.style.height = '';
+  renderMessages();
+  renderChatList();
+
+  // simulate reply after 2s in groups
+  if (currentChat.type === 'group') {
+    const member = currentChat.memberList.find(m => m.name !== ME.name);
+    if (member) {
+      setTimeout(() => {
+        const replies = ['👍 Danke!', 'Gute Idee!', 'Ja stimmt!', 'Ich auch 😄', 'Super, danke dir!', 'Macht Sinn 🙌'];
+        currentChat.messages.push({
+          from: member.name, init: member.initials, color: member.color,
+          text: replies[Math.floor(Math.random()*replies.length)],
+          time: new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}),
+          own: false
+        });
+        currentChat.preview = member.name.split(' ')[0]+': '+currentChat.messages[currentChat.messages.length-1].text;
+        if (currentChat) renderMessages();
+        renderChatList();
+      }, 1800 + Math.random()*1200);
+    }
+  }
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 80) + 'px';
+}
+
+// ── COMMUNITY KARTE ──────────────────────────────────────────────────────
+const KCAT = {
+  cafe:   { bg:'rgba(251,191,36,0.15)',  border:'rgba(251,191,36,0.5)',  text:'#fbbf24', icon:'☕' },
+  food:   { bg:'rgba(248,113,113,0.15)', border:'rgba(248,113,113,0.5)', text:'#f87171', icon:'🍕' },
+  biblio: { bg:'rgba(167,139,250,0.18)', border:'rgba(167,139,250,0.5)', text:'#a78bfa', icon:'📚' },
+  bar:    { bg:'rgba(56,189,248,0.15)',  border:'rgba(56,189,248,0.5)',  text:'#38bdf8', icon:'🍺' },
+  abroad: { bg:'rgba(74,222,128,0.15)',  border:'rgba(74,222,128,0.5)',  text:'#4ade80', icon:'✈️' },
+};
+
+let places = [
+  { id:1, name:'Kaffeebar Zülpicher Str.', cat:'cafe', city:'Köln', addr:'Zülpicher Str. 28, Köln', desc:'Gemütlichstes Café in Uni-Nähe. Perfekt zum Lernen, gutes WLAN, nie zu voll vor 11 Uhr. Oat-Latte empfehlenswert!', rating:4.8, reviews:[{user:'Lisa M.',text:'Bester Oat-Latte der Stadt 🙌',stars:5},{user:'Jonas K.',text:'Super Atmosphäre, aber nachmittags voll.',stars:4}], by:'Lisa M.', x:.38, y:.42 },
+  { id:2, name:'Unibib Lernraum 3.OG', cat:'biblio', city:'Köln', addr:'Universitätsstr. 33, Köln', desc:'Ruhigste Ecke der ganzen Bib. Fensterplätze am Ende rechts sind Gold wert — kaum bekannt!', rating:4.9, reviews:[{user:'Tom W.',text:'Absoluter Geheimtipp, kaum bekannt!',stars:5}], by:'Tom W.', x:.52, y:.35 },
+  { id:3, name:'Pizzeria da Marco', cat:'food', city:'Köln', addr:'Kyffhäuserstr. 14, Köln', desc:'Beste und günstigste Pizza in Uninähe. Mittagsmenü für 6,50€ unschlagbar!', rating:4.6, reviews:[{user:'Sara A.',text:'Jedes Mal wieder! Mittagsmenü ist top.',stars:5},{user:'Max M.',text:'Etwas langsam aber dafür lecker.',stars:4}], by:'Sara A.', x:.44, y:.55 },
+  { id:4, name:'Lotta Carotta', cat:'bar', city:'Köln', addr:'Lottumstr. 9, Köln', desc:'Studenten-Bar mit Happy Hour bis 20 Uhr. Perfekt nach den Prüfungen!', rating:4.3, reviews:[{user:'Felix W.',text:'Happy Hour ist unschlagbar!',stars:5}], by:'Felix W.', x:.62, y:.48 },
+  { id:5, name:'La Boqueria', cat:'food', city:'Barcelona', addr:'La Rambla 91, Barcelona', desc:'Auslandssemester-Tipp! Frühstück hier ist Pflicht. Frisch, günstig und unglaubliche Auswahl. ✈️', rating:4.7, reviews:[{user:'Mia H.',text:'Auslandssemester ohne Boqueria undenkbar!',stars:5}], by:'Mia H.', x:.2, y:.7 },
+  { id:6, name:'Silent Study Café', cat:'cafe', city:'Köln', addr:'Roonstr. 22, Köln', desc:'Striktes Schweigegebot — ideal für konzentriertes Lernen. Kaffee inklusive im Tagesticket.', rating:4.5, reviews:[{user:'Nina F.',text:'Endlich mal wirklich ruhig lernen!',stars:5}], by:'Nina F.', x:.7, y:.3 },
+];
+
+let karteActiveFilter = 'all';
+let karteSelectedPlace = null;
+let karteZoomLevel = 1;
+let apRating = 0;
+
+function initKarte() {
+  const canvas = document.getElementById('karteCanvas');
+  if (!canvas) return;
+  const w = canvas.parentElement.clientWidth || 500;
+  const h = 370;
+  canvas.width = w;
+  canvas.height = h;
+  canvas.style.height = h + 'px';
+  drawKarte();
+  canvas.onclick = function(e) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const mx = (e.clientX - rect.left) * scaleX;
+    const my = (e.clientY - rect.top) * scaleY;
+    const hit = getKartePlaces().find(p => {
+      const px = p.x * canvas.width;
+      const py = p.y * canvas.height;
+      return Math.hypot(px - mx, py - my) < 18;
+    });
+    if (hit) showKarteDetail(hit);
+    else { karteSelectedPlace = null; document.getElementById('karteDetail').style.display='none'; drawKarte(); }
+  };
+}
+
+function drawKarte() {
+  const canvas = document.getElementById('karteCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  // Background
+  ctx.fillStyle = '#0a0b10';
+  ctx.fillRect(0, 0, W, H);
+
+  // Grid
+  ctx.strokeStyle = 'rgba(255,255,255,0.035)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x < W; x += 36) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+  for (let y = 0; y < H; y += 36) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+  // Roads
+  ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+  ctx.lineWidth = 2.5;
+  [[0,H*.44,W,H*.44],[0,H*.71,W,H*.71],[W*.34,0,W*.34,H],[W*.64,0,W*.64,H]].forEach(([x1,y1,x2,y2])=>{
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  });
+  ctx.lineWidth = 1.2;
+  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+  [[0,H*.22,W*.6,H*.22],[W*.45,0,W*.45,H*.6],[0,H*.58,W,H*.58]].forEach(([x1,y1,x2,y2])=>{
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  });
+
+  // City labels
+  ctx.font = '600 10px DM Sans, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.1)';
+  ctx.fillText('KÖLN', W*.47, H*.22);
+  ctx.fillStyle = 'rgba(74,222,128,0.22)';
+  ctx.fillText('BARCELONA ✈', W*.08, H*.64);
+
+  // Pins
+  getKartePlaces().forEach(p => {
+    const px = p.x * W, py = p.y * H;
+    const cat = KCAT[p.cat];
+    const sel = karteSelectedPlace && karteSelectedPlace.id === p.id;
+    const r = sel ? 15 : 11;
+
+    if (sel) {
+      // outer glow
+      const g = ctx.createRadialGradient(px, py, r, px, py, r+10);
+      g.addColorStop(0, cat.border.replace('0.5','0.25'));
+      g.addColorStop(1,'transparent');
+      ctx.beginPath(); ctx.arc(px,py,r+10,0,Math.PI*2);
+      ctx.fillStyle = g; ctx.fill();
+    }
+
+    // circle
+    ctx.beginPath(); ctx.arc(px,py,r,0,Math.PI*2);
+    ctx.fillStyle = cat.bg; ctx.fill();
+    ctx.strokeStyle = sel ? cat.text : cat.border;
+    ctx.lineWidth = sel ? 2 : 1.5;
+    ctx.stroke();
+
+    // emoji
+    ctx.font = `${sel?13:11}px serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(cat.icon, px, py);
+
+    // label bubble on selected
+    if (sel) {
+      const ly = py - r - 16;
+      ctx.font = '500 11px DM Sans, sans-serif';
+      ctx.textAlign = 'center';
+      const tw = ctx.measureText(p.name).width;
+      ctx.fillStyle = 'rgba(10,11,16,0.92)';
+      ctx.beginPath();
+      ctx.roundRect(px - tw/2 - 7, ly - 10, tw + 14, 20, 5);
+      ctx.fill();
+      ctx.strokeStyle = cat.border;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.fillStyle = '#e8e6f0';
+      ctx.fillText(p.name, px, ly);
+    }
+    ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  });
+}
+
+function getKartePlaces() {
+  return karteActiveFilter === 'all' ? places : places.filter(p => p.cat === karteActiveFilter);
+}
+
+function karteFilter(cat) {
+  karteActiveFilter = cat;
+  // reset all pills
+  ['All','Cafe','Biblio','Food','Bar','Abroad'].forEach(c => {
+    const el = document.getElementById('kfilter'+c);
+    if(el){ el.style.background='var(--surface2)'; el.style.color='var(--muted)'; el.style.border='1px solid var(--border)'; }
+  });
+  const key = cat==='all' ? 'All' : cat.charAt(0).toUpperCase()+cat.slice(1);
+  const active = document.getElementById('kfilter'+key);
+  if(active){ active.style.background='var(--accent)'; active.style.color='#fff'; active.style.border='1px solid transparent'; }
+  karteSelectedPlace = null;
+  document.getElementById('karteDetail').style.display='none';
+  const cnt = getKartePlaces().length;
+  document.getElementById('kartePinCount').textContent = cnt;
+  document.getElementById('karteCount').textContent = cnt + ' Orte';
+  renderKartePlaceList();
+  drawKarte();
+}
+
+function renderKartePlaceList() {
+  const list = document.getElementById('kartePlaceList');
+  if(!list) return;
+  list.innerHTML = getKartePlaces().map(p => {
+    const cat = KCAT[p.cat];
+    const stars = '★'.repeat(Math.round(p.rating))+'☆'.repeat(5-Math.round(p.rating));
+    const sel = karteSelectedPlace && karteSelectedPlace.id === p.id;
+    return `<div onclick="showKarteDetail(places.find(x=>x.id===${p.id}))" style="background:${sel?'rgba(124,109,250,0.08)':'var(--surface2)'};border:1px solid ${sel?'rgba(124,109,250,0.3)':'var(--border)'};border-radius:10px;padding:9px 11px;cursor:pointer;transition:all .18s;flex-shrink:0"
+      onmouseover="this.style.borderColor='var(--border-hover)'" onmouseout="this.style.borderColor='${sel?'rgba(124,109,250,0.3)':'var(--border)'}'">
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:3px">
+        <span style="font-size:14px">${cat.icon}</span>
+        <span style="font-size:11px;font-weight:500;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name}</span>
+        <span style="font-size:9px;padding:1px 6px;border-radius:100px;background:${cat.bg};color:${cat.text};flex-shrink:0">${p.city}</span>
+      </div>
+      <div style="font-size:10px;color:#fbbf24;letter-spacing:1px">${stars} <span style="color:var(--muted);letter-spacing:0">${p.rating}</span></div>
+      <div style="font-size:10px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.desc.substring(0,55)}...</div>
+    </div>`;
+  }).join('');
+}
+
+function showKarteDetail(p) {
+  if(!p) return;
+  karteSelectedPlace = p;
+  const cat = KCAT[p.cat];
+  const stars = '★'.repeat(Math.round(p.rating))+'☆'.repeat(5-Math.round(p.rating));
+  document.getElementById('kdIcon').textContent = cat.icon;
+  document.getElementById('kdIcon').style.background = cat.bg;
+  document.getElementById('kdName').textContent = p.name;
+  document.getElementById('kdCat').textContent = p.cat;
+  document.getElementById('kdCat').style.background = cat.bg;
+  document.getElementById('kdCat').style.color = cat.text;
+  document.getElementById('kdCity').textContent = '📍 '+p.city;
+  document.getElementById('kdStars').innerHTML = `<span style="color:#fbbf24">${stars}</span> <span style="font-size:11px;color:var(--muted)">${p.rating} · ${p.reviews.length} Bewertungen · von ${p.by}</span>`;
+  document.getElementById('kdAddr').textContent = p.addr;
+  document.getElementById('kdDesc').textContent = p.desc;
+  document.getElementById('kdReviews').innerHTML = p.reviews.map(r=>`
+    <div style="background:var(--surface2);border-radius:8px;padding:8px 10px;display:flex;gap:8px">
+      <div style="width:22px;height:22px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#fff;flex-shrink:0">${r.user[0]}</div>
+      <div>
+        <div style="font-size:11px;font-weight:500;margin-bottom:2px">${r.user} <span style="color:#fbbf24;font-size:10px">${'★'.repeat(r.stars)}</span></div>
+        <div style="font-size:11px;color:var(--muted)">${r.text}</div>
+      </div>
+    </div>`).join('');
+  document.getElementById('karteDetail').style.display = 'block';
+  renderKartePlaceList();
+  drawKarte();
+}
+
+function karteZoom(f) {
+  karteZoomLevel = Math.max(0.5, Math.min(3, karteZoomLevel * f));
+  drawKarte();
+}
+
+// Add place modal
+function openAddPlace() {
+  const m = document.getElementById('addPlaceModal');
+  if(m){ m.style.display='flex'; apRating=0; apUpdateStars(0); }
+}
+function closeAddPlaceModal() {
+  const m = document.getElementById('addPlaceModal');
+  if(m) m.style.display='none';
+  ['apName','apAddr','apDesc','apCity'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const s=document.getElementById('apCat');if(s)s.value='';
+  apRating=0; apUpdateStars(0);
+  const err=document.getElementById('apErr');if(err)err.style.display='none';
+}
+function apSetRating(r){ apRating=r; apUpdateStars(r); document.getElementById('apRatingLabel').textContent=['','Nicht empfehlenswert','Naja...','Okay!','Gut!','Absoluter Geheimtipp! 🔥'][r]; }
+function apHover(r){ apUpdateStars(r); }
+function apResetHover(){ apUpdateStars(apRating); }
+function apUpdateStars(r){
+  const s=document.querySelectorAll('#apStars span');
+  s.forEach((el,i)=>{ el.style.opacity=i<r?'1':'0.25'; el.style.color=i<r?'#fbbf24':'var(--muted)'; el.style.transform=i<r?'scale(1.1)':'scale(1)'; });
+}
+function apSubmit(){
+  const name=document.getElementById('apName').value.trim();
+  const cat=document.getElementById('apCat').value;
+  const city=document.getElementById('apCity').value.trim();
+  const addr=document.getElementById('apAddr').value.trim();
+  const desc=document.getElementById('apDesc').value.trim();
+  const err=document.getElementById('apErr');
+  if(!name||!cat||!city){ err.style.display='block'; return; }
+  err.style.display='none';
+  const np={
+    id:places.length+1, name, cat, city,
+    addr:addr||city,
+    desc:desc||'Von der Community hinzugefügt.',
+    rating:apRating||4.0,
+    reviews:apRating?[{user:'Max M.',text:desc||'Toller Ort!',stars:apRating}]:[],
+    by:'Max M.',
+    x:.2+Math.random()*.6,
+    y:.2+Math.random()*.6,
+  };
+  places.push(np);
+  closeAddPlaceModal();
+  const cnt=getKartePlaces().length;
+  const kc=document.getElementById('karteCount');if(kc)kc.textContent=cnt+' Orte';
+  const kp=document.getElementById('kartePinCount');if(kp)kp.textContent=cnt;
+  const nb=document.querySelector('.nav-item .nav-badge');
+  renderKartePlaceList();
+  drawKarte();
+  showKarteDetail(np);
+}
+
+// Campus tab switching (kept for CampusLeben page)
+function switchCampusTab(tab) {
+  ['map','events','wg','mensa'].forEach(t => {
+    const panel = document.getElementById('campusPanel' + t.charAt(0).toUpperCase() + t.slice(1));
+    const tabEl = document.getElementById('campusTab' + t.charAt(0).toUpperCase() + t.slice(1));
+    if (panel) panel.style.display = t === tab ? 'block' : 'none';
+    if (tabEl) {
+      tabEl.style.background = t === tab ? 'var(--accent)' : 'transparent';
+      tabEl.style.color = t === tab ? '#fff' : 'var(--muted)';
+    }
+  });
+}
+// ── END COMMUNITY KARTE ───────────────────────────────────────────────────
+
+// ── PROFIL & FREUNDE ─────────────────────────────────────────────────────
+const STUDENTS = [
+  { id:'s1', name:'Lisa Meier', init:'LM', color:'#7c6dfa', sg:'Wirtschaftspsychologie', abschluss:'Bachelor', sem:3, uni:'Uni Köln', bio:'Leidenschaft für Sozialpsychologie und Marktforschung. Biete Nachhilfe für Erstsemester!', interests:['Sozialpsych.','Marktforschung','Yoga'], status:'friend', online:true },
+  { id:'s2', name:'Jonas Klein', init:'JK', color:'#4ade80', sg:'Informatik', abschluss:'Bachelor', sem:2, uni:'Uni Köln', bio:'Dev & Student. Baue gerade eine App für Studenten. Suche Kooperation.', interests:['Coding','BWL','Gaming'], status:'friend', online:false },
+  { id:'s3', name:'Sara Aydın', init:'SA', color:'#f87171', sg:'Wirtschaftspsychologie', abschluss:'Bachelor', sem:1, uni:'Uni Köln', bio:'Gleicher Studiengang! Suche Lerngruppe für Statistik und BWL.', interests:['Statistik','Reisen','Fotografie'], status:'friend', online:true },
+  { id:'s4', name:'Tom Weber', init:'TW', color:'#fbbf24', sg:'Wirtschaftspsychologie', abschluss:'Bachelor', sem:1, uni:'Uni Köln', bio:'Lerngruppen-Fan. Kenne jeden Lernraum der Bib. Hit me up!', interests:['BWL','Fußball','Kochen'], status:'friend', online:true },
+  { id:'s5', name:'Mia Hoffmann', init:'MH', color:'#38bdf8', sg:'Wirtschaftspsychologie', abschluss:'Master', sem:3, uni:'Uni Köln', bio:'Master-Studentin, Werkstudentin bei einer UX-Agentur. Biete Mentoring.', interests:['UX','Leadership','Klettern'], status:'friend', online:false },
+  { id:'s6', name:'Nina Fischer', init:'NF', color:'#a78bfa', sg:'Wirtschaftspsychologie', abschluss:'Bachelor', sem:1, uni:'Uni Köln', bio:'Frisch dabei! Freue mich über Kontakte aus dem gleichen Studiengang 😊', interests:['Psychologie','Musik','Lesen'], status:'friend', online:true },
+  { id:'s7', name:'Felix Wagner', init:'FW', color:'#fb923c', sg:'BWL', abschluss:'Bachelor', sem:5, uni:'TU Berlin', bio:'BWL-Student, Auslandssemester in Barcelona war ein Traum. Frag mich alles!', interests:['Finance','Reisen','Tennis'], status:'request_received', online:true },
+  { id:'s8', name:'Paul Lang', init:'PL', color:'#34d399', sg:'Psychologie', abschluss:'Bachelor', sem:3, uni:'LMU München', bio:'Kognitionspsychologie ist meine Welt. Tausche Skripte gegen Motivation 😄', interests:['Kognitionspsych.','Schach','Podcast'], status:'request_received', online:false },
+  { id:'s9', name:'Kai Schulz', init:'KS', color:'#60a5fa', sg:'Informatik', abschluss:'Master', sem:2, uni:'RWTH Aachen', bio:'AI/ML-Enthusiast. Suche Kollaboration für Research-Projekt.', interests:['AI','Python','Klettern'], status:'none', online:true },
+  { id:'s10', name:'Lena Bauer', init:'LB', color:'#f472b6', sg:'Wirtschaftspsychologie', abschluss:'Bachelor', sem:2, uni:'Uni Hamburg', bio:'WiPsy-Studentin in Hamburg. Auf der Suche nach Austausch mit anderen Campi!', interests:['Marketing','Yoga','Foodie'], status:'none', online:false },
+  { id:'s11', name:'David Chen', init:'DC', color:'#a3e635', sg:'BWL', abschluss:'Bachelor', sem:4, uni:'Uni Frankfurt', bio:'International student from Taiwan. Learning German & business. Let\'s connect!', interests:['Finance','Sprachen','Badminton'], status:'none', online:true },
+  { id:'s12', name:'Anna Schmidt', init:'AS', color:'#c084fc', sg:'Wirtschaftspsychologie', abschluss:'Bachelor', sem:6, uni:'Uni Köln', bio:'Fast fertig! Nachhilfe in Statistik und Forschungsmethoden. Bewertung: 4.9⭐', interests:['Statistik','Forschung','Tanzen'], status:'none', online:true },
+];
+
+function switchProfileTab(tab) {
+  ['profil','editprofil','freunde','anfragen','suche'].forEach(t => {
+    const el = document.getElementById('p'+t);
+    if(el) el.style.display = t===tab ? 'block' : 'none';
+  });
+  const tabMap = {profil:'ptabProfil',editprofil:'ptabProfil',freunde:'ptabFreunde',anfragen:'ptabAnfragen',suche:'ptabSuche'};
+  ['ptabProfil','ptabFreunde','ptabAnfragen','ptabSuche'].forEach(id => {
+    const el=document.getElementById(id);
+    if(el){el.style.background='transparent';el.style.color='var(--muted)';}
+  });
+  const activeTab = document.getElementById(tabMap[tab]);
+  if(activeTab){activeTab.style.background='var(--accent)';activeTab.style.color='#fff';}
+  if(tab==='freunde') renderFriends();
+  if(tab==='anfragen') renderRequests();
+  if(tab==='suche') renderSearchResults(STUDENTS.filter(s=>s.status==='none'));
+}
+
+function renderFriendCard(s, showActions) {
+  const statusBtns = showActions
+    ? `<div style="display:flex;gap:5px;margin-top:7px">
+        <div onclick="acceptFriend('${s.id}')" style="flex:1;padding:5px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.2);border-radius:7px;font-size:10px;color:var(--success);text-align:center;cursor:pointer">✓ Annehmen</div>
+        <div onclick="declineFriend('${s.id}')" style="flex:1;padding:5px;background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.2);border-radius:7px;font-size:10px;color:var(--coral);text-align:center;cursor:pointer">✕ Ablehnen</div>
+       </div>`
+    : s.status==='none'
+      ? `<div onclick="sendFriendRequest('${s.id}')" style="margin-top:7px;padding:5px 0;background:rgba(124,109,250,0.1);border:1px solid rgba(124,109,250,0.2);border-radius:7px;font-size:10px;color:var(--accent2);text-align:center;cursor:pointer" id="frbtn_${s.id}">+ Anfrage senden</div>`
+      : s.status==='request_sent'
+        ? `<div style="margin-top:7px;padding:5px 0;background:var(--surface3);border:1px solid var(--border);border-radius:7px;font-size:10px;color:var(--muted);text-align:center">⏳ Anfrage gesendet</div>`
+        : `<div onclick="navigate('chat',null)" style="margin-top:7px;padding:5px 0;background:rgba(124,109,250,0.08);border:1px solid rgba(124,109,250,0.15);border-radius:7px;font-size:10px;color:var(--accent2);text-align:center;cursor:pointer">💬 Nachricht</div>`;
+  return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:1rem;transition:border-color .2s" onmouseover="this.style.borderColor='var(--border-hover)'" onmouseout="this.style.borderColor='var(--border)'">
+    <div style="display:flex;align-items:center;gap:9px;margin-bottom:7px">
+      <div style="position:relative;flex-shrink:0">
+        <div style="width:40px;height:40px;border-radius:50%;background:${s.color};display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:#fff">${s.init}</div>
+        ${s.online?'<div style="position:absolute;bottom:1px;right:1px;width:9px;height:9px;background:var(--success);border-radius:50%;border:2px solid var(--surface)"></div>':''}
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.name}</div>
+        <div style="font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.sg} ${s.abschluss} · Sem.${s.sem}</div>
+        <div style="font-size:10px;color:var(--muted2)">${s.uni}</div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.bio}</div>
+    <div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:3px">
+      ${s.interests.map(i=>`<span style="font-size:9px;padding:1px 7px;border-radius:100px;background:var(--surface2);border:1px solid var(--border);color:var(--muted)">${i}</span>`).join('')}
+    </div>
+    ${statusBtns}
+  </div>`;
+}
+
+function renderFriends() {
+  const list = document.getElementById('friendsList');
+  if(!list) return;
+  const friends = STUDENTS.filter(s=>s.status==='friend');
+  list.innerHTML = friends.map(s=>renderFriendCard(s,false)).join('');
+}
+
+function renderRequests() {
+  const list = document.getElementById('requestsList');
+  if(!list) return;
+  const reqs = STUDENTS.filter(s=>s.status==='request_received');
+  if(!reqs.length){list.innerHTML='<div style="text-align:center;padding:2rem;color:var(--muted);font-size:13px">Keine ausstehenden Anfragen</div>';return;}
+  list.innerHTML = `<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:9px">`+reqs.map(s=>renderFriendCard(s,true)).join('')+'</div>';
+}
+
+function renderSearchResults(list) {
+  const el = document.getElementById('searchResults');
+  if(!el) return;
+  if(!list.length){el.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--muted);font-size:13px">Keine Studenten gefunden</div>';return;}
+  el.innerHTML = list.map(s=>renderFriendCard(s,false)).join('');
+}
+
+function searchStudents(q) {
+  const results = q.trim()
+    ? STUDENTS.filter(s => s.status==='none' && (
+        s.name.toLowerCase().includes(q.toLowerCase()) ||
+        s.sg.toLowerCase().includes(q.toLowerCase()) ||
+        s.uni.toLowerCase().includes(q.toLowerCase()) ||
+        s.interests.some(i=>i.toLowerCase().includes(q.toLowerCase()))
+      ))
+    : STUDENTS.filter(s=>s.status==='none');
+  renderSearchResults(results);
+}
+
+function sendFriendRequest(id) {
+  const s = STUDENTS.find(x=>x.id===id);
+  if(!s) return;
+  s.status = 'request_sent';
+  const btn = document.getElementById('frbtn_'+id);
+  if(btn){ btn.textContent='⏳ Anfrage gesendet'; btn.style.background='var(--surface3)'; btn.style.color='var(--muted)'; btn.style.borderColor='var(--border)'; btn.onclick=null; }
+}
+
+function acceptFriend(id) {
+  const s = STUDENTS.find(x=>x.id===id);
+  if(!s) return;
+  s.status = 'friend';
+  renderRequests();
+  // update badge
+  const reqs = STUDENTS.filter(x=>x.status==='request_received').length;
+  const badge = document.querySelector('#ptabAnfragen span');
+  if(badge) badge.textContent = reqs || '';
+}
+
+function declineFriend(id) {
+  const s = STUDENTS.find(x=>x.id===id);
+  if(!s) return;
+  s.status = 'none';
+  renderRequests();
+}
+
+// ── END PROFIL & FREUNDE ──────────────────────────────────────────────────
+
+// ── INIT ─────────────────────────────────────────────────────────────────
+renderChatList();
+
+// ── TOAST ─────────────────────────────────────────────────────────────────
+function showToast(msg, type) {
+  let t = document.getElementById('globalToast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'globalToast';
+    t.style.cssText = 'position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 20px;font-size:13px;color:var(--text);box-shadow:0 8px 32px rgba(0,0,0,0.5);opacity:0;transition:all .3s ease;z-index:9999;white-space:nowrap;pointer-events:none';
+    document.body.appendChild(t);
+  }
+  const colors = { success:'var(--success)', error:'var(--coral)', info:'var(--info)' };
+  t.style.borderColor = colors[type] ? colors[type].replace('var(','rgba(').replace(')',',0.3)') : 'rgba(124,109,250,0.3)';
+  t.textContent = msg;
+  t.style.opacity = '1';
+  t.style.transform = 'translateX(-50%) translateY(0)';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(20px)'; }, 2800);
+}
+</script>
+</body>
+</html>

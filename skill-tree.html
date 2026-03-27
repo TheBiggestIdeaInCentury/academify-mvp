@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Academify Skill-Tree System</title>
+<style>
+:root {
+  --bg-dark: #0f1923;
+  --bg-card: #1a2736;
+  --bg-card-hover: #223344;
+  --border: #2a3a4a;
+  --text: #e2e8f0;
+  --text-dim: #8899aa;
+  --accent: #4a9eff;
+  --accent-glow: rgba(74,158,255,0.3);
+
+  --common: #9ca3af;
+  --common-bg: rgba(156,163,175,0.1);
+  --uncommon: #22c55e;
+  --uncommon-bg: rgba(34,197,94,0.1);
+  --rare: #3b82f6;
+  --rare-bg: rgba(59,130,246,0.1);
+  --epic: #a855f7;
+  --epic-bg: rgba(168,85,247,0.1);
+  --legendary: #f59e0b;
+  --legendary-bg: rgba(245,158,11,0.1);
+  --mythical: #ef4444;
+  --mythical-bg: rgba(239,68,68,0.1);
+  --goat: #fbbf24;
+  --goat-bg: rgba(251,191,36,0.15);
+
+  --maslow-1: #ef4444;
+  --maslow-2: #f97316;
+  --maslow-3: #eab308;
+  --maslow-4: #22c55e;
+  --maslow-5: #a855f7;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg-dark);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ===== HERO ===== */
+.hero {
+  background: linear-gradient(135deg, #0a1628 0%, #1a2d4a 50%, #0f1923 100%);
+  padding: 3rem 2rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(circle at 30% 50%, rgba(74,158,255,0.05) 0%, transparent 50%),
+              radial-gradient(circle at 70% 50%, rgba(168,85,247,0.05) 0%, transparent 50%);
+  animation: heroGlow 8s ease-in-out infinite alternate;
+}
+@keyframes heroGlow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(3deg); }
+}
+.hero h1 { font-size: 2.5rem; font-weight: 800; position: relative; z-index: 1; }
+.hero h1 span { background: linear-gradient(90deg, var(--accent), #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.hero p { color: var(--text-dim); font-size: 1.1rem; margin-top: 0.5rem; position: relative; z-index: 1; max-width: 700px; margin-left: auto; margin-right: auto; }
+
+/* ===== CONTAINER ===== */
+.container { max-width: 1400px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+/* ===== SECTION TITLES ===== */
+.section-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 2.5rem 0 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.section-title .icon { font-size: 1.8rem; }
+.section-title .line { flex: 1; height: 2px; background: linear-gradient(90deg, var(--accent), transparent); }
+
+/* ===== TABS ===== */
+.tab-bar {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 0.5rem;
+}
+.tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  padding: 0.6rem 1.2rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border-radius: 8px 8px 0 0;
+  transition: all 0.2s;
+  font-weight: 600;
+}
+.tab-btn:hover { background: var(--bg-card); color: var(--text); }
+.tab-btn.active { background: var(--bg-card); color: var(--accent); border-bottom: 2px solid var(--accent); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ===== LEVEL PROGRESS ===== */
+.level-display {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 2rem;
+  align-items: center;
+}
+.level-circle {
+  width: 100px; height: 100px;
+  border-radius: 50%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  font-weight: 800;
+  font-size: 2rem;
+  position: relative;
+}
+.level-circle .label { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; }
+.level-bar-wrap { width: 100%; }
+.level-bar-wrap .info { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.85rem; color: var(--text-dim); }
+.level-bar { height: 12px; background: rgba(255,255,255,0.08); border-radius: 99px; overflow: hidden; }
+.level-bar .fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--accent), #a855f7); transition: width 1s ease; }
+.level-stats { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.85rem; color: var(--text-dim); text-align: right; }
+.level-stats strong { color: var(--text); font-size: 1rem; }
+
+/* ===== RARITY CARDS ===== */
+.rarity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.rarity-card {
+  border-radius: 12px;
+  padding: 1.25rem;
+  text-align: center;
+  border: 2px solid;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: default;
+}
+.rarity-card:hover { transform: translateY(-3px); }
+.rarity-card .dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; margin-bottom: 0.5rem; }
+.rarity-card .name { font-weight: 700; font-size: 1rem; margin-bottom: 0.25rem; }
+.rarity-card .pts { font-size: 0.85rem; opacity: 0.7; }
+.rc-common { background: var(--common-bg); border-color: var(--common); color: var(--common); }
+.rc-common .dot { background: var(--common); }
+.rc-uncommon { background: var(--uncommon-bg); border-color: var(--uncommon); color: var(--uncommon); }
+.rc-uncommon .dot { background: var(--uncommon); }
+.rc-rare { background: var(--rare-bg); border-color: var(--rare); color: var(--rare); }
+.rc-rare .dot { background: var(--rare); }
+.rc-epic { background: var(--epic-bg); border-color: var(--epic); color: var(--epic); }
+.rc-epic .dot { background: var(--epic); }
+.rc-legendary { background: var(--legendary-bg); border-color: var(--legendary); color: var(--legendary); }
+.rc-legendary .dot { background: var(--legendary); }
+.rc-mythical { background: var(--mythical-bg); border-color: var(--mythical); color: var(--mythical); }
+.rc-mythical .dot { background: var(--mythical); }
+.rc-goat { background: var(--goat-bg); border-color: var(--goat); color: var(--goat); }
+
+/* ===== MASLOW PYRAMID ===== */
+.maslow-pyramid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 2rem 0;
+}
+.maslow-level {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  border: 1px solid;
+  transition: transform 0.2s;
+  cursor: default;
+}
+.maslow-level:hover { transform: scale(1.02); }
+.maslow-level .num { font-size: 1.5rem; font-weight: 800; min-width: 30px; }
+.maslow-level .content h4 { font-weight: 700; margin-bottom: 0.25rem; }
+.maslow-level .content p { font-size: 0.85rem; opacity: 0.8; }
+.maslow-level .skills { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
+.maslow-level .skills span {
+  background: rgba(255,255,255,0.1);
+  padding: 0.2rem 0.6rem;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.m5 { width: 50%; background: rgba(168,85,247,0.1); border-color: var(--maslow-5); color: var(--maslow-5); }
+.m4 { width: 60%; background: rgba(34,197,94,0.1); border-color: var(--maslow-4); color: var(--maslow-4); }
+.m3 { width: 70%; background: rgba(234,179,8,0.1); border-color: var(--maslow-3); color: var(--maslow-3); }
+.m2 { width: 80%; background: rgba(249,115,22,0.1); border-color: var(--maslow-2); color: var(--maslow-2); }
+.m1 { width: 90%; background: rgba(239,68,68,0.1); border-color: var(--maslow-1); color: var(--maslow-1); }
+
+/* ===== SKILL BRANCHES ===== */
+.branch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+.branch-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.branch-card:hover { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); }
+.branch-header {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.branch-icon { font-size: 2rem; }
+.branch-header h3 { font-size: 1.15rem; font-weight: 700; }
+.branch-header .tag { font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 99px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.branch-body { padding: 1.25rem 1.5rem; }
+.branch-body p { font-size: 0.9rem; color: var(--text-dim); margin-bottom: 1rem; }
+
+.skill-node {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid transparent;
+  transition: all 0.2s;
+}
+.skill-node:hover { background: rgba(255,255,255,0.05); border-color: var(--border); }
+.skill-node .lvl {
+  min-width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.skill-node .desc h5 { font-size: 0.9rem; font-weight: 700; }
+.skill-node .desc p { font-size: 0.8rem; color: var(--text-dim); }
+.skill-node .desc .xp { font-size: 0.75rem; color: var(--accent); font-weight: 600; margin-top: 0.2rem; }
+
+/* ===== BADGE GRID ===== */
+.badge-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.badge-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.25rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  transition: all 0.2s;
+}
+.badge-item:hover { transform: translateY(-2px); border-color: var(--accent); }
+.badge-icon {
+  width: 50px; height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+.badge-info h5 { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.15rem; }
+.badge-info .req { font-size: 0.8rem; color: var(--text-dim); }
+.badge-info .rarity-tag { display: inline-block; font-size: 0.7rem; padding: 0.1rem 0.5rem; border-radius: 99px; font-weight: 700; margin-top: 0.35rem; }
+
+/* ===== PRESTIGE ===== */
+.prestige-section {
+  background: linear-gradient(135deg, rgba(251,191,36,0.08), rgba(168,85,247,0.08));
+  border: 2px solid var(--goat);
+  border-radius: 20px;
+  padding: 2.5rem;
+  margin: 2rem 0;
+  position: relative;
+  overflow: hidden;
+}
+.prestige-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(circle at 20% 80%, rgba(251,191,36,0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+.prestige-section h3 { font-size: 1.5rem; font-weight: 800; color: var(--goat); position: relative; }
+.prestige-section > p { color: var(--text-dim); margin: 0.75rem 0 1.5rem; position: relative; }
+.prestige-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  position: relative;
+}
+.prestige-card {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(251,191,36,0.3);
+  border-radius: 14px;
+  padding: 1.25rem;
+}
+.prestige-card .tier { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; color: var(--goat); margin-bottom: 0.5rem; }
+.prestige-card h4 { font-weight: 700; margin-bottom: 0.35rem; }
+.prestige-card p { font-size: 0.85rem; color: var(--text-dim); }
+
+/* ===== ZIELGRUPPEN ===== */
+.zielgruppen-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+.zg-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.zg-card .zg-header {
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 700;
+  font-size: 1.05rem;
+  border-bottom: 1px solid var(--border);
+}
+.zg-card .zg-header .zg-icon { font-size: 1.3rem; }
+.zg-card .zg-header .dot-menu { margin-left: auto; color: var(--text-dim); cursor: pointer; }
+.zg-card ul { list-style: none; padding: 1rem 1.25rem; }
+.zg-card ul li { padding: 0.35rem 0; color: var(--text-dim); font-size: 0.9rem; }
+.zg-card ul li:hover { color: var(--text); }
+.zg-sub { color: var(--accent) !important; font-weight: 700; font-size: 0.75rem !important; text-transform: uppercase; letter-spacing: 1px; padding-top: 0.75rem !important; }
+
+/* ===== TABLE ===== */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bg-card);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+.data-table thead { background: rgba(74,158,255,0.1); }
+.data-table th { padding: 1rem 1.25rem; text-align: left; font-weight: 700; color: var(--accent); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
+.data-table td { padding: 0.85rem 1.25rem; border-top: 1px solid var(--border); font-size: 0.9rem; }
+.data-table tbody tr:hover { background: var(--bg-card-hover); }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .level-display { grid-template-columns: 1fr; text-align: center; }
+  .level-stats { text-align: center; }
+  .branch-grid { grid-template-columns: 1fr; }
+  .maslow-level { width: 100% !important; }
+}
+@media (max-width: 600px) {
+  .hero h1 { font-size: 1.75rem; }
+  .rarity-grid { grid-template-columns: repeat(2, 1fr); }
+  .badge-grid { grid-template-columns: 1fr; }
+  .prestige-grid { grid-template-columns: 1fr; }
+  .zielgruppen-grid { grid-template-columns: 1fr; }
+  .tab-btn { font-size: 0.8rem; padding: 0.4rem 0.8rem; }
+}
+
+/* ===== SCROLL ===== */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-dark); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+</style>
+</head>
+<body>
+
+<!-- ==================== HERO ==================== -->
+<header class="hero">
+  <h1><span>Academify</span> Skill-Tree System</h1>
+  <p>Gamifiziertes Progressionssystem mit Maslow-Integration &middot; Level 0&ndash;99+ &middot; Prestige-Modus &middot; 7 Skill-Branches &middot; 50+ Badges</p>
+</header>
+
+<div class="container">
+
+<!-- ==================== TABS ==================== -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="openTab(event,'overview')">&#127760; &Uuml;bersicht</button>
+  <button class="tab-btn" onclick="openTab(event,'maslow')">&#128200; Maslow-Mapping</button>
+  <button class="tab-btn" onclick="openTab(event,'branches')">&#127795; Skill-Branches</button>
+  <button class="tab-btn" onclick="openTab(event,'badges')">&#127942; Badges</button>
+  <button class="tab-btn" onclick="openTab(event,'prestige')">&#11088; Prestige</button>
+  <button class="tab-btn" onclick="openTab(event,'zielgruppen')">&#127919; Zielgruppen</button>
+  <button class="tab-btn" onclick="openTab(event,'config')">&#9881;&#65039; Konfiguration</button>
+</div>
+
+<!-- ========================================== -->
+<!-- TAB 1: OVERVIEW                            -->
+<!-- ========================================== -->
+<div id="overview" class="tab-content active">
+
+  <h2 class="section-title"><span class="icon">&#128202;</span> Level-Progression Demo <span class="line"></span></h2>
+
+  <div class="level-display">
+    <div class="level-circle" style="background:linear-gradient(135deg, var(--rare), var(--epic)); box-shadow: 0 0 30px rgba(59,130,246,0.3);">
+      <span>42</span>
+      <span class="label">Level</span>
+    </div>
+    <div class="level-bar-wrap">
+      <div class="info">
+        <span>Research Fellow</span>
+        <span>8.420 / 12.000 XP</span>
+      </div>
+      <div class="level-bar">
+        <div class="fill" style="width: 70%;"></div>
+      </div>
+      <div style="display:flex; justify-content:space-between; margin-top:0.5rem; font-size:0.8rem; color:var(--text-dim);">
+        <span>Level 42 &rarr; 43</span>
+        <span>3.580 XP verbleibend</span>
+      </div>
+    </div>
+    <div class="level-stats">
+      <span>Rarity</span>
+      <strong style="color: var(--rare);">&#128309; Rare</strong>
+      <span style="margin-top:0.5rem;">Streak</span>
+      <strong>&#128293; 14 Tage</strong>
+    </div>
+  </div>
+
+  <h2 class="section-title"><span class="icon">&#128142;</span> Rarity-System (Score 0&ndash;25) <span class="line"></span></h2>
+  <p style="color: var(--text-dim); margin-bottom: 1rem;">Jede Einreichung speichert <code style="background:var(--bg-card); padding:0.15rem 0.5rem; border-radius:4px;">score</code> &middot; <code style="background:var(--bg-card); padding:0.15rem 0.5rem; border-radius:4px;">rarity</code> &middot; <code style="background:var(--bg-card); padding:0.15rem 0.5rem; border-radius:4px;">is_goat</code>. Nur der h&ouml;chste Score wird im Profil angezeigt (stackbar).</p>
+
+  <div class="rarity-grid">
+    <div class="rarity-card rc-common"><span class="dot"></span><div class="name">Common</div><div class="pts">0&ndash;5 Pts</div></div>
+    <div class="rarity-card rc-uncommon"><span class="dot"></span><div class="name">Uncommon</div><div class="pts">6&ndash;10 Pts</div></div>
+    <div class="rarity-card rc-rare"><span class="dot"></span><div class="name">Rare</div><div class="pts">11&ndash;15 Pts</div></div>
+    <div class="rarity-card rc-epic"><span class="dot"></span><div class="name">Epic</div><div class="pts">16&ndash;20 Pts</div></div>
+    <div class="rarity-card rc-legendary"><span class="dot"></span><div class="name">Legendary</div><div class="pts">21&ndash;23 Pts</div></div>
+    <div class="rarity-card rc-mythical"><span class="dot"></span><div class="name">Mythical</div><div class="pts">24&ndash;25 Pts</div></div>
+    <div class="rarity-card rc-goat"><span>&#128016;</span><div class="name">GOAT</div><div class="pts">Manuell / HoF</div></div>
+  </div>
+
+  <h2 class="section-title"><span class="icon">&#128640;</span> Level-&Uuml;bersicht (0&ndash;99+) <span class="line"></span></h2>
+
+  <table class="data-table">
+    <thead>
+      <tr><th>Level-Range</th><th>Titel</th><th>XP pro Level</th><th>Rarity-Zugang</th><th>Maslow-Stufe</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>0&ndash;9</td><td>&#128300; Novize</td><td>100&ndash;250</td><td>Common</td><td>&#10102; Grundbed&uuml;rfnisse</td></tr>
+      <tr><td>10&ndash;19</td><td>&#128218; Studiosus</td><td>250&ndash;500</td><td>Common &ndash; Uncommon</td><td>&#10102; Grundbed&uuml;rfnisse</td></tr>
+      <tr><td>20&ndash;34</td><td>&#128214; Scholar</td><td>500&ndash;1.000</td><td>Uncommon &ndash; Rare</td><td>&#10103; Sicherheit</td></tr>
+      <tr><td>35&ndash;49</td><td>&#127891; Research Fellow</td><td>1.000&ndash;2.500</td><td>Rare &ndash; Epic</td><td>&#10104; Zugeh&ouml;rigkeit</td></tr>
+      <tr><td>50&ndash;64</td><td>&#128640; Senior Scientist</td><td>2.500&ndash;5.000</td><td>Epic &ndash; Legendary</td><td>&#10105; Anerkennung</td></tr>
+      <tr><td>65&ndash;79</td><td>&#127775; Distinguished Scholar</td><td>5.000&ndash;10.000</td><td>Legendary</td><td>&#10105; Anerkennung</td></tr>
+      <tr><td>80&ndash;94</td><td>&#128081; Eminence</td><td>10.000&ndash;25.000</td><td>Legendary &ndash; Mythical</td><td>&#10106; Selbstverwirklichung</td></tr>
+      <tr><td>95&ndash;99</td><td>&#127942; Grandmaster</td><td>25.000&ndash;50.000</td><td>Mythical</td><td>&#10106; Selbstverwirklichung</td></tr>
+      <tr style="background:var(--goat-bg);"><td><strong>99+</strong></td><td>&#128016; GOAT &ndash; Prestige</td><td>&infin;</td><td>GOAT (Hall of Fame)</td><td>&#10106; Transzendenz</td></tr>
+    </tbody>
+  </table>
+
+  <h2 class="section-title"><span class="icon">&#9889;</span> XP-Aktionen <span class="line"></span></h2>
+
+  <table class="data-table">
+    <thead>
+      <tr><th>Aktion</th><th>XP</th><th>Cooldown</th><th>Kategorie</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>&#128203; Umfrage ausf&uuml;llen</td><td>50&ndash;200</td><td>Keine</td><td>Earning</td></tr>
+      <tr><td>&#128176; Premium-Umfrage (Echtgeld)</td><td>100&ndash;500</td><td>Keine</td><td>Earning</td></tr>
+      <tr><td>&#129513; Quiz erstellen</td><td>75</td><td>5/Tag</td><td>Content</td></tr>
+      <tr><td>&#127912; Emoji/Sticker hochladen</td><td>25&ndash;50</td><td>10/Tag</td><td>Content</td></tr>
+      <tr><td>&#11088; Hochschule bewerten</td><td>100&ndash;300</td><td>1/Hochschule</td><td>Review</td></tr>
+      <tr><td>&#128214; Dissertation bewerten</td><td>150&ndash;400</td><td>1/Arbeit</td><td>Review</td></tr>
+      <tr><td>&#128240; Fachzeitschrift reviewen</td><td>200&ndash;500</td><td>1/Ausgabe</td><td>Review</td></tr>
+      <tr><td>&#129309; Peer-Review geben</td><td>100&ndash;250</td><td>Keine</td><td>Community</td></tr>
+      <tr><td>&#128172; Kommentar / Diskussion</td><td>10&ndash;30</td><td>20/Tag</td><td>Community</td></tr>
+      <tr><td>&#128101; Neues Mitglied einladen</td><td>200</td><td>Keine</td><td>Growth</td></tr>
+      <tr><td>&#128293; Tages-Login (Streak)</td><td>20 + (5&times;Streak)</td><td>1/Tag</td><td>Engagement</td></tr>
+      <tr><td>&#127919; Weekly Challenge</td><td>300&ndash;1.000</td><td>1/Woche</td><td>Challenge</td></tr>
+    </tbody>
+  </table>
+
+</div>
+
+<!-- ========================================== -->
+<!-- TAB 2: MASLOW MAPPING                      -->
+<!-- ========================================== -->
+<div id="maslow" class="tab-content">
+
+  <h2 class="section-title"><span class="icon">&#128200;</span> Maslowsche Bed&uuml;rfnispyramide &rarr; Skill-Tree Mapping <span class="line"></span></h2>
+  <p style="color: var(--text-dim); margin-bottom: 1.5rem;">Jede Stufe der Maslow-Pyramide wird durch spezifische Gamification-Mechaniken adressiert. Mitglieder durchlaufen die Stufen nat&uuml;rlich w&auml;hrend sie leveln.</p>
+
+  <div class="maslow-pyramid">
+
+    <div class="maslow-level m5">
+      <div class="num">5</div>
+      <div class="content">
+        <h4>Selbstverwirklichung &amp; Transzendenz</h4>
+        <p>Level 80&ndash;99+ &middot; Prestige-Modus &middot; GOAT-Status &middot; Mentoring &amp; Legacy</p>
+        <div class="skills">
+          <span>&#128016; GOAT-Badge</span>
+          <span>&#127942; Prestige-Unlock</span>
+          <span>&#128218; Wissen weitergeben</span>
+          <span>&#128081; Hall of Fame</span>
+          <span>&#127775; Eigene Challenges erstellen</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="maslow-level m4">
+      <div class="num">4</div>
+      <div class="content">
+        <h4>Anerkennung &amp; Wertsch&auml;tzung</h4>
+        <p>Level 50&ndash;79 &middot; Sichtbarkeit &middot; Reputation &middot; Featured Status</p>
+        <div class="skills">
+          <span>&#11088; Featured Researcher</span>
+          <span>&#128200; Leaderboard Top 10</span>
+          <span>&#128142; Epic/Legendary Badges</span>
+          <span>&#127891; Verifizierte Expertise</span>
+          <span>&#128240; Publizierte Reviews</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="maslow-level m3">
+      <div class="num">3</div>
+      <div class="content">
+        <h4>Soziale Bed&uuml;rfnisse &amp; Zugeh&ouml;rigkeit</h4>
+        <p>Level 35&ndash;49 &middot; Community &middot; Kollaboration &middot; Netzwerk</p>
+        <div class="skills">
+          <span>&#129309; Team-Challenges</span>
+          <span>&#128101; Forschungsgruppen</span>
+          <span>&#128172; Diskussionsforen</span>
+          <span>&#127793; Mentoring geben/erhalten</span>
+          <span>&#128140; Co-Authoring</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="maslow-level m2">
+      <div class="num">2</div>
+      <div class="content">
+        <h4>Sicherheitsbed&uuml;rfnisse</h4>
+        <p>Level 20&ndash;34 &middot; Stabilit&auml;t &middot; Vertrauen &middot; Verifizierung</p>
+        <div class="skills">
+          <span>&#128274; Verifiziertes Profil</span>
+          <span>&#128176; Erste Echtgeld-Gutscheine</span>
+          <span>&#128736;&#65039; Erweiterte Einstellungen</span>
+          <span>&#128202; Fortschritts-Dashboard</span>
+          <span>&#128170; Streak-Freeze</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="maslow-level m1">
+      <div class="num">1</div>
+      <div class="content">
+        <h4>Grundbed&uuml;rfnisse &amp; Physiologisch</h4>
+        <p>Level 0&ndash;19 &middot; Onboarding &middot; Erste Schritte &middot; Orientierung</p>
+        <div class="skills">
+          <span>&#128300; Profil erstellen</span>
+          <span>&#128218; Erste Umfrage</span>
+          <span>&#127912; Erster Upload</span>
+          <span>&#11088; Erste Bewertung</span>
+          <span>&#128293; Erster Streak</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <h2 class="section-title"><span class="icon">&#128161;</span> Psychologische Modelle im Skill-Tree <span class="line"></span></h2>
+
+  <table class="data-table">
+    <thead>
+      <tr><th>Psychologisches Modell</th><th>Anwendung im Skill-Tree</th><th>Betroffene Level</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Maslow</strong> &ndash; Bed&uuml;rfnispyramide</td><td>Stufenweise Freischaltung: Erst Basics, dann soziale Features, dann Prestige</td><td>0&ndash;99+</td></tr>
+      <tr><td><strong>Deci &amp; Ryan</strong> &ndash; Selbstbestimmungstheorie</td><td>Autonomie (freie Pfadwahl), Kompetenz (XP/Badges), Zugeh&ouml;rigkeit (Teams)</td><td>0&ndash;99+</td></tr>
+      <tr><td><strong>Csikszentmihalyi</strong> &ndash; Flow-Theorie</td><td>XP-Kurve steigt mit Level &rarr; Herausforderung w&auml;chst mit F&auml;higkeit</td><td>Dynamisch</td></tr>
+      <tr><td><strong>Bartle</strong> &ndash; Spielertypen</td><td>Achiever (Badges), Explorer (Skill-Branches), Socializer (Community), Killer (Leaderboard)</td><td>Alle</td></tr>
+      <tr><td><strong>Fogg</strong> &ndash; Verhaltensmodell</td><td>Motivation (Rewards) + F&auml;higkeit (einfache Aktionen) + Trigger (Notifications)</td><td>0&ndash;19 Onboarding</td></tr>
+      <tr><td><strong>Zeigarnik-Effekt</strong></td><td>Unvollst&auml;ndige Progressbars motivieren zur Vervollst&auml;ndigung</td><td>Alle</td></tr>
+      <tr><td><strong>Endowed Progress</strong></td><td>Neue Mitglieder starten mit 10% gef&uuml;lltem Balken (nicht bei 0)</td><td>0</td></tr>
+    </tbody>
+  </table>
+
+</div>
+
+<!-- ========================================== -->
+<!-- TAB 3: SKILL BRANCHES                      -->
+<!-- ========================================== -->
+<div id="branches" class="tab-content">
+
+  <h2 class="section-title"><span class="icon">&#127795;</span> 7 Skill-Branches <span class="line"></span></h2>
+  <p style="color: var(--text-dim); margin-bottom: 1.5rem;">Jeder Branch repr&auml;sentiert einen Kompetenzbereich. Mitglieder k&ouml;nnen alle Branches parallel leveln. Nur der h&ouml;chste Branch-Score wird im Profil als Haupt-Rarity angezeigt.</p>
+
+  <div class="branch-grid">
+
+    <!-- BRANCH 1: EARNING -->
+    <div class="branch-card">
+      <div class="branch-header" style="background: linear-gradient(90deg, rgba(34,197,94,0.1), transparent);">
+        <span class="branch-icon">&#128176;</span>
+        <div><h3>Earning &amp; Surveys</h3><span style="font-size:0.8rem; color:var(--text-dim);">Umfragen, Echtgeld, Gutscheine</span></div>
+        <span class="tag" style="background:var(--uncommon-bg); color:var(--uncommon);">Maslow 1&ndash;2</span>
+      </div>
+      <div class="branch-body">
+        <p>Monetarisierung durch Umfragen &ndash; der Haupttreiber f&uuml;r neue Mitglieder.</p>
+        <div class="skill-node">
+          <div class="lvl" style="background:var(--common-bg); color:var(--common);">Lv 1</div>
+          <div class="desc"><h5>Erste Umfrage</h5><p>F&uuml;lle deine erste Umfrage aus</p><div class="xp">+50 XP</div></div>
+        </div>
+        <div class="skill-node">
+          <div class="lvl" style="background:var(--common-bg); color:var(--common);">Lv 5</div>
+          <div class="desc"><h5>Umfrage-Routine</h5><p>10 Umfragen in einer Woche abgeschlossen</p><div class="xp">+150 XP</div></div>
+        </div>
+        <div class="skill-node">
+          <div class="lvl" style="background:var(--uncommon-bg); color:var(--uncommon);">Lv 15</div>
+          <div class="desc"><h5>Premium-Umfragen</h5><p>Zugang zu h&ouml;herdotierten Marktforschungsumfragen</p><div class="xp">+300 XP &middot; Unlock: Premium Surveys</div></div>
+        </div>
+        <div class="skill-node">
+          <div class="lvl" style="background:var(--rare-bg); color:var(--rare);">Lv 30</div>
+          <div class="desc"><h5>Survey Expert</h5><p>100 Umfragen &middot; Qualit&auml;ts-Score &gt;90%</p><div class="xp">+500 XP &middot; Badge: &#128203; Survey Expert</div></div>
+        </div>
+        <div class="skill-node">
+          <div class="lvl" style="background:var(--epic-bg); color:var(--epic);">Lv 50</div>
+          <div class="desc"><h5>Survey Master</h5><p>500 Umfragen &middot; Eigene Umfragen erstellen</p><div class="xp">+1.000 XP &middot; Badge: &#128176; Survey Master</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BRANCH 2: CONTENT CREATION -->
+    <div class="branch-card">
+      <div class="branch-header" style="background: linear-gradient(90deg, rgba(168,85,247,0.1), transparent);">
+        <span class="branch-icon">&#127912;</span>
+        <div><h3>Content Creation</h3><span style="font-size:0.8rem; color:var(--text-dim);">Quizze, Emojis, Sticker, Uploads</span></div>
+        <span class="tag" style="background:var(--epic-bg); color:var(--epic);">Maslow 3&ndash;4</span>
+      </div>
+      <div class="branch-body">
+        <p>Kreative Beitr&auml;ge zur Community &ndash; von Emojis bis hin zu komplexen Quizzen.</p>
+        <div class="skill-node">
+          <div class="lvl" style="background:var(--common-bg); color:var(--common);">Lv 1</div>
+          <div class="desc"><h5>Erster Upload</h5><p>Lade dein erstes Emoji oder Sticker hoch</p><div class="xp">+25 XP</div></div>
+        </div>
+        <div class="skill-node">
+          <div class="lvl" style="background:var(--uncommon-bg); color:var(--uncommon);">Lv 10</div>
+          <div class="desc"><h5>Quiz-Ersteller</h5><p>Erstelle dein erstes Quiz f&uuml;r die Community</p><div class="xp">+75 XP &middot; Unlock: Quiz-Builder</div></div>
+        </div>
+        <div class="skill-node">
+          <div class="lvl" style="background:var(--rare-bg); color:var(--rare);">Lv 25</div>
+          <div class="desc"><h5>Content Creator</h5><p>50 Uploads mit durchschnittlich 4+ Sterne Bewertung</p><div class="xp">+400 XP &middot; Badge: &#127912; Content Creator</div></div>
+        </div>
+        <div class="skill-node">
+          <div class="lvl" style="background:var(--legendary-bg); color:var(--legendary);">Lv 60</div>
+          <div class="desc"><h5>Viral Creator</h5><p>Ein Upload mit 1.000+ Interaktionen</p><div class="xp">+2.000 XP &middot; Badge: &#128293; Viral</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BRANCH 3: ACADEMIC REVIEW -->
+    <div class="branch-card">
+      <div class="branch-header" style="background: linear-gradient(90deg, rgba(59,130,246,0.1), transparent);">
+        <span class="branch-icon">&#128214;</span>
+        <div><h3>Academic Review</h3><span style="font-size:0.8rem; color:var(--text-dim);">Hochschul-, Dissertations- &amp; Journal-Bewertungen</span></div>
+        <span class="tag" style="background:var(--rare-bg); color:var(--rare);">Maslow 3&ndash;5</span>
+      </div>
+      <div class="branch-body">
+        <p>Bewerte Hochschulen, Dissertationen und Fachzeitschriften &ndash; baue akademische Reputation auf.</p>
+        <div class="skill-node">
+          <div class="lvl" style="background:var(--common-bg); color:var(--common);">Lv 3</div>
+          <div class="desc"><h5>Erste Bewertung</h5><p>Bewerte deine Hochschule</p><div class="xp">+100 XP</div></div>
+        </div>
+        <div class="skill-node">
+          <div class="lvl" style="background:var(--uncommon-bg); color:var(--uncommon);">Lv 15</div>
+          <div class="desc"><h5>Peer Reviewer</h5><p>10 detaillierte Bewertungen mit 50+ W&ouml;rtern</p><div class="xp">+250 XP &middot; Badge: &#128270; Peer Reviewer</div></div>
+        </div>
+        <div class="skill-node">
+          <div class="lvl" style="background:var(--rare-bg); color:var(--rare);">Lv 35</div>
+          <div class="desc"><h5>Dissertation Critic</h5><p>5 Dissertationsbewertungen ver&ouml;ffentlicht</p><div class="xp">+500 XP &middot; Unlock: Journal Reviews</div></div>
+        </div>
+        <div class="skill-node">
+          <div class="lvl" style="background:var(--legendary-bg); color:var(--legendary);">Lv 65</div>
+          <div class="desc"><h5>Academic Authority</h5><p>50+ Reviews &middot; Top-Reviewer Status</p><div class="xp">+3.000 XP &middot; Badge: &#127891; Academic Authority</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BRANCH 4: COMMUNITY -->
+    <div class="branch-card">
+      <div class="branch-header" style="background: linear-gradient(90deg, rgba(234,179,8,0.1), transparent);">
+        <span class="branch-icon">&#129309;</span>
+        <div><h3>Community &amp; Social</h3><span style="font-size:0.8rem; color:var(--text-dim);">Netzwerk, Diskussionen, Mentoring</span></div>
+        <span class="tag" style="background:var(--legendary-bg); color:var(--legendary);">Maslow 3</span>
+      </div>
+      <div class="branch-body">
+        <p>Vernetze dich, diskutiere und werde Mentor &ndash; das Herzst&uuml;ck der Plattform.</p>
+        <div class="skill-node">
+          <div class="lvl" style="background:var(--common-bg); color:var(--common);">Lv 1</div>
+          <div class="desc"><h5>Erster Kontakt</h5><p>Verbinde dich mit deinem ersten Mitglied</p><div class="xp">+20 XP</div></div>
+        </div>
+        <div class="skill-node">
+          <div class="lvl" style="background:var(--uncommon-bg); color:var(--uncommon);">Lv 12</div>
+          <div class="desc"><h5>Diskutant</h5><p>50 Kommentare in Diskussionsforen</p><div class="xp">+200 XP &middot; Badge: &#128172; Diskutant</div></div>
+        </div>
+        <div class="skill-node">
+          <div class="lvl" style="background:var(--rare-bg); color:var(--rare);">Lv 30</div>
+          <div class="desc"><h5>Netzwerker</h5><p>100+ Verbindungen &middot; 5+ Forschungsgruppen</p><div class="xp">+500 XP &middot; Badge: &#128101; Netzwerker</div></div>
+        </div>
+        <div class="skill-node">
+          <div class="lvl" style="background:var(--epic-bg); color:var(--epic);">Lv 45</div>
+          <div class="desc"><h5>Mentor</h5><p>Hilf 10 Mitgliedern bei ihrem Onboarding</p><div class="xp">+1.500 XP &middot; Badge: &#127793; Mentor &middot; Unlock: Mentor-Dashboard</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BRANCH 5: GROWTH -->
+    <div class="branch-card">
+      <div class="branch-header" style="background: linear-gradient(90deg, rgba(249,115,22,0.1), transparent);">
+        <span class="branch-icon">&#128640;</span>
+        <div><h3>Growth &amp; Recruitment</h3><span style="font-size:0.8rem; color:var(--text-dim);">Einladungen, Ambassadors, Wachstum</span></div>
+        <span class="tag" style="background:var(--mythical-bg); color:var(--mythical);">Maslow 4&ndash;5</span>
+      </div>
+      <div class="branch-body">
+        <p>Bringe neue Mitglieder auf die Plattform und werde Ambassador.</p>
+        <div class="skill-node">
+          <div class="lvl" style="background:var(--common-bg); color:var(--common);">Lv 5</div>
+          <div class="desc"><h5>Erste Einladung</h5><p>Lade dein erstes Mitglied erfolgreich ein</p><div class="xp">+200 XP</div></div>
+        </div>
+        <div class="skill-node">
+          <div class="lvl" style="background:var(--uncommon-bg); color:var(--uncommon);">Lv 20</div>
+          <div class="desc"><h5>Recruiter</h5><p>10 aktive Einladungen angenommen</p><div class="xp">+500 XP &middot; Badge: &#128101; Recruiter</div></div>
+        </div>
+        <div class="skill-node">
+          <div class="lvl" style="background:var(--epic-bg); color:var(--epic);">Lv 50</div>
+          <div class="desc"><h5>Campus Ambassador</h5><p>50+ aktive Einladungen &middot; Von eigener Hochschule</p><div class="xp">+2.000 XP &middot; Badge: &#127963;&#65039; Ambassador</div></div>
+        </div>
+        <div class="skill-node">
+          <div class="lvl" style="background:var(--mythical-bg); color:var(--mythical);">Lv 80</div>
+          <div class="desc"><h5>Growth Legend</h5><p>200+ Einladungen &middot; Top 1% Recruiter</p><div class="xp">+5.000 XP &middot; Badge: &#128640; Growth Legend</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BRANCH 6: ENGAGEMENT -->
+    <div class="branch-card">
+      <div class="branch-header" style="background: linear-gradient(90deg, rgba(239,68,68,0.1), transparent);">
+        <span class="branch-icon">&#128293;</span>
+        <div><h3>Engagement &amp; Streaks</h3><span style="font-size:0.8rem; color:var(--text-dim);">T&auml;gliche Aktivit&auml;t, Challenges, Konsistenz</span></div>
+        <span class="tag" style="background:var(--mythical-bg); color:var(--mythical);">Maslow 2&ndash;3</span>
+      </div>
+      <div class="branch-body">
+        <p>Belohnt regelm&auml;&szlig;ige Aktivit&auml;t und Konsistenz auf der Plattform.</p>
+        <div class="skill-node">
+          <div class="lvl" style="background:var(--common-bg); color:var(--common);">Lv 1</div>
+          <div class="desc"><h5>Erster Login-Streak</h5><p>3 Tage hintereinander eingeloggt</p><div class="xp">+30 XP</div></div>
+        </div>
+        <div class="skill-node">
+          <div class="lvl" style="background:var(--uncommon-bg); color:var(--uncommon);">Lv 10</div>
+          <div class="desc"><h5>Wochenkrieger</h5><p>7-Tage-Streak erreicht</p><div class="xp">+100 XP &middot; Unlock: Streak-Freeze (1x)</div></div>
+        </div>
+        <div class="skill-node">
+          <div class="lvl" style="background:var(--rare-bg); color:var(--rare);">Lv 30</div>
+          <div class="desc"><h5>Monats-Marathon</h5><p>30-Tage-Streak &middot; Weekly Challenge abgeschlossen</p><div class="xp">+750 XP &middot; Badge: &#128293; Marathon</div></div>
+        </div>
+        <div class="skill-node">
+          <div class="lvl" style="background:var(--legendary-bg); color:var(--legendary);">Lv 70</div>
+          <div class="desc"><h5>365-Tage Legende</h5><p>Ein volles Jahr ohne Streak-Unterbrechung</p><div class="xp">+10.000 XP &middot; Badge: &#128081; Jahreslegende</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BRANCH 7: KNOWLEDGE -->
+    <div class="branch-card">
+      <div class="branch-header" style="background: linear-gradient(90deg, rgba(74,158,255,0.1), transparent);">
+        <span class="branch-icon">&#129504;</span>
+        <div><h3>Knowledge &amp; Expertise</h3><span style="font-size:0.8rem; color:var(--text-dim);">Fachwissen, Zertifikate, Verifizierung</span></div>
+        <span class="tag" style="background:var(--rare-bg); color:var(--rare);">Maslow 4&ndash;5</span>
+      </div>
+      <div class="branch-body">
+        <p>Zeige deine Fachexpertise und erhalte verifizierte Kompetenznachweise.</p>
+        <div class="skill-node">
+          <div class="lvl" style="background:var(--common-bg); color:var(--common);">Lv 5</div>
+          <div class="desc"><h5>Fachgebiet w&auml;hlen</h5><p>W&auml;hle dein prim&auml;res Fachgebiet</p><div class="xp">+50 XP</div></div>
+        </div>
+        <div class="skill-node">
+          <div class="lvl" style="background:var(--uncommon-bg); color:var(--uncommon);">Lv 15</div>
+          <div class="desc"><h5>Fach-Quiz bestanden</h5><p>Bestehe ein fachspezifisches Quiz mit 80%+</p><div class="xp">+200 XP &middot; Badge: &#128218; Fach-Novize</div></div>
+        </div>
+        <div class="skill-node">
+          <div class="lvl" style="background:var(--epic-bg); color:var(--epic);">Lv 45</div>
+          <div class="desc"><h5>Verifizierte Expertise</h5><p>Von Peers best&auml;tigte Fachkompetenz in 3+ Gebieten</p><div class="xp">+1.500 XP &middot; Badge: &#9989; Verifiziert</div></div>
+        </div>
+        <div class="skill-node">
+          <div class="lvl" style="background:var(--mythical-bg); color:var(--mythical);">Lv 85</div>
+          <div class="desc"><h5>Thought Leader</h5><p>Top 0.1% in deinem Fachgebiet</p><div class="xp">+8.000 XP &middot; Badge: &#129504; Thought Leader</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- TAB 4: BADGES                              -->
+<!-- ========================================== -->
+<div id="badges" class="tab-content">
+
+  <h2 class="section-title"><span class="icon">&#127942;</span> Badge-Katalog (50+ Badges) <span class="line"></span></h2>
+  <p style="color: var(--text-dim); margin-bottom: 1.5rem;">Badges sind stackbar &ndash; nur der h&ouml;chste Rarity-Wert wird im Profil angezeigt. Teilbar via LinkedIn-&auml;hnlichem Share.</p>
+
+  <h3 style="color: var(--common); margin: 1.5rem 0 1rem;">&#9898; Common Badges (0&ndash;5 Pts)</h3>
+  <div class="badge-grid">
+    <div class="badge-item"><div class="badge-icon" style="background:var(--common-bg); color:var(--common);">&#128300;</div><div class="badge-info"><h5>Erster Schritt</h5><div class="req">Profil vollst&auml;ndig ausgef&uuml;llt</div><div class="rarity-tag" style="background:var(--common-bg); color:var(--common);">Common &middot; 1 Pt</div></div></div>
+    <div class="badge-item"><div class="badge-icon" style="background:var(--common-bg); color:var(--common);">&#128203;</div><div class="badge-info"><h5>Umfrage-Neuling</h5><div class="req">Erste Umfrage ausgef&uuml;llt</div><div class="rarity-tag" style="background:var(--common-bg); color:var(--common);">Common &middot; 2 Pts</div></div></div>
+    <div class="badge-item"><div class="badge-icon" style="background:var(--common-bg); color:var(--common);">&#127912;</div><div class="badge-info"><h5>Erster Upload</h5><div class="req">Erstes Emoji/Sticker hochgeladen</div><div class="rarity-tag" style="background:var(--common-bg); color:var(--common);">Common &middot; 1 Pt</div></div></div>
+    <div class="badge-item"><div class="badge-icon" style="background:var(--common-bg); color:var(--common);">&#11088;</div><div class="badge-info"><h5>Erste Bewertung</h5><div class="req">Erste Hochschulbewertung abgegeben</div><div class="rarity-tag" style="background:var(--common-bg); color:var(--common);">Common &middot; 3 Pts</div></div></div>
+    <div class="badge-item"><div class="badge-icon" style="background:var(--common-bg); color:var(--common);">&#128172;</div><div class="badge-info"><h5>Eisbrecher</h5><div class="req">Erster Kommentar in einem Forum</div><div class="rarity-tag" style="background:var(--common-bg); color:var(--common);">Common &middot; 1 Pt</div></div></div>
+    <div class="badge-item"><div class="badge-icon" style="background:var(--common-bg); color:var(--common);">&#128293;</div><div class="badge-info"><h5>3-Tage-Streak</h5><div class="req">3 Tage hintereinander aktiv</div><div class="rarity-tag" style="background:var(--common-bg); color:var(--common);">Common &middot; 2 Pts</div></div></div>
+  </div>
+
+  <h3 style="color: var(--uncommon); margin: 1.5rem 0 1rem;">&#128994; Uncommon Badges (6&ndash;10 Pts)</h3>
+  <div class="badge-grid">
+    <div class="badge-item"><div class="badge-icon" style="background:var(--uncommon-bg); color:var(--uncommon);">&#128176;</div><div class="badge-info"><h5>Erster Verdienst</h5><div class="req">Ersten Gutschein eingeholt (Echtgeld)</div><div class="rarity-tag" style="background:var(--uncommon-bg); color:var(--uncommon);">Uncommon &middot; 7 Pts</div></div></div>
+    <div class="badge-item"><div class="badge-icon" style="background:var(--uncommon-bg); color:var(--uncommon);">&#129513;</div><div class="badge-info"><h5>Quiz-Ersteller</h5><div class="req">Erstes eigenes Quiz ver&ouml;ffentlicht</div><div class="rarity-tag" style="background:var(--uncommon-bg); color:var(--uncommon);">Uncommon &middot; 8 Pts</div></div></div>
+    <div class="badge-item"><div class="badge-icon" style="background:var(--uncommon-bg); color:var(--uncommon);">&#128270;</div><div class="badge-info"><h5>Peer Reviewer</h5><div class="req">10 detaillierte Bewertungen geschrieben</div><div class="rarity-tag" style="background:var(--uncommon-bg); color:var(--uncommon);">Uncommon &middot; 9 Pts</div></div></div>
+    <div class="badge-item"><div class="badge-icon" style="background:var(--uncommon-bg); color:var(--uncommon);">&#128293;</div><div class="badge-info"><h5>7-Tage-Streak</h5><div class="req">7 Tage hintereinander aktiv</div><div class="rarity-tag" style="background:var(--uncommon-bg); color:var(--uncommon);">Uncommon &middot; 6 Pts</div></div></div>
+    <div class="badge-item"><div class="badge-icon" style="background:var(--uncommon-bg); color:var(--uncommon);">&#128101;</div><div class="badge-info"><h5>Recruiter Bronze</h5><div class="req">5 Mitglieder erfolgreich eingeladen</div><div class="rarity-tag" style="background:var(--uncommon-bg); color:var(--uncommon);">Uncommon &middot; 8 Pts</div></div></div>
+    <div class="badge-item"><div class="badge-icon" style="background:var(--uncommon-bg); color:var(--uncommon);">&#128218;</div><div class="badge-info"><h5>Fach-Novize</h5><div class="req">Erstes Fach-Quiz mit 80%+ bestanden</div><div class="rarity-tag" style="background:var(--uncommon-bg); color:var(--uncommon);">Uncommon &middot; 7 Pts</div></div></div>
+  </div>
+
+  <h3 style="color: var(--rare); margin: 1.5rem 0 1rem;">&#128309; Rare Badges (11&ndash;15 Pts)</h3>
+  <div class="badge-grid">
+    <div class="badge-item"><div class="badge-icon" style="background:var(--rare-bg); color:var(--rare);">&#128203;</div><div class="badge-info"><h5>Survey Expert</h5><div class="req">100 Umfragen &middot; Qualit&auml;t &gt;90%</div><div class="rarity-tag" style="background:var(--rare-bg); color:var(--rare);">Rare &middot; 13 Pts</div></div></div>
+    <div class="badge-item"><div class="badge-icon" style="background:var(--rare-bg); color:var(--rare);">&#127912;</div><div class="badge-info"><h5>Content Creator</h5><div class="req">50 Uploads mit 4+ Sterne Rating</div><div class="rarity-tag" style="background:var(--rare-bg); color:var(--rare);">Rare &middot; 12 Pts</div></div></div>
+    <div class="badge-item"><div class="badge-icon" style="background:var(--rare-bg); color:var(--rare);">&#128101;</div><div class="badge-info"><h5>Netzwerker</h5><div class="req">100+ Verbindungen &middot; 5+ Gruppen</div><div class="rarity-tag" style="background:var(--rare-bg); color:var(--rare);">Rare &middot; 14 Pts</div></div></div>
+    <div class="badge-item"><div class="badge-icon" style="background:var(--rare-bg); color:var(--rare);">&#128293;</div><div class="badge-info"><h5>Marathon-Streak</h5><div class="req">30-Tage-Streak ohne Unterbrechung</div><div class="rarity-tag" style="background:var(--rare-bg); color:var(--rare);">Rare &middot; 11 Pts</div></div></div>
+    <div class="badge-item"><div class="badge-icon" style="background:var(--rare-bg); color:var(--rare);">&#128214;</div><div class="badge-info"><h5>Dissertation Critic</h5><div class="req">5 Dissertationsbewertungen ver&ouml;ffentlicht</div><div class="rarity-tag" style="background:var(--rare-bg); color:var(--rare);">Rare &middot; 14 Pts</div></div></div>
+    <div class="badge-item"><div class="badge-icon" style="background:var(--rare-bg); color:var(--rare);">&#128172;</div><div class="badge-info"><h5>Diskussionsleiter</h5><div class="req">10 Diskussionen mit 50+ Antworten gestartet</div><div class="rarity-tag" style="background:var(--rare-bg); color:var(--rare);">Rare &middot; 12 Pts</div></div></div>
+  </div>
+
+  <h3 style="color: var(--epic); margin: 1.5rem 0 1rem;">&#128995; Epic Badges (16&ndash;20 Pts)</h3>
+  <div class="badge-grid">
+    <div class="badge-item"><div class="badge-icon" style="background:var(--epic-bg); color:var(--epic);">&#128176;</div><div class="badge-info"><h5>Survey Master</h5><div class="req">500 Umfragen &middot; Eigene Umfragen erstellen</div><div class="rarity-tag" style="background:var(--epic-bg); color:var(--epic);">Epic &middot; 18 Pts</div></div></div>
+    <div class="badge-item"><div class="badge-icon" style="background:var(--epic-bg); color:var(--epic);">&#127793;</div><div class="badge-info"><h5>Mentor</h5><div class="req">10 Mitglieder erfolgreich gementored</div><div class="rarity-tag" style="background:var(--epic-bg); color:var(--epic);">Epic &middot; 17 Pts</div></div></div>
+    <div class="badge-item"><div class="badge-icon" style="background:var(--epic-bg); color:var(--epic);">&#9989;</div><div class="badge-info"><h5>Verifizierte Expertise</h5><div class="req">Peer-verifiziert in 3+ Fachgebieten</div><div class="rarity-tag" style="background:var(--epic-bg); color:var(--epic);">Epic &middot; 19 Pts</div></div></div>
+    <div class="badge-item"><div class="badge-icon" style="background:var(--epic-bg); color:var(--epic);">&#127963;&#65039;</div><div class="badge-info"><h5>Campus Ambassador</h5><div class="req">50+ Einladungen von eigener Hochschule</div><div class="rarity-tag" style="background:var(--epic-bg); color:var(--epic);">Epic &middot; 18 Pts</div></div></div>
+    <div class="badge-item"><div class="badge-icon" style="background:var(--epic-bg); color:var(--epic);">&#128240;</div><div class="badge-info"><h5>Journal Reviewer</h5><div class="req">10 Fachzeitschriften-Reviews ver&ouml;ffentlicht</div><div class="rarity-tag" style="background:var(--epic-bg); color:var(--epic);">Epic &middot; 20 Pts</div></div></div>
+  </div>
+
+  <h3 style="color: var(--legendary); margin: 1.5rem 0 1rem;">&#128992; Legendary Badges (21&ndash;23 Pts)</h3>
+  <div class="badge-grid">
+    <div class="badge-item"><div class="badge-icon" style="background:var(--legendary-bg); color:var(--legendary);">&#127891;</div><div class="badge-info"><h5>Academic Authority</h5><div class="req">50+ Reviews &middot; Top-Reviewer Status</div><div class="rarity-tag" style="background:var(--legendary-bg); color:var(--legendary);">Legendary &middot; 22 Pts</div></div></div>
+    <div class="badge-item"><div class="badge-icon" style="background:var(--legendary-bg); color:var(--legendary);">&#128293;</div><div class="badge-info"><h5>Viral Creator</h5><div class="req">Upload mit 1.000+ Interaktionen</div><div class="rarity-tag" style="background:var(--legendary-bg); color:var(--legendary);">Legendary &middot; 21 Pts</div></div></div>
+    <div class="badge-item"><div class="badge-icon" style="background:var(--legendary-bg); color:var(--legendary);">&#128081;</div><div class="badge-info"><h5>Jahreslegende</h5><div class="req">365-Tage-Streak ohne Unterbrechung</div><div class="rarity-tag" style="background:var(--legendary-bg); color:var(--legendary);">Legendary &middot; 23 Pts</div></div></div>
+    <div class="badge-item"><div class="badge-icon" style="background:var(--legendary-bg); color:var(--legendary);">&#128640;</div><div class="badge-info"><h5>Growth Legend</h5><div class="req">200+ aktive Einladungen &middot; Top 1%</div><div class="rarity-tag" style="background:var(--legendary-bg); color:var(--legendary);">Legendary &middot; 22 Pts</div></div></div>
+  </div>
+
+  <h3 style="color: var(--mythical); margin: 1.5rem 0 1rem;">&#128308; Mythical Badges (24&ndash;25 Pts)</h3>
+  <div class="badge-grid">
+    <div class="badge-item"><div class="badge-icon" style="background:var(--mythical-bg); color:var(--mythical);">&#129504;</div><div class="badge-info"><h5>Thought Leader</h5><div class="req">Top 0.1% in deinem Fachgebiet</div><div class="rarity-tag" style="background:var(--mythical-bg); color:var(--mythical);">Mythical &middot; 25 Pts</div></div></div>
+    <div class="badge-item"><div class="badge-icon" style="background:var(--mythical-bg); color:var(--mythical);">&#127775;</div><div class="badge-info"><h5>Distinguished Scholar</h5><div class="req">Alle 7 Branches auf Level 60+</div><div class="rarity-tag" style="background:var(--mythical-bg); color:var(--mythical);">Mythical &middot; 25 Pts</div></div></div>
+    <div class="badge-item"><div class="badge-icon" style="background:var(--mythical-bg); color:var(--mythical);">&#128142;</div><div class="badge-info"><h5>Diamant-Sammler</h5><div class="req">30+ verschiedene Badges gesammelt</div><div class="rarity-tag" style="background:var(--mythical-bg); color:var(--mythical);">Mythical &middot; 24 Pts</div></div></div>
+  </div>
+
+  <h3 style="color: var(--goat); margin: 1.5rem 0 1rem;">&#128016; GOAT Badge (Manuell / Hall of Fame)</h3>
+  <div class="badge-grid">
+    <div class="badge-item" style="border-color: var(--goat); background: var(--goat-bg);"><div class="badge-icon" style="background:rgba(251,191,36,0.2); color:var(--goat); font-size: 2rem;">&#128016;</div><div class="badge-info"><h5 style="color: var(--goat);">GOAT &ndash; Greatest of All Time</h5><div class="req">Manuell vergeben &middot; Level 99+ &middot; Prestige abgeschlossen &middot; Hall of Fame Aufnahme</div><div class="rarity-tag" style="background:rgba(251,191,36,0.2); color:var(--goat);">GOAT &middot; Hall of Fame</div></div></div>
+  </div>
+
+</div>
+
+<!-- ========================================== -->
+<!-- TAB 5: PRESTIGE                            -->
+<!-- ========================================== -->
+<div id="prestige" class="tab-content">
+
+  <h2 class="section-title"><span class="icon">&#11088;</span> Prestige-System (Level 99+) <span class="line"></span></h2>
+  <p style="color: var(--text-dim); margin-bottom: 1.5rem;">Bei Erreichen von Level 99 wird <strong>99+</strong> angezeigt. Das Mitglied kann in den Prestige-Modus wechseln und eine <strong>permanente Funktion</strong> f&uuml;r immer freischalten &ndash; solange der Account existiert.</p>
+
+  <div class="prestige-section">
+    <h3>&#11088; Prestige-Modus &ndash; Permanente Freischaltungen</h3>
+    <p>Jedes Prestige-Level schaltet <strong>eine permanente Funktion</strong> frei. Das Level wird auf 0 zur&uuml;ckgesetzt, aber alle freigeschalteten Features bleiben f&uuml;r immer erhalten. Der Prestige-Z&auml;hler wird im Profil neben dem Level angezeigt.</p>
+
+    <div class="prestige-grid">
+      <div class="prestige-card">
+        <div class="tier">Prestige I</div>
+        <h4>&#128142; Exklusives Profil-Design</h4>
+        <p>Animated Profile Border &middot; Benutzerdefinierte Farbschemata &middot; Exklusive Profilrahmen die nur Prestige-Mitglieder haben</p>
+      </div>
+      <div class="prestige-card">
+        <div class="tier">Prestige II</div>
+        <h4>&#128200; Erweiterte Analytik</h4>
+        <p>Zugang zu detaillierten Statistiken &uuml;ber eigene Aktivit&auml;t &middot; Fortgeschrittene Insights &middot; Export-Funktion</p>
+      </div>
+      <div class="prestige-card">
+        <div class="tier">Prestige III</div>
+        <h4>&#128176; Premium-Marktforschung</h4>
+        <p>Zugang zu exklusiven, hochdotierten Umfragen &middot; 2x Gutschein-Multiplikator &middot; Fr&uuml;hzeitiger Zugang</p>
+      </div>
+      <div class="prestige-card">
+        <div class="tier">Prestige IV</div>
+        <h4>&#127793; Mentor-Suite</h4>
+        <p>Eigenes Mentor-Dashboard &middot; Sichtbar als offizieller Mentor &middot; Priorit&auml;t bei Matching &middot; Mentoring-Badges</p>
+      </div>
+      <div class="prestige-card">
+        <div class="tier">Prestige V</div>
+        <h4>&#127775; Featured Status</h4>
+        <p>Dauerhafter &bdquo;Featured Researcher&rdquo;-Status &middot; Priorisierte Sichtbarkeit in Suchergebnissen und Empfehlungen</p>
+      </div>
+      <div class="prestige-card">
+        <div class="tier">Prestige VI</div>
+        <h4>&#129504; Content-Creation Studio</h4>
+        <p>Erweiterte Tools zum Erstellen von Quizzen, Umfragen und interaktivem Content &middot; Eigene Template-Bibliothek</p>
+      </div>
+      <div class="prestige-card">
+        <div class="tier">Prestige VII</div>
+        <h4>&#128274; API-Zugang</h4>
+        <p>Pers&ouml;nlicher API-Zugang f&uuml;r Datenexport &middot; Eigene Integrationen &middot; Entwickler-Tools</p>
+      </div>
+      <div class="prestige-card">
+        <div class="tier">Prestige VIII</div>
+        <h4>&#127963;&#65039; Eigene Community</h4>
+        <p>Erstelle eigene Sub-Communities &middot; Private Foren &middot; Eigene Einladungscodes &middot; Community-Management-Tools</p>
+      </div>
+      <div class="prestige-card">
+        <div class="tier">Prestige IX</div>
+        <h4>&#128081; VIP-Netzwerk</h4>
+        <p>Zugang zum exklusiven VIP-Netzwerk &middot; Direkte Kontakte zu Industriepartnern &middot; Exklusive Events</p>
+      </div>
+      <div class="prestige-card">
+        <div class="tier">Prestige X &ndash; MAX</div>
+        <h4>&#128016; GOAT &ndash; Hall of Fame</h4>
+        <p>Permanenter GOAT-Status &middot; Hall of Fame Eintrag &middot; Alle Features freigeschalten &middot; Eigene Challenges f&uuml;r die Community erstellen</p>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title"><span class="icon">&#128202;</span> Prestige-Mechanik im Detail <span class="line"></span></h2>
+
+  <table class="data-table">
+    <thead>
+      <tr><th>Aspekt</th><th>Details</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Ausl&ouml;ser</strong></td><td>Level 99 erreicht &rarr; Anzeige &bdquo;99+&rdquo; &rarr; Option: Prestige-Modus starten</td></tr>
+      <tr><td><strong>Reset</strong></td><td>Level wird auf 0 zur&uuml;ckgesetzt &middot; Alle Badges bleiben erhalten &middot; XP-Multiplikator steigt</td></tr>
+      <tr><td><strong>XP-Multiplikator</strong></td><td>Prestige I: 1.1x &middot; II: 1.2x &middot; III: 1.35x &middot; ... &middot; X: 2.5x</td></tr>
+      <tr><td><strong>Profil-Anzeige</strong></td><td>&bdquo;Level 42 &#11088;III&rdquo; &ndash; zeigt aktuelles Level + Prestige-Stufe</td></tr>
+      <tr><td><strong>Feature-Unlock</strong></td><td>Permanent &middot; Zeitlich unlimitiert &middot; Solange Account aktiv ist</td></tr>
+      <tr><td><strong>Stackbar</strong></td><td>Nur h&ouml;chstes Level wird angezeigt &middot; Prestige-Stern zeigt Erfahrung</td></tr>
+      <tr><td><strong>Teilbar</strong></td><td>LinkedIn-&auml;hnlicher Share &middot; Profil &ouml;ffentlich teilbar &middot; Embed-Code</td></tr>
+    </tbody>
+  </table>
+
+</div>
+
+<!-- ========================================== -->
+<!-- TAB 6: ZIELGRUPPEN                         -->
+<!-- ========================================== -->
+<div id="zielgruppen" class="tab-content">
+
+  <h2 class="section-title"><span class="icon">&#127919;</span> Zielgruppen <span class="line"></span></h2>
+
+  <div class="zielgruppen-grid">
+
+    <div class="zg-card">
+      <div class="zg-header"><span class="zg-icon">&#128100;</span> Personen <span class="dot-menu">&#8942;</span></div>
+      <ul>
+        <li>Schueler &amp; Abiturienten</li>
+        <li>Studieninteressierte</li>
+        <li>Berufstaetige (Weiterbildung)</li>
+        <li>Studiumabbrecher</li>
+        <li>Eltern</li>
+      </ul>
+    </div>
+
+    <div class="zg-card">
+      <div class="zg-header"><span class="zg-icon">&#127891;</span> Studierende <span class="dot-menu">&#8942;</span></div>
+      <ul>
+        <li>Bachelor</li>
+        <li>Master</li>
+        <li>MBA</li>
+        <li>Staatsexamen</li>
+        <li>Diplom</li>
+        <li>PhD</li>
+      </ul>
+    </div>
+
+    <div class="zg-card">
+      <div class="zg-header"><span class="zg-icon">&#127979;</span> EduMitarbeiter <span class="dot-menu">&#8942;</span></div>
+      <ul>
+        <li>Hochschulleitung &amp; Gremien</li>
+        <li>Fakultaetsleitung</li>
+        <li>Wissenschaftliches Personal</li>
+        <li>Verwaltung &amp; Technik</li>
+        <li>Studentische Beschaeftigte</li>
+      </ul>
+    </div>
+
+    <div class="zg-card">
+      <div class="zg-header"><span class="zg-icon">&#127963;&#65039;</span> Bildungseinrichtungen <span class="dot-menu">&#8942;</span></div>
+      <ul>
+        <li>Universitaeten</li>
+        <li>Fachhochschulen</li>
+        <li>Technische Hochschulen</li>
+        <li>Kunst- &amp; Musikhochschulen</li>
+        <li>Private Hochschulen</li>
+        <li>Duale Hochschulen</li>
+      </ul>
+    </div>
+
+    <div class="zg-card">
+      <div class="zg-header"><span class="zg-icon">&#128182;</span> Stiftungen &amp; Foerderanstalten <span class="dot-menu">&#8942;</span></div>
+      <ul>
+        <li>Studienstiftung des dt. Volkes</li>
+        <li>DAAD</li>
+        <li>DFG</li>
+        <li>Parteinahe Stiftungen (KAS, FES, HBS...)</li>
+        <li>Private Stiftungen</li>
+        <li>Foerderprogramme (BAFoeG-Aemter, KfW)</li>
+      </ul>
+    </div>
+
+    <div class="zg-card">
+      <div class="zg-header"><span class="zg-icon">&#127970;</span> Unternehmen <span class="dot-menu">&#8942;</span></div>
+      <ul>
+        <li>Technologie &amp; IT</li>
+        <li>Beratung &amp; Wirtschaftspruefung</li>
+        <li>Finanz- &amp; Versicherungswesen</li>
+        <li>Pharma &amp; Gesundheit</li>
+        <li>Automobil &amp; Maschinenbau</li>
+        <li>Energie &amp; Umwelt</li>
+        <li>Medien &amp; Kommunikation</li>
+        <li>Handel &amp; Konsumgueter</li>
+        <li>Bau &amp; Immobilien</li>
+        <li>Recht &amp; Kanzleien</li>
+        <li>Bildung &amp; EdTech</li>
+        <li>Luft- &amp; Raumfahrt</li>
+      </ul>
+    </div>
+
+    <div class="zg-card">
+      <div class="zg-header"><span class="zg-icon">&#127963;&#65039;</span> Regierungen <span class="dot-menu">&#8942;</span></div>
+      <ul>
+        <li class="zg-sub">Ministerien</li>
+        <li>Bildungs- &amp; Forschungsministerium (BMBF)</li>
+        <li>Wirtschaftsministerium</li>
+        <li>Arbeits- &amp; Sozialministerium</li>
+        <li>Gesundheitsministerium</li>
+        <li>Innenministerium</li>
+        <li>Auswaertiges Amt</li>
+        <li>Finanzministerium</li>
+        <li>Justizministerium</li>
+        <li>Landesministerien (Bildung, Wissenschaft)</li>
+        <li class="zg-sub">Militaer</li>
+        <li>Bundeswehr</li>
+        <li>Universitaet der Bundeswehr</li>
+        <li>Militaerische Forschungseinrichtungen</li>
+        <li>NATO-Bildungsprogramme</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <h2 class="section-title"><span class="icon">&#128200;</span> Zielgruppen-spezifische Skill-Pfad-Empfehlungen <span class="line"></span></h2>
+
+  <table class="data-table">
+    <thead>
+      <tr><th>Zielgruppe</th><th>Prim&auml;rer Branch</th><th>Sekund&auml;rer Branch</th><th>Haupt-Motivation (Maslow)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Schueler / Studieninteressierte</td><td>&#128176; Earning</td><td>&#128293; Engagement</td><td>&#10102; Grundbed&uuml;rfnisse (Taschengeld)</td></tr>
+      <tr><td>Bachelor / Master</td><td>&#128176; Earning</td><td>&#128214; Academic Review</td><td>&#10102;&#10103; Sicherheit + Geld</td></tr>
+      <tr><td>PhD / Wissenschaftler</td><td>&#128214; Academic Review</td><td>&#129504; Knowledge</td><td>&#10105;&#10106; Anerkennung + Selbstverwirklichung</td></tr>
+      <tr><td>Berufstaetige</td><td>&#129504; Knowledge</td><td>&#129309; Community</td><td>&#10104;&#10105; Zugeh&ouml;rigkeit + Anerkennung</td></tr>
+      <tr><td>EduMitarbeiter</td><td>&#129309; Community</td><td>&#128214; Academic Review</td><td>&#10105; Anerkennung</td></tr>
+      <tr><td>Bildungseinrichtungen</td><td>&#128640; Growth</td><td>&#129309; Community</td><td>&#10105;&#10106; Reputation + Wachstum</td></tr>
+      <tr><td>Unternehmen</td><td>&#128640; Growth</td><td>&#127912; Content</td><td>&#10104;&#10105; Talent-Zugang + Branding</td></tr>
+      <tr><td>Stiftungen</td><td>&#129309; Community</td><td>&#129504; Knowledge</td><td>&#10106; Impact + Mission</td></tr>
+    </tbody>
+  </table>
+
+</div>
+
+<!-- ========================================== -->
+<!-- TAB 7: KONFIGURATION                       -->
+<!-- ========================================== -->
+<div id="config" class="tab-content">
+
+  <h2 class="section-title"><span class="icon">&#9881;&#65039;</span> Technische Konfiguration <span class="line"></span></h2>
+
+  <h3 style="color: var(--accent); margin: 1rem 0;">XP-Formel pro Level</h3>
+  <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; font-family: monospace;">
+    <div style="color: var(--text-dim); margin-bottom: 0.5rem;">// XP ben&ouml;tigt f&uuml;r Level n</div>
+    <div style="color: var(--accent); font-size: 1.1rem;">xp_required(n) = floor(100 * (1.08 ^ n) + 50 * n)</div>
+    <br>
+    <div style="color: var(--text-dim);">// Beispiele:</div>
+    <div>Level 1: 158 XP &middot; Level 10: 716 XP &middot; Level 25: 2.592 XP</div>
+    <div>Level 50: 14.689 XP &middot; Level 75: 76.914 XP &middot; Level 99: 384.951 XP</div>
+    <br>
+    <div style="color: var(--text-dim);">// Gesamt-XP f&uuml;r Level 99:</div>
+    <div style="color: var(--mythical); font-weight: 700;">Total: ~4.850.000 XP</div>
+  </div>
+
+  <h3 style="color: var(--accent); margin: 1rem 0;">Score-Rarity Mapping</h3>
+  <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; font-family: monospace;">
+    <div style="color: var(--text-dim);">// Jede Einreichung speichert:</div>
+    <div>{ score: 0&ndash;25, rarity: "common"|...|"mythical", is_goat: boolean }</div>
+    <br>
+    <div><span style="color:var(--common);">Common</span>: score 0&ndash;5</div>
+    <div><span style="color:var(--uncommon);">Uncommon</span>: score 6&ndash;10</div>
+    <div><span style="color:var(--rare);">Rare</span>: score 11&ndash;15</div>
+    <div><span style="color:var(--epic);">Epic</span>: score 16&ndash;20</div>
+    <div><span style="color:var(--legendary);">Legendary</span>: score 21&ndash;23</div>
+    <div><span style="color:var(--mythical);">Mythical</span>: score 24&ndash;25</div>
+    <div><span style="color:var(--goat);">GOAT</span>: is_goat = true (manuell / HoF)</div>
+    <br>
+    <div style="color: var(--text-dim);">// Profil zeigt nur den h&ouml;chsten Wert (stackbar)</div>
+    <div style="color: var(--accent);">displayed_rarity = max(all_submissions.score)</div>
+  </div>
+
+  <h3 style="color: var(--accent); margin: 1rem 0;">Prestige XP-Multiplikator</h3>
+  <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; font-family: monospace;">
+    <div style="color: var(--text-dim);">// Multiplikator pro Prestige-Stufe</div>
+    <div style="color: var(--accent);">multiplier(p) = 1.0 + (p * 0.15)</div>
+    <br>
+    <div>Prestige I: 1.15x &middot; II: 1.30x &middot; III: 1.45x &middot; IV: 1.60x &middot; V: 1.75x</div>
+    <div>Prestige VI: 1.90x &middot; VII: 2.05x &middot; VIII: 2.20x &middot; IX: 2.35x &middot; X: 2.50x</div>
+  </div>
+
+  <h3 style="color: var(--accent); margin: 1rem 0;">Streak-Bonus-Formel</h3>
+  <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; font-family: monospace;">
+    <div style="color: var(--text-dim);">// T&auml;glicher Streak-Bonus</div>
+    <div style="color: var(--accent);">streak_xp(day) = 20 + min(day * 5, 200)</div>
+    <br>
+    <div>Tag 1: 25 XP &middot; Tag 7: 55 XP &middot; Tag 30: 170 XP &middot; Tag 40+: 220 XP (cap)</div>
+  </div>
+
+  <h3 style="color: var(--accent); margin: 1rem 0;">Datenmodell (Kurzfassung)</h3>
+  <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; font-family: monospace; overflow-x: auto;">
+<pre style="color: var(--text); margin: 0;">
+User {
+  id, name, email, avatar
+  level: 0..99           // aktuelles Level
+  display_level: "42"    // oder "99+"
+  total_xp: number
+  current_level_xp: number
+  prestige: 0..10        // Prestige-Stufe
+  prestige_unlocks: []   // freigeschaltete Features
+  highest_rarity: string // "common".."goat"
+  highest_score: 0..25
+  streak_days: number
+  streak_freeze: number
+  badges: [BadgeRef]
+  branches: {
+    earning: { level, xp },
+    content: { level, xp },
+    review:  { level, xp },
+    community: { level, xp },
+    growth:  { level, xp },
+    engagement: { level, xp },
+    knowledge: { level, xp }
+  }
+  zielgruppe: string     // z.B. "studierende_master"
+  share_public: boolean  // LinkedIn-like sharing
+}
+
+Badge {
+  id, name, icon, description
+  rarity: "common"|"uncommon"|"rare"|"epic"|"legendary"|"mythical"|"goat"
+  score: 0..25
+  requirement: string
+  branch: string
+  maslow_level: 1..5
+}
+
+Submission {
+  id, user_id, type, timestamp
+  score: 0..25
+  rarity: string
+  is_goat: boolean
+}
+</pre>
+  </div>
+
+</div>
+
+</div><!-- /container -->
+
+<footer style="text-align:center; padding:2rem; color:var(--text-dim); font-size:0.85rem; border-top:1px solid var(--border);">
+  Academify Skill-Tree System &middot; Gamification-Architektur v1.0 &middot; 2026<br>
+  7 Branches &middot; 50+ Badges &middot; Level 0&ndash;99+ &middot; 10 Prestige-Stufen &middot; Maslow-integriert
+</footer>
+
+<script>
+function openTab(evt, tabId) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  evt.currentTarget.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>

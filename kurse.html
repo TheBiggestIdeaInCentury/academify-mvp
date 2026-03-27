@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Academify — Online-Kurse</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0e14;--surface:#13141c;--surface2:#1a1b26;--surface3:#1f2030;
+  --border:rgba(255,255,255,0.06);--border-hover:rgba(255,255,255,0.13);
+  --accent:#7c6dfa;--accent2:#a78bfa;--text:#e8e6f0;--muted:#6b6880;--muted2:#4a4860;
+  --success:#4ade80;--warn:#fbbf24;--info:#38bdf8;--coral:#f87171;
+}
+html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text)}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(124,109,250,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(124,109,250,0.02) 1px,transparent 1px);background-size:44px 44px;pointer-events:none}
+
+/* ── LAYOUT ── */
+.shell{display:flex;height:100vh;position:relative;z-index:1}
+.sidebar{width:220px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{display:flex;align-items:center;gap:12px;padding:.85rem 1.5rem;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--surface)}
+.content{flex:1;overflow-y:auto;padding:1.4rem 1.6rem}
+.content::-webkit-scrollbar{width:4px}
+.content::-webkit-scrollbar-thumb{background:var(--muted2);border-radius:2px}
+
+/* ── SIDEBAR ── */
+.logo{display:flex;align-items:center;gap:9px;padding:1.2rem 1.1rem .9rem;border-bottom:1px solid var(--border);font-family:'DM Serif Display',serif;font-size:17px}
+.logo-mark{width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.logo span{color:var(--accent2)}
+.nav-sec{padding:.5rem .7rem .2rem}
+.nav-sec-label{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted2);padding:.3rem .5rem .15rem}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:8px;cursor:pointer;font-size:12px;color:var(--muted);transition:all .18s;user-select:none;margin-bottom:1px;position:relative}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:rgba(124,109,250,0.1);color:var(--accent2)}
+.nav-item.active::before{content:'';position:absolute;left:0;top:20%;height:60%;width:2.5px;background:var(--accent);border-radius:0 2px 2px 0}
+.nav-icon{font-size:13px;width:16px;text-align:center;flex-shrink:0}
+.nav-badge{margin-left:auto;font-size:9px;padding:1px 6px;border-radius:100px;background:rgba(124,109,250,0.15);color:var(--accent2)}
+.sidebar-footer{margin-top:auto;padding:.8rem .7rem;border-top:1px solid var(--border)}
+.user-row{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:9px;cursor:pointer;transition:background .18s}
+.user-row:hover{background:var(--surface2)}
+.user-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
+
+/* ── TOPBAR ── */
+.topbar-title{font-family:'DM Serif Display',serif;font-size:18px;font-weight:400}
+.topbar-title em{font-style:italic;color:var(--accent2)}
+.tab-row{display:flex;gap:3px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:3px;margin-left:1rem}
+.tab{padding:5px 14px;border-radius:6px;font-size:11px;cursor:pointer;color:var(--muted);transition:all .18s;user-select:none;white-space:nowrap}
+.tab.active{background:var(--accent);color:#fff}
+.tab:hover:not(.active){color:var(--text)}
+.topbar-right{margin-left:auto;display:flex;gap:8px;align-items:center}
+.btn-primary{padding:8px 16px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:9px;color:#fff;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:opacity .2s,transform .15s}
+.btn-primary:hover{opacity:.87;transform:translateY(-1px)}
+.btn-ghost{padding:7px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;font-size:12px;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s}
+.btn-ghost:hover{border-color:var(--border-hover);color:var(--text)}
+
+/* ── PAGES ── */
+.page{display:none}
+.page.active{display:block;animation:fadeIn .22s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── CARDS ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:1.1rem 1.2rem}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem}
+.card-title{font-size:12px;font-weight:500}
+.card-action{font-size:11px;color:var(--accent2);cursor:pointer;transition:opacity .2s}
+.card-action:hover{opacity:.7}
+
+/* ── STATS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.3rem}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem;transition:border-color .2s,transform .15s;cursor:default}
+.stat:hover{border-color:var(--border-hover);transform:translateY(-1px)}
+.stat-icon{font-size:16px;margin-bottom:.4rem}
+.stat-val{font-family:'DM Serif Display',serif;font-size:22px;line-height:1;margin-bottom:2px}
+.stat-label{font-size:10px;color:var(--muted)}
+.stat-delta{font-size:10px;margin-top:4px}
+.delta-up{color:var(--success)}.delta-warn{color:var(--warn)}
+
+/* ── COURSE CARDS ── */
+.courses-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.3rem}
+.course-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;transition:border-color .2s,transform .18s}
+.course-card:hover{border-color:var(--border-hover);transform:translateY(-2px)}
+.course-thumb{height:110px;display:flex;align-items:center;justify-content:center;font-size:40px;position:relative;flex-shrink:0}
+.course-thumb-overlay{position:absolute;inset:0;display:flex;align-items:flex-start;justify-content:flex-end;padding:8px}
+.course-status{font-size:9px;padding:2px 8px;border-radius:100px}
+.status-live{background:rgba(74,222,128,0.15);color:var(--success);border:1px solid rgba(74,222,128,0.25)}
+.status-draft{background:rgba(107,128,153,0.15);color:var(--muted);border:1px solid rgba(107,128,153,0.2)}
+.status-review{background:rgba(251,191,36,0.12);color:var(--warn);border:1px solid rgba(251,191,36,0.2)}
+.status-sponsored{background:rgba(56,189,248,0.12);color:var(--info);border:1px solid rgba(56,189,248,0.2)}
+.course-body{padding:.9rem 1rem}
+.course-title{font-size:13px;font-weight:500;margin-bottom:3px;line-height:1.3}
+.course-sub{font-size:11px;color:var(--muted);margin-bottom:.6rem}
+.course-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:.7rem}
+.course-pill{font-size:9px;padding:2px 7px;border-radius:100px;background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
+.course-stats{display:flex;gap:10px;font-size:10px;color:var(--muted);margin-bottom:.8rem}
+.course-progress{height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;margin-bottom:.8rem}
+.course-progress-fill{height:100%;border-radius:2px}
+.course-actions{display:flex;gap:6px}
+.btn-xs{padding:5px 11px;border-radius:7px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;border:none}
+.btn-xs-primary{background:rgba(124,109,250,0.12);color:var(--accent2);border:1px solid rgba(124,109,250,0.2)}
+.btn-xs-primary:hover{background:rgba(124,109,250,0.2)}
+.btn-xs-ghost{background:var(--surface2);color:var(--muted);border:1px solid var(--border)}
+.btn-xs-ghost:hover{border-color:var(--border-hover);color:var(--text)}
+.btn-xs-danger{background:rgba(248,113,113,0.08);color:var(--coral);border:1px solid rgba(248,113,113,0.15)}
+.btn-xs-danger:hover{background:rgba(248,113,113,0.15)}
+
+/* ── MODAL OVERLAY ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);z-index:1000;display:none;align-items:center;justify-content:center;padding:1rem}
+.overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;width:100%;max-width:680px;max-height:90vh;overflow-y:auto;position:relative;animation:modalIn .25s ease}
+.modal::-webkit-scrollbar{width:4px}
+.modal::-webkit-scrollbar-thumb{background:var(--muted2);border-radius:2px}
+@keyframes modalIn{from{opacity:0;transform:scale(.96) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:1.3rem 1.5rem 0}
+.modal-title{font-family:'DM Serif Display',serif;font-size:20px;font-weight:400}
+.modal-title em{font-style:italic;color:var(--accent2)}
+.modal-close{width:30px;height:30px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:var(--muted);transition:all .18s;flex-shrink:0}
+.modal-close:hover{border-color:var(--border-hover);color:var(--text)}
+.modal-body{padding:1.2rem 1.5rem 1.5rem}
+
+/* ── FORM FIELDS ── */
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.field .req{color:var(--accent2)}
+.field input,.field select,.field textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px 13px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s;appearance:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,109,250,0.1)}
+.field input::placeholder,.field textarea::placeholder{color:var(--muted)}
+.field textarea{resize:none;min-height:80px;line-height:1.5}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.select-wrap{position:relative}
+.select-wrap::after{content:'↓';position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:11px;pointer-events:none}
+.field-hint{font-size:11px;color:var(--muted2);margin-top:4px;line-height:1.5}
+.char-count{font-size:10px;color:var(--muted2);text-align:right;margin-top:3px}
+
+/* ── STEPS ── */
+.steps{display:flex;gap:0;margin-bottom:1.5rem;position:relative}
+.steps::before{content:'';position:absolute;top:14px;left:0;right:0;height:1.5px;background:var(--border);z-index:0}
+.step{display:flex;flex-direction:column;align-items:center;flex:1;position:relative;z-index:1}
+.step-circle{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted);transition:all .3s}
+.step.active .step-circle{border-color:var(--accent);background:rgba(124,109,250,0.12);color:var(--accent2)}
+.step.done .step-circle{border-color:var(--success);background:rgba(74,222,128,0.1);color:var(--success);font-size:13px}
+.step-label{font-size:9px;color:var(--muted);margin-top:4px;letter-spacing:.03em}
+.step.active .step-label{color:var(--accent2)}
+.step.done .step-label{color:var(--success)}
+.step-content{display:none}
+.step-content.active{display:block;animation:fadeIn .2s ease}
+
+/* ── MODULE EDITOR ── */
+.module-list{display:flex;flex-direction:column;gap:7px;margin-bottom:.9rem}
+.module-item{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 13px;display:flex;align-items:center;gap:10px;cursor:grab;transition:border-color .2s}
+.module-item:hover{border-color:var(--border-hover)}
+.module-drag{color:var(--muted2);font-size:14px;cursor:grab;flex-shrink:0}
+.module-num{width:22px;height:22px;border-radius:50%;background:rgba(124,109,250,0.1);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--accent2);flex-shrink:0;font-weight:500}
+.module-info{flex:1;min-width:0}
+.module-title{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.module-meta{font-size:10px;color:var(--muted)}
+.module-actions{display:flex;gap:5px;flex-shrink:0}
+.add-module-btn{width:100%;padding:9px;border:1px dashed var(--border);border-radius:10px;background:none;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.add-module-btn:hover{border-color:var(--accent);color:var(--accent2);background:rgba(124,109,250,0.04)}
+
+/* ── PRICING CARDS ── */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem}
+.price-card{background:var(--surface2);border:1.5px solid var(--border);border-radius:11px;padding:12px;cursor:pointer;transition:all .2s;text-align:center;user-select:none}
+.price-card:hover{border-color:var(--border-hover);transform:translateY(-1px)}
+.price-card.selected{border-color:var(--accent);background:rgba(124,109,250,0.06)}
+.price-val{font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:2px}
+.price-label{font-size:10px;color:var(--muted)}
+
+/* ── PROGRESS BAR ── */
+.bar-chart{display:flex;flex-direction:column;gap:6px}
+.bar-row{display:flex;align-items:center;gap:8px}
+.bar-label{font-size:11px;color:var(--muted);width:140px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{flex:1;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px}
+.bar-val{font-size:10px;color:var(--muted);width:36px;text-align:right;flex-shrink:0}
+
+/* ── LESSON MODAL ── */
+.lesson-list{display:flex;flex-direction:column;gap:5px}
+.lesson-item{display:flex;align-items:center;gap:9px;padding:9px 11px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;cursor:pointer;transition:border-color .2s}
+.lesson-item:hover{border-color:var(--border-hover)}
+.lesson-type{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.lesson-info{flex:1;min-width:0}
+.lesson-title{font-size:12px;font-weight:500}
+.lesson-dur{font-size:10px;color:var(--muted)}
+.lesson-done{font-size:12px;margin-left:auto;flex-shrink:0}
+
+/* ── RATING STARS ── */
+.stars{display:flex;gap:2px;cursor:pointer}
+.star{font-size:14px;color:var(--muted2);transition:color .15s}
+.star.filled{color:var(--warn)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:11px 16px;font-size:12px;color:var(--text);z-index:9999;display:flex;align-items:center;gap:8px;animation:toastIn .3s ease;max-width:320px}
+@keyframes toastIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.toast.success{border-color:rgba(74,222,128,0.3)}
+.toast.error{border-color:rgba(248,113,113,0.3)}
+
+/* ── TAG INPUT ── */
+.tag-wrap{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:7px 9px;display:flex;flex-wrap:wrap;gap:5px;cursor:text;transition:border-color .2s}
+.tag-wrap:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,109,250,0.1)}
+.tag{display:flex;align-items:center;gap:4px;padding:2px 9px;background:rgba(124,109,250,0.12);border:1px solid rgba(124,109,250,0.2);border-radius:100px;font-size:11px;color:var(--accent2)}
+.tag-del{cursor:pointer;opacity:.6;font-size:11px}
+.tag-del:hover{opacity:1}
+.tag-input{background:none;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);min-width:100px;padding:2px 4px}
+.tag-input::placeholder{color:var(--muted)}
+
+/* ── DIVIDER ── */
+.divider{display:flex;align-items:center;gap:10px;margin:1.1rem 0;color:var(--muted2);font-size:11px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ── TABLE ── */
+.tbl-head{display:grid;gap:8px;padding:6px 9px;font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted2);border-bottom:1px solid var(--border)}
+.tbl-row{display:grid;gap:8px;padding:9px 9px;border-bottom:1px solid var(--border);font-size:11px;color:var(--muted);transition:background .15s;cursor:pointer}
+.tbl-row:hover{background:var(--surface2)}
+.tbl-row:last-child{border-bottom:none}
+
+/* ── RATING BAR ── */
+.rating-dist{display:flex;flex-direction:column;gap:4px}
+.rating-row{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
+.rating-track{flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden}
+.rating-fill{height:100%;border-radius:2px;background:var(--warn)}
+
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--muted)}
+.empty-icon{font-size:40px;margin-bottom:.8rem}
+.empty-title{font-size:14px;font-weight:500;color:var(--text);margin-bottom:.4rem}
+.empty-sub{font-size:12px;line-height:1.6}
+
+/* ── INFO NOTE ── */
+.info-note{background:rgba(56,189,248,0.05);border:1px solid rgba(56,189,248,0.14);border-radius:9px;padding:10px 13px;font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:1rem;display:flex;gap:9px}
+.success-note{background:rgba(74,222,128,0.05);border:1px solid rgba(74,222,128,0.15);border-radius:9px;padding:10px 13px;font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:1rem;display:flex;gap:9px}
+
+/* ── SLIDER ── */
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;background:var(--surface2);border-radius:2px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg)}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar">
+  <div class="logo"><div class="logo-mark">🎓</div>Acade<span>mify</span></div>
+  <div class="nav-sec">
+    <div class="nav-sec-label">Hauptmenü</div>
+    <div class="nav-item" onclick="void(0)"><span class="nav-icon">⊞</span>Dashboard</div>
+    <div class="nav-item" onclick="void(0)"><span class="nav-icon">💬</span>Nachrichten</div>
+    <div class="nav-item" onclick="void(0)"><span class="nav-icon">👥</span>Profil & Freunde</div>
+  </div>
+  <div class="nav-sec">
+    <div class="nav-sec-label">Lernen</div>
+    <div class="nav-item active"><span class="nav-icon">📖</span>Online-Kurse<span class="nav-badge">3</span></div>
+    <div class="nav-item" onclick="void(0)"><span class="nav-icon">🎓</span>Nachhilfe</div>
+    <div class="nav-item" onclick="void(0)"><span class="nav-icon">📄</span>StudyDocs</div>
+  </div>
+  <div class="nav-sec">
+    <div class="nav-sec-label">Campus</div>
+    <div class="nav-item" onclick="void(0)"><span class="nav-icon">🏫</span>CampusLeben</div>
+    <div class="nav-item" onclick="void(0)"><span class="nav-icon">🗺️</span>Community-Karte</div>
+    <div class="nav-item" onclick="void(0)"><span class="nav-icon">🚗</span>StudyRide</div>
+  </div>
+  <div class="nav-sec">
+    <div class="nav-sec-label">Karriere</div>
+    <div class="nav-item" onclick="void(0)"><span class="nav-icon">💼</span>Jobs & Praktika</div>
+    <div class="nav-item" onclick="void(0)"><span class="nav-icon">👕</span>Merch-Shop</div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-row">
+      <div class="user-av">MM</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Max Müller</div>
+        <div style="font-size:10px;color:var(--muted)">WiPsy B.Sc. · Sem. 1</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-title">Online-<em>Kurse</em></div>
+    <div class="tab-row">
+      <div class="tab active" onclick="switchTab('meine',this)">Meine Kurse</div>
+      <div class="tab" onclick="switchTab('entdecken',this)">Entdecken</div>
+      <div class="tab" onclick="switchTab('erstellen',this)">Kurs erstellen</div>
+      <div class="tab" onclick="switchTab('verwalten',this)">Verwaltung</div>
+      <div class="tab" onclick="switchTab('analytics',this)">Analytics</div>
+    </div>
+    <div class="topbar-right">
+      <button class="btn-ghost" onclick="showToast('🔍 Suche wird geöffnet...','info')">🔍 Suchen</button>
+      <button class="btn-primary" onclick="openCreateModal()">+ Kurs erstellen</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══ MEINE KURSE ══ -->
+    <div class="page active" id="page-meine">
+      <div class="stats-grid">
+        <div class="stat"><div class="stat-icon">📖</div><div class="stat-val" style="color:var(--accent2)">3</div><div class="stat-label">Laufende Kurse</div><div class="stat-delta delta-up">↑ 1 neu diese Woche</div></div>
+        <div class="stat"><div class="stat-icon">✅</div><div class="stat-val" style="color:var(--success)">2</div><div class="stat-label">Abgeschlossen</div><div class="stat-delta delta-up">↑ Zertifikate erhalten</div></div>
+        <div class="stat"><div class="stat-icon">⏱️</div><div class="stat-val" style="color:var(--warn)">14h</div><div class="stat-label">Lernzeit gesamt</div><div class="stat-delta delta-up">↑ +2h diese Woche</div></div>
+        <div class="stat"><div class="stat-icon">🏆</div><div class="stat-val" style="color:var(--coral)">3</div><div class="stat-label">Zertifikate</div><div class="stat-delta">in deinem Profil</div></div>
+      </div>
+
+      <!-- Laufende Kurse -->
+      <div class="card" style="margin-bottom:1.2rem">
+        <div class="card-head"><span class="card-title">▶ Weitermachen</span><span class="card-action" onclick="showToast('Alle Kurse werden angezeigt','info')">Alle ansehen →</span></div>
+        <div style="display:flex;flex-direction:column;gap:0">
+
+          <!-- Kurs 1 -->
+          <div style="display:flex;gap:13px;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer" onclick="openCoursePlayer('Problem Solving für Studenten','McKinsey & Company',68,'🧠','#7c6dfa')">
+            <div style="width:54px;height:54px;border-radius:10px;background:rgba(124,109,250,0.12);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🧠</div>
+            <div style="flex:1">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+                <div style="font-size:13px;font-weight:500">Problem Solving für Studenten</div>
+                <span style="font-size:9px;padding:1px 7px;border-radius:100px;background:rgba(56,189,248,0.1);color:var(--info)">Gesponsert · McKinsey</span>
+              </div>
+              <div style="font-size:11px;color:var(--muted);margin-bottom:7px">Lektion 14 von 21 · Kapitel 3: Strukturiertes Denken · ~3h verbleibend</div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden"><div style="width:68%;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px"></div></div>
+                <span style="font-size:11px;color:var(--accent2);font-weight:500;flex-shrink:0">68%</span>
+                <button class="btn-xs btn-xs-primary" onclick="event.stopPropagation();openCoursePlayer('Problem Solving für Studenten','McKinsey & Company',68,'🧠','#7c6dfa')">▶ Weiter</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Kurs 2 -->
+          <div style="display:flex;gap:13px;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer" onclick="openCoursePlayer('Statistik mit SPSS','Prof. Dr. Weber',34,'📊','#38bdf8')">
+            <div style="width:54px;height:54px;border-radius:10px;background:rgba(56,189,248,0.1);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">📊</div>
+            <div style="flex:1">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+                <div style="font-size:13px;font-weight:500">Statistik mit SPSS — Grundkurs</div>
+                <span style="font-size:9px;padding:1px 7px;border-radius:100px;background:rgba(251,191,36,0.1);color:var(--warn)">29€</span>
+              </div>
+              <div style="font-size:11px;color:var(--muted);margin-bottom:7px">Lektion 7 von 20 · Kapitel 2: Deskriptive Statistik · ~6h verbleibend</div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden"><div style="width:34%;height:100%;background:linear-gradient(90deg,var(--info),#0ea5e9);border-radius:2px"></div></div>
+                <span style="font-size:11px;color:var(--info);font-weight:500;flex-shrink:0">34%</span>
+                <button class="btn-xs btn-xs-primary" onclick="event.stopPropagation();openCoursePlayer('Statistik mit SPSS','Prof. Dr. Weber',34,'📊','#38bdf8')">▶ Weiter</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Kurs 3 -->
+          <div style="display:flex;gap:13px;padding:12px 0;cursor:pointer" onclick="openCoursePlayer('Einführung in die Psychologie','Academify',12,'🧬','#4ade80')">
+            <div style="width:54px;height:54px;border-radius:10px;background:rgba(74,222,128,0.1);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🧬</div>
+            <div style="flex:1">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+                <div style="font-size:13px;font-weight:500">Einführung in die Psychologie</div>
+                <span style="font-size:9px;padding:1px 7px;border-radius:100px;background:rgba(74,222,128,0.1);color:var(--success)">Kostenlos</span>
+              </div>
+              <div style="font-size:11px;color:var(--muted);margin-bottom:7px">Lektion 2 von 18 · Kapitel 1: Geschichte der Psychologie · ~9h verbleibend</div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden"><div style="width:12%;height:100%;background:linear-gradient(90deg,var(--success),#22c55e);border-radius:2px"></div></div>
+                <span style="font-size:11px;color:var(--success);font-weight:500;flex-shrink:0">12%</span>
+                <button class="btn-xs btn-xs-primary" onclick="event.stopPropagation();openCoursePlayer('Einführung in die Psychologie','Academify',12,'🧬','#4ade80')">▶ Weiter</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Abgeschlossene Kurse -->
+      <div class="card">
+        <div class="card-head"><span class="card-title">🏆 Abgeschlossene Kurse</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:11px 13px;display:flex;gap:10px;align-items:center">
+            <div style="font-size:24px">🖥️</div>
+            <div style="flex:1">
+              <div style="font-size:12px;font-weight:500;margin-bottom:2px">Excel Komplettkurs</div>
+              <div style="font-size:10px;color:var(--muted);margin-bottom:5px">Abgeschlossen am 12.02.2025</div>
+              <button class="btn-xs btn-xs-ghost" onclick="openCertModal('Excel Komplettkurs')">🏅 Zertifikat anzeigen</button>
+            </div>
+            <div style="font-size:20px">✅</div>
+          </div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:11px 13px;display:flex;gap:10px;align-items:center">
+            <div style="font-size:24px">✏️</div>
+            <div style="flex:1">
+              <div style="font-size:12px;font-weight:500;margin-bottom:2px">Wissenschaftliches Arbeiten</div>
+              <div style="font-size:10px;color:var(--muted);margin-bottom:5px">Abgeschlossen am 28.01.2025</div>
+              <button class="btn-xs btn-xs-ghost" onclick="openCertModal('Wissenschaftliches Arbeiten')">🏅 Zertifikat anzeigen</button>
+            </div>
+            <div style="font-size:20px">✅</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ENTDECKEN ══ -->
+    <div class="page" id="page-entdecken">
+      <!-- Filter Pills -->
+      <div style="display:flex;gap:6px;margin-bottom:1.1rem;flex-wrap:wrap">
+        <div class="filter-pill active-pill" onclick="filterCourses(this,'alle')" style="padding:5px 13px;border-radius:100px;font-size:11px;cursor:pointer;background:var(--accent);color:#fff;border:1px solid transparent;user-select:none">Alle</div>
+        <div onclick="filterCourses(this,'gesponsert')" style="padding:5px 13px;border-radius:100px;font-size:11px;cursor:pointer;background:var(--surface2);color:var(--muted);border:1px solid var(--border);user-select:none">🏢 Gesponsert</div>
+        <div onclick="filterCourses(this,'kostenlos')" style="padding:5px 13px;border-radius:100px;font-size:11px;cursor:pointer;background:var(--surface2);color:var(--muted);border:1px solid var(--border);user-select:none">🎁 Kostenlos</div>
+        <div onclick="filterCourses(this,'karriere')" style="padding:5px 13px;border-radius:100px;font-size:11px;cursor:pointer;background:var(--surface2);color:var(--muted);border:1px solid var(--border);user-select:none">💼 Karriere</div>
+        <div onclick="filterCourses(this,'statistik')" style="padding:5px 13px;border-radius:100px;font-size:11px;cursor:pointer;background:var(--surface2);color:var(--muted);border:1px solid var(--border);user-select:none">📐 Statistik</div>
+        <div onclick="filterCourses(this,'tech')" style="padding:5px 13px;border-radius:100px;font-size:11px;cursor:pointer;background:var(--surface2);color:var(--muted);border:1px solid var(--border);user-select:none">💻 Tech & Tools</div>
+        <div onclick="filterCourses(this,'softskills')" style="padding:5px 13px;border-radius:100px;font-size:11px;cursor:pointer;background:var(--surface2);color:var(--muted);border:1px solid var(--border);user-select:none">🧠 Soft Skills</div>
+      </div>
+
+      <div class="courses-grid">
+        <div class="course-card" onclick="openCourseDetail('Problem Solving','McKinsey',4.9,2418,'🧠','rgba(124,109,250,0.15)','Kostenlos','sponsored')">
+          <div class="course-thumb" style="background:rgba(124,109,250,0.12)">🧠
+            <div class="course-thumb-overlay"><span class="course-status status-sponsored">Gesponsert</span></div>
+          </div>
+          <div class="course-body">
+            <div class="course-title">Problem Solving für Studenten</div>
+            <div class="course-sub">von McKinsey & Company</div>
+            <div class="course-meta"><span class="course-pill">6h</span><span class="course-pill">Zertifikat</span><span class="course-pill">BWL · WiPsy</span></div>
+            <div class="course-stats"><span>⭐ 4,9</span><span>👥 2.418</span><span>📶 Einsteiger</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div style="font-size:14px;font-weight:500;color:var(--success)">Kostenlos</div>
+              <button class="btn-xs btn-xs-primary" onclick="event.stopPropagation();enrollCourse('Problem Solving für Studenten')">Einschreiben</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="course-card" onclick="openCourseDetail('Statistik mit SPSS','Prof. Dr. Weber',4.6,890,'📊','rgba(56,189,248,0.1)','29€','paid')">
+          <div class="course-thumb" style="background:rgba(56,189,248,0.1)">📊
+            <div class="course-thumb-overlay"><span class="course-status status-live">Live</span></div>
+          </div>
+          <div class="course-body">
+            <div class="course-title">Statistik mit SPSS — Grundkurs</div>
+            <div class="course-sub">von Prof. Dr. Weber · Uni Köln</div>
+            <div class="course-meta"><span class="course-pill">5h</span><span class="course-pill">Zertifikat</span><span class="course-pill">WiPsy · Psych</span></div>
+            <div class="course-stats"><span>⭐ 4,6</span><span>👥 890</span><span>📶 Grundlagen</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div style="font-size:14px;font-weight:500;color:var(--warn)">29€</div>
+              <button class="btn-xs btn-xs-primary" onclick="event.stopPropagation();enrollCourse('Statistik mit SPSS')">Kaufen</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="course-card" onclick="openCourseDetail('Excel Komplettkurs','Academify',4.8,3200,'🖥️','rgba(74,222,128,0.1)','19€','paid')">
+          <div class="course-thumb" style="background:rgba(74,222,128,0.1)">🖥️
+            <div class="course-thumb-overlay"><span class="course-status status-live">Live</span></div>
+          </div>
+          <div class="course-body">
+            <div class="course-title">Excel & Datenanalyse Komplettkurs</div>
+            <div class="course-sub">von Academify</div>
+            <div class="course-meta"><span class="course-pill">8h</span><span class="course-pill">Zertifikat</span><span class="course-pill">Alle Fächer</span></div>
+            <div class="course-stats"><span>⭐ 4,8</span><span>👥 3.200</span><span>📶 Einsteiger</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div style="font-size:14px;font-weight:500;color:var(--warn)">19€</div>
+              <button class="btn-xs btn-xs-primary" onclick="event.stopPropagation();enrollCourse('Excel Komplettkurs')">Kaufen</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="course-card" onclick="openCourseDetail('Wissenschaftliches Arbeiten','Dr. Müller',4.9,1200,'✏️','rgba(248,113,113,0.1)','Kostenlos','free')">
+          <div class="course-thumb" style="background:rgba(248,113,113,0.1)">✏️
+            <div class="course-thumb-overlay"><span class="course-status status-live">Kostenlos</span></div>
+          </div>
+          <div class="course-body">
+            <div class="course-title">Wissenschaftliches Arbeiten & Zitieren</div>
+            <div class="course-sub">von Dr. Müller · Academify</div>
+            <div class="course-meta"><span class="course-pill">4h</span><span class="course-pill">Sem. 1–3</span></div>
+            <div class="course-stats"><span>⭐ 4,9</span><span>👥 1.200</span><span>📶 Einsteiger</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div style="font-size:14px;font-weight:500;color:var(--success)">Kostenlos</div>
+              <button class="btn-xs btn-xs-primary" onclick="event.stopPropagation();enrollCourse('Wissenschaftliches Arbeiten')">Einschreiben</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="course-card" onclick="openCourseDetail('Bewerbung & Karriere','Academify Pro',4.7,780,'💼','rgba(251,191,36,0.1)','49€','paid')">
+          <div class="course-thumb" style="background:rgba(251,191,36,0.1)">💼
+            <div class="course-thumb-overlay"><span class="course-status status-live">Beliebt</span></div>
+          </div>
+          <div class="course-body">
+            <div class="course-title">Bewerbung & Karriereeinstieg</div>
+            <div class="course-sub">von Academify Pro</div>
+            <div class="course-meta"><span class="course-pill">6h</span><span class="course-pill">Zertifikat</span><span class="course-pill">Ab Sem. 4</span></div>
+            <div class="course-stats"><span>⭐ 4,7</span><span>👥 780</span><span>📶 Fortgeschritten</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div style="font-size:14px;font-weight:500;color:var(--warn)">49€</div>
+              <button class="btn-xs btn-xs-primary" onclick="event.stopPropagation();enrollCourse('Bewerbung & Karriere')">Kaufen</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="course-card" onclick="openCourseDetail('Python Grundlagen','Tech Academy',4.5,560,'🐍','rgba(167,139,250,0.1)','39€','paid')">
+          <div class="course-thumb" style="background:rgba(167,139,250,0.1)">🐍
+            <div class="course-thumb-overlay"><span class="course-status status-review">Neu</span></div>
+          </div>
+          <div class="course-body">
+            <div class="course-title">Python Grundlagen für Nicht-Informatiker</div>
+            <div class="course-sub">von Tech Academy</div>
+            <div class="course-meta"><span class="course-pill">7h</span><span class="course-pill">Zertifikat</span><span class="course-pill">Alle Fächer</span></div>
+            <div class="course-stats"><span>⭐ 4,5</span><span>👥 560</span><span>📶 Einsteiger</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div style="font-size:14px;font-weight:500;color:var(--warn)">39€</div>
+              <button class="btn-xs btn-xs-primary" onclick="event.stopPropagation();enrollCourse('Python Grundlagen')">Kaufen</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ KURS ERSTELLEN (Wizard) ══ -->
+    <div class="page" id="page-erstellen">
+      <div class="card">
+        <div style="font-family:'DM Serif Display',serif;font-size:20px;font-weight:400;margin-bottom:.3rem">Neuen Kurs <em style="font-style:italic;color:var(--accent2)">erstellen</em></div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:1.4rem">Schritt-für-Schritt zum fertigen Kurs auf der Academify-Plattform</div>
+
+        <div class="steps" id="wizardSteps">
+          <div class="step active" id="wstep1"><div class="step-circle">1</div><div class="step-label">Grunddaten</div></div>
+          <div class="step" id="wstep2"><div class="step-circle">2</div><div class="step-label">Curriculum</div></div>
+          <div class="step" id="wstep3"><div class="step-circle">3</div><div class="step-label">Preis & Zielgruppe</div></div>
+          <div class="step" id="wstep4"><div class="step-circle">4</div><div class="step-label">Veröffentlichen</div></div>
+        </div>
+
+        <!-- Step 1 -->
+        <div class="step-content active" id="wsc1">
+          <div class="field-row">
+            <div class="field" style="grid-column:1/-1">
+              <label>Kurstitel <span class="req">*</span></label>
+              <input id="wTitle" placeholder="z.B. Einführung in die Verhaltensökonomie" oninput="document.getElementById('wTitleCount').textContent=this.value.length+' / 80'">
+              <div class="char-count" id="wTitleCount">0 / 80</div>
+            </div>
+          </div>
+          <div class="field">
+            <label>Kurzbeschreibung <span class="req">*</span></label>
+            <textarea id="wDesc" placeholder="Was lernen Studenten in diesem Kurs? Was macht ihn besonders? (2–4 Sätze)" oninput="document.getElementById('wDescCount').textContent=this.value.length+' / 300'"></textarea>
+            <div class="char-count" id="wDescCount">0 / 300</div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Kategorie <span class="req">*</span></label>
+              <div class="select-wrap"><select id="wCat">
+                <option value="">Kategorie wählen...</option>
+                <option>Karriere & Business</option>
+                <option>Statistik & Methoden</option>
+                <option>Soft Skills</option>
+                <option>Tech & Tools</option>
+                <option>Wissenschaftliches Arbeiten</option>
+                <option>Psychologie</option>
+                <option>BWL & VWL</option>
+                <option>Recht & Jura</option>
+              </select></div>
+            </div>
+            <div class="field">
+              <label>Schwierigkeitsgrad</label>
+              <div class="select-wrap"><select id="wLevel">
+                <option>Einsteiger (Sem. 1–2)</option>
+                <option>Grundlagen (Sem. 1–4)</option>
+                <option>Fortgeschritten (Sem. 3+)</option>
+                <option>Experten (Master)</option>
+              </select></div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Sprache</label>
+              <div class="select-wrap"><select><option selected>Deutsch</option><option>Englisch</option><option>Beides</option></select></div>
+            </div>
+            <div class="field">
+              <label>Geschätzte Lernzeit</label>
+              <input placeholder="z.B. 4 Stunden, 6 Module">
+            </div>
+          </div>
+          <div class="field">
+            <label>Lernziele (Was werden Studenten können?)</label>
+            <div class="tag-wrap" id="goalsWrap" onclick="document.getElementById('goalInput').focus()">
+              <input class="tag-input" id="goalInput" placeholder="Lernziel eingeben + Enter" onkeydown="addTagToWrap(event,'goalInput','goalsWrap','goals')">
+            </div>
+            <div class="field-hint">z.B. "SPSS bedienen", "Hypothesen formulieren", "Case Studies lösen"</div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:.5rem">
+            <button class="btn-primary" onclick="wizardNext(2)">Weiter: Curriculum →</button>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step-content" id="wsc2">
+          <div class="info-note"><span style="font-size:14px;flex-shrink:0">💡</span><div>Strukturiere deinen Kurs in Kapitel und Lektionen. Studenten sehen die Gliederung vor dem Kauf.</div></div>
+          <div class="module-list" id="moduleList">
+            <div class="module-item">
+              <span class="module-drag">⋮⋮</span>
+              <div class="module-num">1</div>
+              <div class="module-info">
+                <div class="module-title">Kapitel 1: Einführung & Überblick</div>
+                <div class="module-meta">3 Lektionen · ~45 min · Video, Quiz</div>
+              </div>
+              <div class="module-actions">
+                <button class="btn-xs btn-xs-ghost" onclick="editModule(1)">✏️ Bearbeiten</button>
+                <button class="btn-xs btn-xs-danger" onclick="deleteModule(this)">✕</button>
+              </div>
+            </div>
+            <div class="module-item">
+              <span class="module-drag">⋮⋮</span>
+              <div class="module-num">2</div>
+              <div class="module-info">
+                <div class="module-title">Kapitel 2: Grundkonzepte</div>
+                <div class="module-meta">5 Lektionen · ~90 min · Video, Aufgaben</div>
+              </div>
+              <div class="module-actions">
+                <button class="btn-xs btn-xs-ghost" onclick="editModule(2)">✏️ Bearbeiten</button>
+                <button class="btn-xs btn-xs-danger" onclick="deleteModule(this)">✕</button>
+              </div>
+            </div>
+          </div>
+          <button class="add-module-btn" onclick="addModule()">
+            <span>+</span> Neues Kapitel hinzufügen
+          </button>
+          <div class="divider">Einstellungen</div>
+          <div class="field-row">
+            <div class="field">
+              <label>Zertifikat anbieten?</label>
+              <div class="select-wrap"><select><option selected>Ja — Academify-Zertifikat</option><option>Nein</option></select></div>
+            </div>
+            <div class="field">
+              <label>Kursvoraussetzungen</label>
+              <input placeholder="z.B. Keine, oder: Grundkenntnisse Excel">
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:.5rem">
+            <button class="btn-ghost" onclick="wizardNext(1)">← Zurück</button>
+            <button class="btn-primary" onclick="wizardNext(3)">Weiter: Preis & Zielgruppe →</button>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step-content" id="wsc3">
+          <div class="field">
+            <label>Preismodell <span class="req">*</span></label>
+            <div class="pricing-grid">
+              <div class="price-card selected" onclick="selectPrice(this,'0')">
+                <div class="price-val" style="color:var(--success)">Kostenlos</div>
+                <div class="price-label">Maximale Reichweite</div>
+              </div>
+              <div class="price-card" onclick="selectPrice(this,'19')">
+                <div class="price-val">19€</div>
+                <div class="price-label">Einmalig</div>
+              </div>
+              <div class="price-card" onclick="selectPrice(this,'29')">
+                <div class="price-val">29€</div>
+                <div class="price-label">Einmalig</div>
+              </div>
+              <div class="price-card" onclick="selectPrice(this,'49')">
+                <div class="price-val">49€</div>
+                <div class="price-label">Einmalig</div>
+              </div>
+              <div class="price-card" onclick="selectPrice(this,'99')">
+                <div class="price-val">99€</div>
+                <div class="price-label">Premium</div>
+              </div>
+              <div class="price-card" onclick="selectPrice(this,'custom')">
+                <div class="price-val">🎯</div>
+                <div class="price-label">Eigener Preis</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label>Ziel-Studiengänge</label>
+              <div class="select-wrap"><select>
+                <option selected>Alle Studiengänge</option>
+                <option>BWL + WiPsy</option>
+                <option>Nur WiPsy</option>
+                <option>Nur BWL</option>
+                <option>Informatik</option>
+                <option>Alle sozialen Wissenschaften</option>
+              </select></div>
+            </div>
+            <div class="field">
+              <label>Ziel-Semester</label>
+              <div class="select-wrap"><select>
+                <option>Alle Semester</option>
+                <option selected>1.–3. Semester</option>
+                <option>3.–6. Semester</option>
+                <option>Master</option>
+              </select></div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Kurs-Tags für Suche</label>
+            <div class="tag-wrap" id="tagsWrap" onclick="document.getElementById('tagInput').focus()">
+              <span class="tag">Statistik<span class="tag-del" onclick="removeTag(this)">×</span></span>
+              <span class="tag">SPSS<span class="tag-del" onclick="removeTag(this)">×</span></span>
+              <input class="tag-input" id="tagInput" placeholder="Tag hinzufügen + Enter" onkeydown="addTagToWrap(event,'tagInput','tagsWrap','courseTags')">
+            </div>
+          </div>
+
+          <div class="success-note"><span style="font-size:14px;flex-shrink:0">📊</span><div>Mit diesen Einstellungen erreichst du geschätzt <strong style="color:var(--success)">2.840 Studenten</strong> auf Academify — perfekt für deinen Start.</div></div>
+
+          <div style="display:flex;gap:8px;margin-top:.5rem">
+            <button class="btn-ghost" onclick="wizardNext(2)">← Zurück</button>
+            <button class="btn-primary" onclick="wizardNext(4)">Zur Vorschau →</button>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="step-content" id="wsc4">
+          <div class="info-note"><span style="font-size:14px;flex-shrink:0">🔍</span><div>Prüfe deine Angaben bevor du veröffentlichst. Du kannst alles danach noch bearbeiten.</div></div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:1.2rem">
+            <div style="font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted2);margin-bottom:.9rem">Zusammenfassung</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px">
+              <div><span style="color:var(--muted)">Titel:</span> <span id="sumTitle" style="color:var(--text)">—</span></div>
+              <div><span style="color:var(--muted)">Kategorie:</span> <span id="sumCat" style="color:var(--text)">—</span></div>
+              <div><span style="color:var(--muted)">Preis:</span> <span id="sumPrice" style="color:var(--success)">Kostenlos</span></div>
+              <div><span style="color:var(--muted)">Kapitel:</span> <span style="color:var(--text)" id="sumChapters">2</span></div>
+              <div><span style="color:var(--muted)">Reichweite:</span> <span style="color:var(--accent2)">2.840 Studenten</span></div>
+              <div><span style="color:var(--muted)">Status nach Veröff.:</span> <span style="color:var(--warn)">⏳ Wird geprüft</span></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn-ghost" onclick="wizardNext(3)">← Zurück</button>
+            <button class="btn-primary" style="background:linear-gradient(135deg,var(--success),#22c55e)" onclick="publishCourse()">🚀 Kurs einreichen</button>
+            <button class="btn-ghost" onclick="showToast('Entwurf gespeichert ✓','success')">Entwurf speichern</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ VERWALTUNG ══ -->
+    <div class="page" id="page-verwalten">
+      <div class="stats-grid">
+        <div class="stat"><div class="stat-icon">📖</div><div class="stat-val" style="color:var(--accent2)">2</div><div class="stat-label">Veröffentlichte Kurse</div><div class="stat-delta delta-up">↑ Aktiv & sichtbar</div></div>
+        <div class="stat"><div class="stat-icon">👥</div><div class="stat-val" style="color:var(--success)">342</div><div class="stat-label">Einschreibungen gesamt</div><div class="stat-delta delta-up">↑ +23 diese Woche</div></div>
+        <div class="stat"><div class="stat-icon">💶</div><div class="stat-val" style="color:var(--warn)">1.840€</div><div class="stat-label">Einnahmen gesamt</div><div class="stat-delta delta-up">↑ +180€ diesen Monat</div></div>
+        <div class="stat"><div class="stat-icon">⭐</div><div class="stat-val" style="color:var(--coral)">4,8</div><div class="stat-label">Ø Bewertung</div><div class="stat-delta delta-up">↑ Ausgezeichnet</div></div>
+      </div>
+
+      <div class="courses-grid">
+        <!-- Eigener Kurs 1 -->
+        <div class="course-card">
+          <div class="course-thumb" style="background:rgba(56,189,248,0.1)">📊
+            <div class="course-thumb-overlay"><span class="course-status status-live">Live ✓</span></div>
+          </div>
+          <div class="course-body">
+            <div class="course-title">Statistik mit SPSS — Grundkurs</div>
+            <div class="course-sub">Erstellt von dir · 5h · 29€</div>
+            <div class="course-stats"><span>👥 234 Teilnehmer</span><span>⭐ 4,7</span><span>💶 1.440€</span></div>
+            <div style="height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;margin-bottom:.7rem"><div style="width:78%;height:100%;background:var(--success);border-radius:2px"></div></div>
+            <div style="font-size:10px;color:var(--muted);margin-bottom:.7rem">78% Abschlussrate · ⭐ 4,7 Ø · letztes Update vor 2 Wochen</div>
+            <div class="course-actions">
+              <button class="btn-xs btn-xs-primary" onclick="openEditModal('Statistik mit SPSS')">✏️ Bearbeiten</button>
+              <button class="btn-xs btn-xs-ghost" onclick="openStatsModal('Statistik mit SPSS')">📊 Stats</button>
+              <button class="btn-xs btn-xs-ghost" onclick="showToast('Link kopiert!','success')">🔗</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Eigener Kurs 2 -->
+        <div class="course-card">
+          <div class="course-thumb" style="background:rgba(167,139,250,0.1)">🧬
+            <div class="course-thumb-overlay"><span class="course-status status-live">Live ✓</span></div>
+          </div>
+          <div class="course-body">
+            <div class="course-title">Einführung in die Psychologie</div>
+            <div class="course-sub">Erstellt von dir · 6h · Kostenlos</div>
+            <div class="course-stats"><span>👥 108 Teilnehmer</span><span>⭐ 4,9</span><span>💶 0€</span></div>
+            <div style="height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;margin-bottom:.7rem"><div style="width:65%;height:100%;background:var(--accent);border-radius:2px"></div></div>
+            <div style="font-size:10px;color:var(--muted);margin-bottom:.7rem">65% Abschlussrate · ⭐ 4,9 Ø · letzte Woche aktualisiert</div>
+            <div class="course-actions">
+              <button class="btn-xs btn-xs-primary" onclick="openEditModal('Einführung in die Psychologie')">✏️ Bearbeiten</button>
+              <button class="btn-xs btn-xs-ghost" onclick="openStatsModal('Einführung in die Psychologie')">📊 Stats</button>
+              <button class="btn-xs btn-xs-danger" onclick="showToast('Kurs pausiert','warn')">⏸ Pausieren</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Entwurf -->
+        <div class="course-card">
+          <div class="course-thumb" style="background:rgba(107,128,153,0.1)">🧠
+            <div class="course-thumb-overlay"><span class="course-status status-draft">Entwurf</span></div>
+          </div>
+          <div class="course-body">
+            <div class="course-title">Verhaltensökonomie für Einsteiger</div>
+            <div class="course-sub">Entwurf · 0 Kapitel · nicht veröffentlicht</div>
+            <div class="course-stats"><span>📝 In Bearbeitung</span></div>
+            <div style="height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;margin-bottom:.7rem"><div style="width:20%;height:100%;background:var(--muted2);border-radius:2px"></div></div>
+            <div style="font-size:10px;color:var(--muted);margin-bottom:.7rem">20% fertig · zuletzt bearbeitet gestern</div>
+            <div class="course-actions">
+              <button class="btn-xs btn-xs-primary" onclick="switchTab('erstellen',document.querySelectorAll('.tab')[2]);wizardNext(1)">▶ Weiter bearbeiten</button>
+              <button class="btn-xs btn-xs-danger" onclick="showToast('Entwurf gelöscht','error')">🗑 Löschen</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kommentare & Bewertungen -->
+      <div class="card">
+        <div class="card-head"><span class="card-title">💬 Neueste Bewertungen</span><span class="card-action" onclick="showToast('Alle Bewertungen werden geladen...','info')">Alle ansehen →</span></div>
+        <div style="display:flex;flex-direction:column;gap:0">
+          <div style="padding:10px 0;border-bottom:1px solid var(--border)">
+            <div style="display:flex;align-items:center;gap:9px;margin-bottom:6px">
+              <div style="width:28px;height:28px;border-radius:50%;background:rgba(124,109,250,0.12);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600">LM</div>
+              <div style="flex:1"><div style="font-size:12px;font-weight:500">Lisa Meier</div><div style="font-size:10px;color:var(--muted)">Statistik mit SPSS · vor 2 Tagen</div></div>
+              <div style="font-size:12px;color:var(--warn)">★★★★★</div>
+            </div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.5">"Super erklärt! Die Beispiele mit echten Daten haben mir wirklich geholfen. Ich hätte mir nur mehr Übungsaufgaben gewünscht."</div>
+            <button style="margin-top:6px;background:none;border:none;font-size:11px;color:var(--accent2);cursor:pointer" onclick="showToast('Antwort wird geöffnet...','info')">↩ Antworten</button>
+          </div>
+          <div style="padding:10px 0">
+            <div style="display:flex;align-items:center;gap:9px;margin-bottom:6px">
+              <div style="width:28px;height:28px;border-radius:50%;background:rgba(74,222,128,0.1);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600">TW</div>
+              <div style="flex:1"><div style="font-size:12px;font-weight:500">Tom Weber</div><div style="font-size:10px;color:var(--muted)">Statistik mit SPSS · vor 5 Tagen</div></div>
+              <div style="font-size:12px;color:var(--warn)">★★★★☆</div>
+            </div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.5">"Guter Einstieg! Einige Videos könnten kürzer sein. Insgesamt aber sehr empfehlenswert für Erstis."</div>
+            <button style="margin-top:6px;background:none;border:none;font-size:11px;color:var(--accent2);cursor:pointer" onclick="showToast('Antwort wird geöffnet...','info')">↩ Antworten</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ANALYTICS ══ -->
+    <div class="page" id="page-analytics">
+      <div class="stats-grid">
+        <div class="stat"><div class="stat-icon">👁️</div><div class="stat-val" style="color:var(--info)">8.420</div><div class="stat-label">Kurs-Aufrufe gesamt</div><div class="stat-delta delta-up">↑ +18% zum Vormonat</div></div>
+        <div class="stat"><div class="stat-icon">🛒</div><div class="stat-val" style="color:var(--accent2)">342</div><div class="stat-label">Einschreibungen</div><div class="stat-delta delta-up">↑ +23 diese Woche</div></div>
+        <div class="stat"><div class="stat-icon">✅</div><div class="stat-val" style="color:var(--success)">71%</div><div class="stat-label">Ø Abschlussrate</div><div class="stat-delta delta-up">↑ Plattform-Ø: 48%</div></div>
+        <div class="stat"><div class="stat-icon">💶</div><div class="stat-val" style="color:var(--warn)">1.840€</div><div class="stat-label">Einnahmen gesamt</div><div class="stat-delta delta-up">↑ +180€ März</div></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:1.2rem">
+        <div class="card">
+          <div class="card-head"><span class="card-title">📈 Einschreibungen pro Woche</span></div>
+          <div class="bar-chart">
+            <div class="bar-row"><span class="bar-label">KW 8</span><div class="bar-track"><div class="bar-fill" style="width:55%;background:var(--accent)"></div></div><span class="bar-val">48</span></div>
+            <div class="bar-row"><span class="bar-label">KW 9</span><div class="bar-track"><div class="bar-fill" style="width:68%;background:var(--accent)"></div></div><span class="bar-val">59</span></div>
+            <div class="bar-row"><span class="bar-label">KW 10</span><div class="bar-track"><div class="bar-fill" style="width:80%;background:var(--accent2)"></div></div><span class="bar-val">70</span></div>
+            <div class="bar-row"><span class="bar-label">KW 11 (diese W.)</span><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--success)"></div></div><span class="bar-val">87</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><span class="card-title">🎓 Abschlussrate nach Kurs</span></div>
+          <div class="bar-chart">
+            <div class="bar-row"><span class="bar-label">Statistik mit SPSS</span><div class="bar-track"><div class="bar-fill" style="width:78%;background:var(--success)"></div></div><span class="bar-val">78%</span></div>
+            <div class="bar-row"><span class="bar-label">Einf. Psychologie</span><div class="bar-track"><div class="bar-fill" style="width:65%;background:var(--accent2)"></div></div><span class="bar-val">65%</span></div>
+            <div class="bar-row"><span class="bar-label">Ø Plattform</span><div class="bar-track"><div class="bar-fill" style="width:48%;background:var(--muted2)"></div></div><span class="bar-val">48%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px">
+        <div class="card">
+          <div class="card-head"><span class="card-title">📊 Studiengang-Verteilung</span></div>
+          <div class="bar-chart">
+            <div class="bar-row"><span class="bar-label">WiPsy Bachelor</span><div class="bar-track"><div class="bar-fill" style="width:82%;background:var(--accent)"></div></div><span class="bar-val">38%</span></div>
+            <div class="bar-row"><span class="bar-label">BWL Bachelor</span><div class="bar-track"><div class="bar-fill" style="width:60%;background:var(--info)"></div></div><span class="bar-val">28%</span></div>
+            <div class="bar-row"><span class="bar-label">Psychologie B.</span><div class="bar-track"><div class="bar-fill" style="width:40%;background:var(--success)"></div></div><span class="bar-val">19%</span></div>
+            <div class="bar-row"><span class="bar-label">Sonstige</span><div class="bar-track"><div class="bar-fill" style="width:25%;background:var(--muted2)"></div></div><span class="bar-val">15%</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><span class="card-title">⭐ Bewertungsverteilung</span></div>
+          <div style="display:flex;gap:12px;align-items:center;margin-bottom:10px">
+            <div style="text-align:center">
+              <div style="font-family:'DM Serif Display',serif;font-size:36px;color:var(--warn)">4,8</div>
+              <div style="font-size:13px;color:var(--warn);letter-spacing:2px">★★★★★</div>
+              <div style="font-size:10px;color:var(--muted);margin-top:3px">342 Bewertungen</div>
+            </div>
+            <div class="rating-dist" style="flex:1">
+              <div class="rating-row"><span style="width:20px;text-align:right">5★</span><div class="rating-track"><div class="rating-fill" style="width:78%"></div></div><span style="width:28px;text-align:right">78%</span></div>
+              <div class="rating-row"><span style="width:20px;text-align:right">4★</span><div class="rating-track"><div class="rating-fill" style="width:15%"></div></div><span style="width:28px;text-align:right">15%</span></div>
+              <div class="rating-row"><span style="width:20px;text-align:right">3★</span><div class="rating-track"><div class="rating-fill" style="width:5%"></div></div><span style="width:28px;text-align:right">5%</span></div>
+              <div class="rating-row"><span style="width:20px;text-align:right">2★</span><div class="rating-track"><div class="rating-fill" style="width:1%"></div></div><span style="width:28px;text-align:right">1%</span></div>
+              <div class="rating-row"><span style="width:20px;text-align:right">1★</span><div class="rating-track"><div class="rating-fill" style="width:1%"></div></div><span style="width:28px;text-align:right">1%</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+</div>
+
+<!-- ══ MODALS ══ -->
+
+<!-- Kurs-Detail Modal -->
+<div class="overlay" id="overlay-detail">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="detailTitle">Kurs</div>
+      <div class="modal-close" onclick="closeModal('overlay-detail')">✕</div>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;gap:14px;margin-bottom:1.2rem">
+        <div id="detailThumb" style="width:80px;height:80px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:36px;flex-shrink:0;background:rgba(124,109,250,0.1)">🧠</div>
+        <div>
+          <div id="detailAuthor" style="font-size:12px;color:var(--muted);margin-bottom:4px"></div>
+          <div style="display:flex;gap:6px;margin-bottom:6px">
+            <span style="font-size:11px;color:var(--warn)">★★★★★</span>
+            <span id="detailRating" style="font-size:11px;color:var(--muted)"></span>
+          </div>
+          <div id="detailPrice" style="font-size:18px;font-weight:500"></div>
+        </div>
+      </div>
+      <div class="info-note"><span style="font-size:14px;flex-shrink:0">📚</span><div>Dieser Kurs enthält Videos, Quizze und herunterladbare Materialien. Nach Abschluss erhältst du ein Academify-Zertifikat.</div></div>
+
+      <div style="font-size:12px;font-weight:500;margin-bottom:.6rem">Was du lernst:</div>
+      <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:1rem">
+        <div style="font-size:12px;color:var(--muted);display:flex;gap:7px"><span style="color:var(--success)">✓</span>Grundlegende Konzepte verstehen und anwenden</div>
+        <div style="font-size:12px;color:var(--muted);display:flex;gap:7px"><span style="color:var(--success)">✓</span>Praxisnahe Beispiele aus dem Studienalltag</div>
+        <div style="font-size:12px;color:var(--muted);display:flex;gap:7px"><span style="color:var(--success)">✓</span>Zertifikat für Lebenslauf und Bewerbungen</div>
+        <div style="font-size:12px;color:var(--muted);display:flex;gap:7px"><span style="color:var(--success)">✓</span>Lebenslanger Zugang nach Einschreibung</div>
+      </div>
+
+      <div style="font-size:12px;font-weight:500;margin-bottom:.6rem">Kursinhalt:</div>
+      <div class="lesson-list" id="detailLessons"></div>
+
+      <div style="display:flex;gap:8px;margin-top:1.2rem">
+        <button class="btn-primary" style="flex:1" id="detailEnrollBtn" onclick="enrollFromDetail()">Jetzt einschreiben</button>
+        <button class="btn-ghost" onclick="showToast('Auf Merkliste gespeichert ✓','success')">🔖 Merken</button>
+        <button class="btn-ghost" onclick="showToast('Link kopiert!','success')">🔗 Teilen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Kurs-Player Modal -->
+<div class="overlay" id="overlay-player">
+  <div class="modal" style="max-width:760px">
+    <div class="modal-head">
+      <div class="modal-title"><em id="playerTitle">Kurs</em></div>
+      <div class="modal-close" onclick="closeModal('overlay-player')">✕</div>
+    </div>
+    <div class="modal-body">
+      <!-- Video Player -->
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;position:relative;overflow:hidden" id="playerScreen">
+        <div style="text-align:center">
+          <div style="font-size:48px;margin-bottom:.8rem" id="playerEmoji">🧠</div>
+          <div style="font-size:14px;font-weight:500;margin-bottom:.4rem" id="playerLessonTitle">Lektion wird geladen...</div>
+          <div style="font-size:12px;color:var(--muted)">Klick auf Play zum Starten</div>
+        </div>
+        <div style="position:absolute;bottom:12px;left:12px;right:12px">
+          <div style="height:3px;background:rgba(255,255,255,0.15);border-radius:2px;overflow:hidden;margin-bottom:8px">
+            <div id="videoProgress" style="width:35%;height:100%;background:var(--accent);border-radius:2px;transition:width .3s"></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <button style="background:var(--accent);border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:#fff" onclick="togglePlay(this)">▶</button>
+            <span style="font-size:11px;color:rgba(255,255,255,0.6)" id="playerTime">04:22 / 12:30</span>
+            <div style="margin-left:auto;display:flex;gap:6px">
+              <button class="btn-xs btn-xs-ghost" style="font-size:10px" onclick="showToast('Notiz gespeichert ✓','success')">📝 Notiz</button>
+              <button class="btn-xs btn-xs-ghost" style="font-size:10px" onclick="showToast('Lesezeichen gesetzt','success')">🔖</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 260px;gap:12px">
+        <div>
+          <div style="font-size:13px;font-weight:500;margin-bottom:.5rem" id="playerCurLesson">Kapitel 2: Grundkonzepte — Lektion 3</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:1rem">In dieser Lektion lernst du die wichtigsten Grundbegriffe und kannst sie direkt auf Beispiele aus deinem Studium anwenden.</div>
+          <div style="display:flex;gap:7px">
+            <button class="btn-ghost" style="font-size:11px" onclick="prevLesson()">← Vorherige</button>
+            <button class="btn-primary" style="font-size:11px" onclick="nextLesson()">Nächste Lektion →</button>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:500;margin-bottom:.6rem;color:var(--muted)">KURSINHALT</div>
+          <div class="lesson-list" id="playerLessonList" style="max-height:200px;overflow-y:auto"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Kurs-Edit Modal -->
+<div class="overlay" id="overlay-edit">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">Kurs <em>bearbeiten</em></div>
+      <div class="modal-close" onclick="closeModal('overlay-edit')">✕</div>
+    </div>
+    <div class="modal-body">
+      <div class="field"><label>Kurstitel</label><input id="editTitle" value="Statistik mit SPSS — Grundkurs"></div>
+      <div class="field"><label>Kurzbeschreibung</label><textarea id="editDesc">Lerne SPSS von Grund auf mit praxisnahen Beispielen aus dem WiPsy-Studium. Ideal für das 2.–4. Semester.</textarea></div>
+      <div class="field-row">
+        <div class="field"><label>Preis</label><div class="select-wrap"><select><option selected>29€</option><option>19€</option><option>49€</option><option>Kostenlos</option></select></div></div>
+        <div class="field"><label>Status</label><div class="select-wrap"><select><option selected>Live (öffentlich)</option><option>Entwurf (privat)</option><option>Pausiert</option></select></div></div>
+      </div>
+      <div class="divider">Kapitel & Lektionen</div>
+      <div class="module-list">
+        <div class="module-item">
+          <span class="module-drag">⋮⋮</span>
+          <div class="module-num">1</div>
+          <div class="module-info"><div class="module-title">Einführung in SPSS</div><div class="module-meta">4 Lektionen · ~45 min</div></div>
+          <div class="module-actions">
+            <button class="btn-xs btn-xs-ghost" onclick="editModule(1)">✏️</button>
+            <button class="btn-xs btn-xs-danger" onclick="deleteModule(this)">✕</button>
+          </div>
+        </div>
+        <div class="module-item">
+          <span class="module-drag">⋮⋮</span>
+          <div class="module-num">2</div>
+          <div class="module-info"><div class="module-title">Deskriptive Statistik</div><div class="module-meta">6 Lektionen · ~90 min</div></div>
+          <div class="module-actions">
+            <button class="btn-xs btn-xs-ghost" onclick="editModule(2)">✏️</button>
+            <button class="btn-xs btn-xs-danger" onclick="deleteModule(this)">✕</button>
+          </div>
+        </div>
+        <div class="module-item">
+          <span class="module-drag">⋮⋮</span>
+          <div class="module-num">3</div>
+          <div class="module-info"><div class="module-title">Inferenzstatistik</div><div class="module-meta">5 Lektionen · ~80 min</div></div>
+          <div class="module-actions">
+            <button class="btn-xs btn-xs-ghost" onclick="editModule(3)">✏️</button>
+            <button class="btn-xs btn-xs-danger" onclick="deleteModule(this)">✕</button>
+          </div>
+        </div>
+      </div>
+      <button class="add-module-btn" onclick="addModule()"><span>+</span>Kapitel hinzufügen</button>
+      <div style="display:flex;gap:8px;margin-top:1rem">
+        <button class="btn-primary" onclick="saveEdit()">Änderungen speichern</button>
+        <button class="btn-ghost" onclick="closeModal('overlay-edit')">Abbrechen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Kurs-Stats Modal -->
+<div class="overlay" id="overlay-stats">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="statsTitle">Kurs-<em>Analytics</em></div>
+      <div class="modal-close" onclick="closeModal('overlay-stats')">✕</div>
+    </div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:1.2rem">
+        <div class="stat" style="text-align:center;padding:.8rem"><div class="stat-icon">👥</div><div class="stat-val" style="font-size:18px;color:var(--accent2)" id="sTotal">234</div><div class="stat-label">Teilnehmer</div></div>
+        <div class="stat" style="text-align:center;padding:.8rem"><div class="stat-icon">✅</div><div class="stat-val" style="font-size:18px;color:var(--success)" id="sComplete">78%</div><div class="stat-label">Abschlussrate</div></div>
+        <div class="stat" style="text-align:center;padding:.8rem"><div class="stat-icon">⭐</div><div class="stat-val" style="font-size:18px;color:var(--warn)" id="sRating">4,7</div><div class="stat-label">Bewertung</div></div>
+      </div>
+      <div class="card-head"><span class="card-title">Lektions-Abbruchrate (wo steigen Studenten aus?)</span></div>
+      <div class="bar-chart" style="margin-bottom:1rem">
+        <div class="bar-row"><span class="bar-label">Lektion 1 — Intro</span><div class="bar-track"><div class="bar-fill" style="width:98%;background:var(--success)"></div></div><span class="bar-val">98%</span></div>
+        <div class="bar-row"><span class="bar-label">Lektion 2 — Grundlagen</span><div class="bar-track"><div class="bar-fill" style="width:91%;background:var(--success)"></div></div><span class="bar-val">91%</span></div>
+        <div class="bar-row"><span class="bar-label">Lektion 3 — SPSS Setup</span><div class="bar-track"><div class="bar-fill" style="width:84%;background:var(--accent2)"></div></div><span class="bar-val">84%</span></div>
+        <div class="bar-row"><span class="bar-label">Lektion 4 — Daten einlesen</span><div class="bar-track"><div class="bar-fill" style="width:79%;background:var(--accent2)"></div></div><span class="bar-val">79%</span></div>
+        <div class="bar-row"><span class="bar-label">Lektion 5 — Deskriptiv</span><div class="bar-track"><div class="bar-fill" style="width:71%;background:var(--warn)"></div></div><span class="bar-val">71%</span></div>
+        <div class="bar-row"><span class="bar-label">Lektion 7 — t-Test ⚠</span><div class="bar-track"><div class="bar-fill" style="width:55%;background:var(--coral)"></div></div><span class="bar-val">55%</span></div>
+      </div>
+      <div style="background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.15);border-radius:9px;padding:10px 13px;font-size:12px;color:var(--muted);line-height:1.5">
+        ⚠ <strong style="color:var(--text)">Empfehlung:</strong> Lektion 7 (t-Test) hat eine hohe Abbruchrate. Erwäge ein zusätzliches Erklärvideo oder mehr Beispiele.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Zertifikat Modal -->
+<div class="overlay" id="overlay-cert">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-head">
+      <div class="modal-title">Dein <em>Zertifikat</em> 🏅</div>
+      <div class="modal-close" onclick="closeModal('overlay-cert')">✕</div>
+    </div>
+    <div class="modal-body">
+      <div style="background:linear-gradient(135deg,rgba(124,109,250,0.12),rgba(167,139,250,0.06));border:1px solid rgba(124,109,250,0.2);border-radius:14px;padding:2rem;text-align:center;margin-bottom:1.2rem">
+        <div style="font-size:40px;margin-bottom:.8rem">🏅</div>
+        <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem">Academify — Zertifikat</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;margin-bottom:.3rem">Max Müller</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:.6rem">hat den Kurs erfolgreich abgeschlossen</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:16px;color:var(--accent2);margin-bottom:.6rem" id="certCourseName">Excel Komplettkurs</div>
+        <div style="font-size:11px;color:var(--muted)">Abgeschlossen am 12. Februar 2025</div>
+        <div style="margin-top:.8rem;font-size:10px;color:var(--muted2)">Zertifikat-ID: ACM-2025-EXC-8847</div>
+      </div>
+      <div style="display:flex;gap:7px">
+        <button class="btn-primary" style="flex:1" onclick="showToast('Zertifikat wird heruntergeladen...','success')">⬇ PDF herunterladen</button>
+        <button class="btn-ghost" onclick="showToast('Auf LinkedIn geteilt ✓','success')">🔗 LinkedIn</button>
+        <button class="btn-ghost" onclick="showToast('Link kopiert!','success')">📋 Kopieren</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create Kurs Quick Modal -->
+<div class="overlay" id="overlay-create">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-head">
+      <div class="modal-title">Kurs <em>erstellen</em></div>
+      <div class="modal-close" onclick="closeModal('overlay-create')">✕</div>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:13px;color:var(--muted);margin-bottom:1.2rem;line-height:1.6">Wie möchtest du deinen Kurs erstellen?</div>
+      <div style="display:grid;gap:9px">
+        <div style="background:var(--surface2);border:1.5px solid rgba(124,109,250,0.2);border-radius:12px;padding:13px 15px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='rgba(124,109,250,0.2)'" onclick="closeModal('overlay-create');switchTab('erstellen',document.querySelectorAll('.tab')[2])">
+          <div style="font-size:13px;font-weight:500;margin-bottom:3px">🧙 Schritt-für-Schritt Assistent</div>
+          <div style="font-size:12px;color:var(--muted)">Geführter Prozess in 4 Schritten — empfohlen für neue Kurs-Ersteller</div>
+        </div>
+        <div style="background:var(--surface2);border:1.5px solid var(--border);border-radius:12px;padding:13px 15px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='var(--border-hover)'" onmouseout="this.style.borderColor='var(--border)'" onclick="closeModal('overlay-create');showToast('Import-Funktion kommt bald!','info')">
+          <div style="font-size:13px;font-weight:500;margin-bottom:3px">📥 Kurs importieren</div>
+          <div style="font-size:12px;color:var(--muted)">Importiere Inhalte aus Notion, Google Drive oder PDF — kommt bald</div>
+        </div>
+        <div style="background:var(--surface2);border:1.5px solid var(--border);border-radius:12px;padding:13px 15px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='var(--border-hover)'" onmouseout="this.style.borderColor='var(--border)'" onclick="closeModal('overlay-create');showToast('KI-Assistent wird aktiviert...','success')">
+          <div style="font-size:13px;font-weight:500;margin-bottom:3px">🤖 Mit KI erstellen</div>
+          <div style="font-size:12px;color:var(--muted)">Beschreibe deinen Kurs und lass die KI eine Gliederung vorschlagen</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div id="toastContainer" style="position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px"></div>
+
+<script>
+var goals = [];
+var courseTags = [];
+var currentPrice = '0';
+var currentWizardStep = 1;
+var moduleCount = 2;
+var playerPlaying = false;
+var playerProgress = 35;
+var currentCourseDetail = {};
+var lessonIndex = 0;
+
+var LESSONS = [
+  {icon:'▶',title:'Einführung & Überblick',dur:'8 min',done:true},
+  {icon:'▶',title:'Grundbegriffe & Definitionen',dur:'12 min',done:true},
+  {icon:'📝',title:'Quiz: Grundbegriffe',dur:'5 min',done:true},
+  {icon:'▶',title:'Methodik im Detail',dur:'15 min',done:false},
+  {icon:'▶',title:'Praxisbeispiel Schritt 1',dur:'10 min',done:false},
+  {icon:'📋',title:'Übungsaufgabe',dur:'20 min',done:false},
+  {icon:'▶',title:'Zusammenfassung & Ausblick',dur:'6 min',done:false},
+];
+
+// ── TAB SWITCH ──
+function switchTab(name, el) {
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  if(el) el.classList.add('active');
+}
+
+// ── WIZARD ──
+function wizardNext(step) {
+  if(step === 4) {
+    document.getElementById('sumTitle').textContent = document.getElementById('wTitle').value || '(kein Titel)';
+    document.getElementById('sumCat').textContent   = document.getElementById('wCat').value || '(keine Kategorie)';
+    document.getElementById('sumPrice').textContent = currentPrice === '0' ? 'Kostenlos' : currentPrice + '€';
+    document.getElementById('sumChapters').textContent = moduleCount;
+  }
+  for(var i=1;i<=4;i++) {
+    var sc = document.getElementById('wsc'+i);
+    var ws = document.getElementById('wstep'+i);
+    sc.classList.remove('active');
+    ws.className = 'step';
+    if(i < step) { ws.classList.add('done'); ws.querySelector('.step-circle').textContent = '✓'; }
+    else if(i === step) { ws.classList.add('active'); sc.classList.add('active'); }
+    else { ws.querySelector('.step-circle').textContent = i; }
+  }
+  currentWizardStep = step;
+}
+
+function publishCourse() {
+  closeModal('overlay-create');
+  document.querySelectorAll('.step').forEach(function(s){ s.className='step done'; s.querySelector('.step-circle').textContent='✓'; });
+  document.querySelectorAll('.step-content').forEach(function(sc){ sc.classList.remove('active'); });
+  var card = document.querySelector('#page-erstellen .card');
+  var success = document.createElement('div');
+  success.style.cssText = 'text-align:center;padding:2.5rem 1rem;animation:fadeIn .4s ease';
+  success.innerHTML = '<div style="font-size:50px;margin-bottom:1rem">🚀</div><div style="font-family:DM Serif Display,serif;font-size:22px;margin-bottom:.5rem">Kurs <em style="font-style:italic;color:var(--accent2)">eingereicht!</em></div><div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:1.5rem">Dein Kurs wird innerhalb von 24–48h vom Academify-Team geprüft.<br>Du wirst per Nachricht benachrichtigt.</div><div style="display:flex;gap:8px;justify-content:center"><button class="btn-primary" onclick="wizardNext(1)">Weiteren Kurs erstellen</button><button class="btn-ghost" onclick="switchTab(\'verwalten\',document.querySelectorAll(\'.tab\')[3])">Zur Verwaltung →</button></div>';
+  card.appendChild(success);
+  setTimeout(function(){ success.scrollIntoView({behavior:'smooth'}); }, 100);
+  showToast('Kurs erfolgreich eingereicht! ✓','success');
+}
+
+// ── MODALS ──
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function openCreateModal() { openModal('overlay-create'); }
+
+function openCourseDetail(title, author, rating, students, emoji, bg, price, type) {
+  currentCourseDetail = {title, author, rating, students, emoji, bg, price, type};
+  document.getElementById('detailTitle').innerHTML = title;
+  document.getElementById('detailAuthor').textContent = 'von ' + author;
+  document.getElementById('detailRating').textContent = rating + ' (' + students.toLocaleString('de-DE') + ' Bewertungen)';
+  document.getElementById('detailThumb').style.background = bg;
+  document.getElementById('detailThumb').textContent = emoji;
+  var priceEl = document.getElementById('detailPrice');
+  priceEl.textContent = price;
+  priceEl.style.color = price === 'Kostenlos' ? 'var(--success)' : 'var(--warn)';
+  var btn = document.getElementById('detailEnrollBtn');
+  btn.textContent = type === 'sponsored' || price === 'Kostenlos' ? 'Kostenlos einschreiben' : ('Für ' + price + ' kaufen');
+
+  var ll = document.getElementById('detailLessons');
+  ll.innerHTML = LESSONS.slice(0,5).map(function(l){
+    return '<div class="lesson-item"><div class="lesson-type" style="background:rgba(124,109,250,0.1)">'+l.icon+'</div><div class="lesson-info"><div class="lesson-title">'+l.title+'</div><div class="lesson-dur">'+l.dur+'</div></div><div class="lesson-done">'+(l.done?'✅':'🔒')+'</div></div>';
+  }).join('');
+  openModal('overlay-detail');
+}
+
+function enrollFromDetail() {
+  closeModal('overlay-detail');
+  enrollCourse(currentCourseDetail.title);
+}
+
+function enrollCourse(name) {
+  showToast('Erfolgreich eingeschrieben: ' + name + ' ✓', 'success');
+}
+
+function openCoursePlayer(title, author, progress, emoji, color) {
+  document.getElementById('playerTitle').textContent = title;
+  document.getElementById('playerEmoji').textContent = emoji;
+  document.getElementById('playerLessonTitle').textContent = 'Kapitel 2: Grundkonzepte — Lektion ' + (lessonIndex+1);
+  document.getElementById('playerCurLesson').textContent = 'Kapitel 2: ' + LESSONS[lessonIndex].title;
+  document.getElementById('videoProgress').style.width = progress + '%';
+  playerProgress = progress;
+  playerPlaying = false;
+
+  var pll = document.getElementById('playerLessonList');
+  pll.innerHTML = LESSONS.map(function(l,i){
+    return '<div class="lesson-item" style="'+(i===lessonIndex?'border-color:var(--accent);background:rgba(124,109,250,0.06)':'')+'" onclick="jumpLesson('+i+')"><div class="lesson-type" style="background:'+(l.done?'rgba(74,222,128,0.1)':'rgba(124,109,250,0.1)')+'">'+l.icon+'</div><div class="lesson-info"><div class="lesson-title">'+l.title+'</div><div class="lesson-dur">'+l.dur+'</div></div><div class="lesson-done">'+(i===lessonIndex?'▶':(l.done?'✅':'🔒'))+'</div></div>';
+  }).join('');
+
+  openModal('overlay-player');
+}
+
+function jumpLesson(idx) {
+  lessonIndex = idx;
+  var lesson = LESSONS[idx];
+  document.getElementById('playerLessonTitle').textContent = lesson.title;
+  document.getElementById('playerCurLesson').textContent = 'Lektion '+(idx+1)+': '+lesson.title;
+  document.getElementById('videoProgress').style.width = (lesson.done ? 100 : 0) + '%';
+  playerPlaying = false;
+  var btn = document.querySelector('#overlay-player button[onclick="togglePlay(this)"]');
+  if(btn) btn.textContent = '▶';
+  document.querySelectorAll('#playerLessonList .lesson-item').forEach(function(el,i){
+    el.style.borderColor = i===idx ? 'var(--accent)' : 'var(--border)';
+    el.style.background  = i===idx ? 'rgba(124,109,250,0.06)' : '';
+    el.querySelector('.lesson-done').textContent = i===idx ? '▶' : (LESSONS[i].done ? '✅' : '🔒');
+  });
+}
+
+function togglePlay(btn) {
+  playerPlaying = !playerPlaying;
+  btn.textContent = playerPlaying ? '⏸' : '▶';
+  if(playerPlaying) {
+    var interval = setInterval(function(){
+      if(!playerPlaying){ clearInterval(interval); return; }
+      playerProgress = Math.min(playerProgress + 0.3, 100);
+      var pv = document.getElementById('videoProgress');
+      if(pv) pv.style.width = playerProgress + '%';
+      var mins = Math.floor(playerProgress/100*12);
+      var secs = Math.floor((playerProgress/100*12*60) % 60);
+      var pt = document.getElementById('playerTime');
+      if(pt) pt.textContent = String(mins).padStart(2,'0')+':'+String(secs).padStart(2,'0')+' / 12:30';
+      if(playerProgress >= 100){ clearInterval(interval); playerPlaying=false; btn.textContent='✅'; showToast('Lektion abgeschlossen! ✓','success'); }
+    }, 200);
+  }
+}
+
+function nextLesson() {
+  lessonIndex = Math.min(lessonIndex+1, LESSONS.length-1);
+  jumpLesson(lessonIndex);
+  showToast('Weiter zu Lektion '+(lessonIndex+1),'info');
+}
+
+function prevLesson() {
+  lessonIndex = Math.max(lessonIndex-1, 0);
+  jumpLesson(lessonIndex);
+}
+
+function openEditModal(title) {
+  document.getElementById('editTitle').value = title;
+  openModal('overlay-edit');
+}
+
+function saveEdit() {
+  closeModal('overlay-edit');
+  showToast('Kurs erfolgreich aktualisiert ✓','success');
+}
+
+function openStatsModal(title) {
+  document.getElementById('statsTitle').innerHTML = title.split(' ')[0] + ' <em>Analytics</em>';
+  if(title.includes('Psych')) {
+    document.getElementById('sTotal').textContent = '108';
+    document.getElementById('sComplete').textContent = '65%';
+    document.getElementById('sRating').textContent = '4,9';
+  } else {
+    document.getElementById('sTotal').textContent = '234';
+    document.getElementById('sComplete').textContent = '78%';
+    document.getElementById('sRating').textContent = '4,7';
+  }
+  openModal('overlay-stats');
+}
+
+function openCertModal(name) {
+  document.getElementById('certCourseName').textContent = name;
+  openModal('overlay-cert');
+}
+
+// ── MODULES ──
+function addModule() {
+  moduleCount++;
+  var list = document.getElementById('moduleList') || document.querySelector('#overlay-edit .module-list');
+  var item = document.createElement('div');
+  item.className = 'module-item';
+  item.innerHTML = '<span class="module-drag">⋮⋮</span><div class="module-num">'+moduleCount+'</div><div class="module-info"><div class="module-title" contenteditable="true" style="outline:none;border-bottom:1px dashed var(--border)">Neues Kapitel — klick zum Bearbeiten</div><div class="module-meta">0 Lektionen</div></div><div class="module-actions"><button class="btn-xs btn-xs-ghost" onclick="editModule('+moduleCount+')">✏️</button><button class="btn-xs btn-xs-danger" onclick="deleteModule(this)">✕</button></div>';
+  list.appendChild(item);
+  item.querySelector('.module-title').focus();
+  showToast('Kapitel '+moduleCount+' hinzugefügt','success');
+}
+
+function editModule(num) {
+  showToast('Kapitel '+num+' wird bearbeitet...','info');
+}
+
+function deleteModule(btn) {
+  var item = btn.closest('.module-item');
+  item.style.opacity = '0';
+  item.style.transform = 'translateX(20px)';
+  item.style.transition = 'all .3s';
+  setTimeout(function(){ item.remove(); moduleCount = Math.max(0,moduleCount-1); }, 300);
+}
+
+// ── TAGS ──
+function addTagToWrap(e, inputId, wrapId, list) {
+  if(e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    var val = document.getElementById(inputId).value.trim().replace(',','');
+    if(!val) return;
+    var wrap = document.getElementById(wrapId);
+    var input = document.getElementById(inputId);
+    var tag = document.createElement('span');
+    tag.className = 'tag';
+    tag.innerHTML = val + '<span class="tag-del" onclick="removeTag(this)">×</span>';
+    wrap.insertBefore(tag, input);
+    input.value = '';
+  }
+}
+
+function removeTag(btn) { btn.parentElement.remove(); }
+
+// ── PRICING ──
+function selectPrice(el, price) {
+  currentPrice = price;
+  document.querySelectorAll('.price-card').forEach(function(c){ c.classList.remove('selected'); });
+  el.classList.add('selected');
+}
+
+// ── FILTER ──
+function filterCourses(el, cat) {
+  document.querySelectorAll('#page-entdecken [onclick^="filterCourses"]').forEach(function(b){
+    b.style.background = 'var(--surface2)';
+    b.style.color = 'var(--muted)';
+    b.style.borderColor = 'var(--border)';
+  });
+  el.style.background = 'var(--accent)';
+  el.style.color = '#fff';
+  el.style.borderColor = 'transparent';
+  showToast('Filter: '+cat,'info');
+}
+
+// ── TOAST ──
+function showToast(msg, type) {
+  var container = document.getElementById('toastContainer');
+  var toast = document.createElement('div');
+  toast.className = 'toast ' + (type||'');
+  var icon = type==='success'?'✅':type==='error'?'❌':type==='warn'?'⚠️':'ℹ️';
+  toast.innerHTML = '<span>'+icon+'</span><span>'+msg+'</span>';
+  container.appendChild(toast);
+  setTimeout(function(){
+    toast.style.opacity='0';
+    toast.style.transform='translateY(8px)';
+    toast.style.transition='all .3s';
+    setTimeout(function(){ toast.remove(); }, 300);
+  }, 3000);
+}
+
+// Close overlay on backdrop click
+document.querySelectorAll('.overlay').forEach(function(o){
+  o.addEventListener('click', function(e){
+    if(e.target === o) o.classList.remove('open');
+  });
+});
+
+// Init
+document.addEventListener('DOMContentLoaded', function(){
+  showToast('Willkommen zurück, Max! 👋','success');
+});
+</script>
+</body>
+</html>

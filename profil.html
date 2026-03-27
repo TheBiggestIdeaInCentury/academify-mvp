@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Academify — Profil & Freunde</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0e14;--surface:#13141c;--surface2:#1a1b26;--surface3:#1f2030;
+  --border:rgba(255,255,255,0.06);--bh:rgba(255,255,255,0.13);
+  --accent:#7c6dfa;--accent2:#a78bfa;--accent3:#c4b5fd;
+  --text:#e8e6f0;--muted:#6b6880;--muted2:#4a4860;
+  --success:#4ade80;--warn:#fbbf24;--info:#38bdf8;--coral:#f87171;
+}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(124,109,250,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(124,109,250,0.025) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;z-index:0}
+
+/* ── SHELL ── */
+.shell{display:flex;height:100vh;position:relative;z-index:1}
+
+/* ── SIDEBAR ── */
+.sb{width:220px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;overflow:hidden}
+.logo{display:flex;align-items:center;gap:9px;padding:1.1rem;border-bottom:1px solid var(--border);font-family:'DM Serif Display',serif;font-size:17px}
+.lm{width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.lt span{color:var(--accent2)}
+.nav-scroll{overflow-y:auto;flex:1;padding:.5rem .7rem .5rem}
+.nav-scroll::-webkit-scrollbar{width:3px}
+.nav-scroll::-webkit-scrollbar-thumb{background:var(--muted2);border-radius:2px}
+.nl{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted2);padding:.3rem .5rem .15rem;margin-top:.4rem}
+.ni{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:8px;cursor:pointer;font-size:12px;color:var(--muted);transition:all .18s;margin-bottom:1px;position:relative;user-select:none}
+.ni:hover{background:var(--surface2);color:var(--text)}
+.ni.on{background:rgba(124,109,250,.1);color:var(--accent2)}
+.ni.on::before{content:'';position:absolute;left:0;top:20%;height:60%;width:2.5px;background:var(--accent);border-radius:0 2px 2px 0}
+.ni-ico{font-size:13px;width:16px;text-align:center;flex-shrink:0}
+.nbadge{margin-left:auto;background:var(--accent);color:#fff;font-size:10px;padding:1px 6px;border-radius:100px;font-weight:500}
+.sb-bot{padding:.8rem .7rem;border-top:1px solid var(--border)}
+.uc{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:9px;cursor:pointer;transition:background .18s}
+.uc:hover{background:var(--surface2)}
+.uav{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
+.un{font-size:12px;font-weight:500}
+.ur{font-size:10px;color:var(--muted)}
+
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+/* ── TOPBAR — mit Übergang wie im Screenshot ── */
+.topbar{
+  display:flex;align-items:center;gap:10px;
+  padding:.9rem 1.6rem;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+  background:var(--surface);
+  position:relative;
+}
+/* Subtiler Gradient-Übergang rechts in der Topbar */
+.topbar::after{
+  content:'';position:absolute;top:0;right:0;bottom:0;
+  width:180px;
+  background:linear-gradient(to right, transparent, rgba(124,109,250,0.04));
+  pointer-events:none;
+}
+.tbl{flex:1}
+.tbl h1{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;letter-spacing:-.2px}
+.tbl h1 em{font-style:italic;color:var(--accent2)}
+.tbl p{font-size:11px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:8px}
+.vp{display:inline-flex;align-items:center;gap:4px;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);border-radius:100px;padding:2px 9px;font-size:10px;color:var(--success)}
+.vd{width:4px;height:4px;background:var(--success);border-radius:50%}
+.tbr{display:flex;align-items:center;gap:7px}
+.ib{width:32px;height:32px;border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:all .18s;position:relative;background:transparent}
+.ib:hover{border-color:var(--bh);background:var(--surface2)}
+.nd{position:absolute;top:6px;right:6px;width:5px;height:5px;background:var(--accent);border-radius:50%;border:1.5px solid var(--surface)}
+
+.content{flex:1;overflow-y:auto;padding:1.4rem 1.6rem}
+.content::-webkit-scrollbar{width:4px}
+.content::-webkit-scrollbar-thumb{background:var(--muted2);border-radius:2px}
+
+/* ── TABS — like studienberatung ── */
+.tab-bar{display:flex;gap:6px;margin-bottom:1.4rem;flex-wrap:wrap}
+.tab{display:flex;align-items:center;gap:7px;padding:8px 16px;border-radius:10px;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;border:1px solid var(--border);color:var(--muted);background:var(--surface);user-select:none;white-space:nowrap}
+.tab:hover{border-color:var(--bh);color:var(--text);transform:translateY(-1px)}
+.tab.on{background:rgba(124,109,250,.1);border-color:rgba(124,109,250,.3);color:var(--accent2)}
+.tab-badge{background:var(--accent);color:#fff;font-size:10px;padding:1px 6px;border-radius:100px;font-weight:500}
+.tab-badge.red{background:var(--coral)}
+
+/* ── PAGES ── */
+.page{display:none}.page.on{display:block}
+
+/* ══════════════════════════════════════════
+   PROFIL TAB
+══════════════════════════════════════════ */
+
+/* Profil-Hero: volle Breite, 2-Spalten */
+.profil-top-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+
+/* Linke Spalte: Profilkarte */
+.profile-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;position:relative}
+.profile-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(124,109,250,.25),transparent);z-index:1}
+.profile-banner{height:100px;position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(124,109,250,.25) 0%,rgba(167,139,250,.15) 40%,rgba(56,189,248,.1) 100%)}
+.profile-banner::after{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(45deg,transparent,transparent 18px,rgba(124,109,250,.04) 18px,rgba(124,109,250,.04) 19px)}
+.profile-banner-glow{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);width:160px;height:60px;background:rgba(124,109,250,.15);filter:blur(28px);border-radius:50%}
+.profile-body{padding:0 1.3rem 1.3rem}
+.pav-row{display:flex;align-items:flex-end;justify-content:space-between;margin-top:-30px;margin-bottom:1rem}
+.profile-av{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;border:3px solid var(--surface);flex-shrink:0;color:#fff;position:relative}
+.av-online{position:absolute;bottom:2px;right:2px;width:12px;height:12px;border-radius:50%;background:var(--success);border:2px solid var(--surface)}
+.pactions{display:flex;gap:7px}
+.btn-edit{display:flex;align-items:center;gap:5px;padding:6px 13px;background:rgba(124,109,250,.12);border:1px solid rgba(124,109,250,.25);border-radius:8px;font-size:11px;color:var(--accent2);cursor:pointer;transition:all .18s;font-family:'DM Sans',sans-serif}
+.btn-edit:hover{background:rgba(124,109,250,.22)}
+.btn-share{display:flex;align-items:center;gap:5px;padding:6px 11px;background:transparent;border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--muted);cursor:pointer;transition:all .18s;font-family:'DM Sans',sans-serif}
+.btn-share:hover{border-color:var(--bh);color:var(--text)}
+.profile-name{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;margin-bottom:.5rem}
+.profile-name em{font-style:italic;color:var(--accent2)}
+.profile-pills{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:.8rem}
+.ppill{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--muted);background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:3px 9px}
+.profile-bio{font-size:12px;color:var(--muted);line-height:1.6;padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;margin-bottom:1rem}
+/* Stats inside card */
+.profile-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.pstat{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:8px;text-align:center;position:relative;overflow:hidden}
+.pstat::after{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.ps1::after{background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.ps2::after{background:linear-gradient(90deg,#f59e0b,var(--warn))}
+.ps3::after{background:linear-gradient(90deg,#22c55e,var(--success))}
+.ps4::after{background:linear-gradient(90deg,#3b82f6,var(--info))}
+.pstat-v{font-family:'DM Serif Display',serif;font-size:20px;line-height:1;margin-bottom:2px}
+.pstat-l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+
+/* Rechte Spalte: Badges */
+.badges-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.2rem 1.3rem;position:relative;overflow:hidden}
+.badges-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(124,109,250,.2),transparent)}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.card-title{font-size:13px;font-weight:500}
+.card-action{font-size:11px;color:var(--accent2);cursor:pointer;transition:opacity .18s}
+.card-action:hover{opacity:.7}
+.badges-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.badge{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:11px 8px;cursor:default;transition:all .2s;position:relative}
+.badge:not(.locked):hover{border-color:var(--bh);transform:translateY(-2px)}
+.badge:not(.locked):hover .badge-ico{filter:drop-shadow(0 0 8px rgba(124,109,250,.5))}
+.badge.locked{opacity:.3;filter:grayscale(.9)}
+.badge-new-dot{position:absolute;top:-4px;right:-4px;background:var(--accent);color:#fff;font-size:9px;padding:1px 5px;border-radius:100px;font-weight:600}
+.badge-ico{font-size:22px;line-height:1}
+.badge-name{font-size:10px;color:var(--muted);text-align:center;line-height:1.3;white-space:nowrap}
+.badges-progress{margin-top:.9rem;padding-top:.9rem;border-top:1px solid var(--border)}
+.bp-row{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:5px}
+.bp-bar{height:3px;background:var(--surface3);border-radius:2px;overflow:hidden}
+.bp-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width 1.2s cubic-bezier(.4,0,.2,1);width:0}
+
+/* Aktivitäts-Feed: volle Breite darunter */
+.feed-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.2rem 1.3rem;position:relative;overflow:hidden}
+.feed-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(124,109,250,.2),transparent)}
+.feed-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1.4rem}
+.feed-item{display:flex;gap:11px;padding:9px 0;border-bottom:1px solid var(--border);align-items:flex-start}
+.feed-item:last-child{border-bottom:none;padding-bottom:0}
+.feed-ico{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.feed-body{flex:1;min-width:0}
+.feed-title{font-size:12px;font-weight:500;margin-bottom:2px}
+.feed-sub{font-size:11px;color:var(--muted);line-height:1.4}
+.feed-time{font-size:10px;color:var(--muted2);flex-shrink:0;margin-top:2px;white-space:nowrap}
+
+/* ══════════════════════════════════════════
+   FREUNDE TAB
+══════════════════════════════════════════ */
+.freunde-layout{display:grid;grid-template-columns:1fr 300px;gap:14px}
+
+.search-bar{display:flex;align-items:center;gap:9px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:8px 13px;margin-bottom:1rem;transition:border-color .2s}
+.search-bar:focus-within{border-color:rgba(124,109,250,.4)}
+.search-bar input{flex:1;background:none;border:none;outline:none;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif}
+.search-bar input::placeholder{color:var(--muted2)}
+
+.friend-item{display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:10px;transition:background .18s;margin-bottom:2px}
+.friend-item:hover{background:var(--surface2)}
+.fav{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;position:relative}
+.odot{position:absolute;bottom:1px;right:1px;width:9px;height:9px;border-radius:50%;border:2px solid var(--bg);background:var(--muted2)}
+.odot.on{background:var(--success)}
+.odot.away{background:var(--warn)}
+.finfo{flex:1;min-width:0}
+.fname{font-size:12px;font-weight:500;margin-bottom:1px}
+.fmeta{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cpills{display:flex;flex-wrap:wrap;gap:3px;margin-top:4px}
+.cp{font-size:10px;background:rgba(124,109,250,.08);border:1px solid rgba(124,109,250,.15);color:var(--accent3);border-radius:100px;padding:1px 7px}
+.ftag{font-size:10px;padding:2px 8px;border-radius:100px;flex-shrink:0;white-space:nowrap}
+.ft-on{background:rgba(74,222,128,.1);color:var(--success)}
+.ft-away{background:rgba(251,191,36,.1);color:var(--warn)}
+.ft-off{background:var(--surface3);color:var(--muted2)}
+.fbtns{display:flex;gap:5px;flex-shrink:0}
+.fbtn{padding:5px 10px;border-radius:7px;font-size:11px;cursor:pointer;transition:all .18s;border:1px solid transparent;white-space:nowrap;font-family:'DM Sans',sans-serif}
+.fbtn.msg{background:rgba(124,109,250,.12);border-color:rgba(124,109,250,.2);color:var(--accent2)}
+.fbtn.msg:hover{background:rgba(124,109,250,.22)}
+.fbtn.rem{background:transparent;border-color:var(--border);color:var(--muted)}
+.fbtn.rem:hover{border-color:rgba(248,113,113,.3);color:var(--coral)}
+
+/* Section labels */
+.sec-lbl{font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin:.9rem 0 .4rem;display:flex;align-items:center;gap:8px}
+.sec-lbl::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ── VORSCHLÄGE — Priorität-Panel ── */
+.suggest-panel{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.2rem;height:fit-content;position:sticky;top:0}
+.suggest-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(124,109,250,.2),transparent);border-radius:14px 14px 0 0}
+.suggest-panel{position:relative}
+/* Priority label */
+.prio-label{display:inline-flex;align-items:center;gap:5px;font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:100px;margin-bottom:.5rem}
+.prio-1{background:rgba(124,109,250,.12);border:1px solid rgba(124,109,250,.25);color:var(--accent2)}
+.prio-2{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--info)}
+/* Suggest item */
+.sug-item{padding:8px 0;border-bottom:1px solid var(--border)}
+.sug-item:last-child{border-bottom:none;padding-bottom:0}
+.sug-row{display:flex;align-items:center;gap:9px;margin-bottom:5px}
+.sav{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
+.sinfo{flex:1;min-width:0}
+.sname{font-size:12px;font-weight:500;margin-bottom:1px}
+.smeta{font-size:10px;color:var(--muted);line-height:1.35}
+.swhy{font-size:10px;color:var(--accent2);margin-bottom:5px;line-height:1.4}
+.btn-add{width:100%;padding:5px;background:rgba(124,109,250,.1);border:1px solid rgba(124,109,250,.22);border-radius:7px;font-size:11px;color:var(--accent2);cursor:pointer;transition:all .18s;font-family:'DM Sans',sans-serif}
+.btn-add:hover{background:rgba(124,109,250,.2)}
+.btn-add.sent{background:rgba(74,222,128,.08);border-color:rgba(74,222,128,.2);color:var(--success);pointer-events:none}
+
+/* ══════════════════════════════════════════
+   ANFRAGEN TAB
+══════════════════════════════════════════ */
+.req-item{display:flex;align-items:center;gap:11px;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:11px;margin-bottom:8px;transition:border-color .18s}
+.req-item:hover{border-color:var(--bh)}
+.rav{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;flex-shrink:0}
+.rinfo{flex:1;min-width:0}
+.rname{font-size:12px;font-weight:500;margin-bottom:2px}
+.rmeta{font-size:11px;color:var(--muted)}
+.rbtns{display:flex;gap:7px;flex-shrink:0}
+.btn-accept{padding:6px 13px;background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.25);border-radius:8px;font-size:11px;color:var(--success);cursor:pointer;transition:all .18s;font-family:'DM Sans',sans-serif}
+.btn-accept:hover{background:rgba(74,222,128,.22)}
+.btn-decline{padding:6px 13px;background:transparent;border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--muted);cursor:pointer;transition:all .18s;font-family:'DM Sans',sans-serif}
+.btn-decline:hover{border-color:rgba(248,113,113,.3);color:var(--coral)}
+
+@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.page.on>*{animation:up .28s ease both}
+
+/* ── MODAL ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--bh);border-radius:16px;width:480px;max-width:95vw;max-height:90vh;overflow-y:auto;position:relative;animation:modalIn .22s ease both;box-shadow:0 24px 60px rgba(0,0,0,.6)}
+.modal::-webkit-scrollbar{width:3px}
+.modal::-webkit-scrollbar-thumb{background:var(--muted2);border-radius:2px}
+@keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(12px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-header{padding:1.4rem 1.4rem .9rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--surface);z-index:1;border-radius:16px 16px 0 0}
+.modal-title{font-family:'DM Serif Display',serif;font-size:18px;font-weight:400}
+.modal-title em{font-style:italic;color:var(--accent2)}
+.modal-close{width:28px;height:28px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .18s;flex-shrink:0}
+.modal-close:hover{border-color:var(--bh);color:var(--text)}
+.modal-body{padding:1.2rem 1.4rem}
+.modal-section{margin-bottom:1.3rem}
+.modal-sec-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:.7rem;display:flex;align-items:center;gap:7px}
+.modal-sec-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.field{margin-bottom:10px}
+.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:11px;color:var(--muted);margin-bottom:5px;letter-spacing:.03em}
+.field input,.field select,.field textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 11px;color:var(--text);font-size:12px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .18s;-webkit-appearance:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(124,109,250,.5);box-shadow:0 0 0 3px rgba(124,109,250,.08)}
+.field textarea{resize:vertical;min-height:72px;line-height:1.5}
+.field select{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b6880'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+/* Avatar upload area */
+.av-upload{display:flex;align-items:center;gap:14px;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;margin-bottom:10px}
+.av-preview{width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;flex-shrink:0}
+.av-upload-info{flex:1}
+.av-upload-name{font-size:12px;font-weight:500;margin-bottom:3px}
+.av-upload-sub{font-size:11px;color:var(--muted);margin-bottom:7px}
+.av-upload-btn{font-size:11px;padding:5px 12px;background:rgba(124,109,250,.12);border:1px solid rgba(124,109,250,.25);border-radius:7px;color:var(--accent2);cursor:pointer;transition:all .18s;font-family:'DM Sans',sans-serif}
+.av-upload-btn:hover{background:rgba(124,109,250,.22)}
+/* Interest tags */
+.tag-input-wrap{display:flex;flex-wrap:wrap;gap:5px;padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;cursor:text;min-height:38px;transition:border-color .18s}
+.tag-input-wrap:focus-within{border-color:rgba(124,109,250,.5)}
+.interest-tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;background:rgba(124,109,250,.12);border:1px solid rgba(124,109,250,.22);color:var(--accent2);border-radius:100px;padding:2px 9px}
+.interest-tag button{background:none;border:none;color:var(--accent2);cursor:pointer;font-size:12px;line-height:1;padding:0;opacity:.6}
+.interest-tag button:hover{opacity:1}
+.tag-input{border:none;background:none;outline:none;color:var(--text);font-size:12px;font-family:'DM Sans',sans-serif;min-width:80px;flex:1}
+/* Privacy toggle */
+.privacy-row{display:flex;align-items:center;justify-content:space-between;padding:9px 11px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;margin-bottom:7px}
+.privacy-label{font-size:12px;color:var(--text)}
+.privacy-sub{font-size:10px;color:var(--muted);margin-top:1px}
+.toggle{position:relative;width:36px;height:20px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-track{position:absolute;inset:0;border-radius:100px;background:var(--surface3);border:1px solid var(--border);transition:all .2s;cursor:pointer}
+.toggle input:checked + .toggle-track{background:rgba(124,109,250,.5);border-color:rgba(124,109,250,.5)}
+.toggle-thumb{position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;top:2px;left:2px;transition:transform .2s;pointer-events:none}
+.toggle input:checked ~ .toggle-thumb{transform:translateX(16px)}
+/* Modal footer */
+.modal-footer{padding:.9rem 1.4rem 1.4rem;display:flex;justify-content:flex-end;gap:8px;border-top:1px solid var(--border);position:sticky;bottom:0;background:var(--surface);border-radius:0 0 16px 16px}
+.btn-cancel{padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;cursor:pointer;transition:all .18s;font-family:'DM Sans',sans-serif}
+.btn-cancel:hover{border-color:var(--bh);color:var(--text)}
+.btn-save{padding:8px 20px;border-radius:8px;border:none;background:var(--accent);color:#fff;font-size:12px;font-weight:500;cursor:pointer;transition:opacity .18s;font-family:'DM Sans',sans-serif}
+.btn-save:hover{opacity:.85}
+
+/* ── NOTIFICATION DRAWER ── */
+.notif-drawer{display:none;position:fixed;top:0;right:0;bottom:0;width:320px;background:var(--surface);border-left:1px solid var(--border);z-index:150;flex-direction:column;box-shadow:-8px 0 32px rgba(0,0,0,.4)}
+.notif-drawer.open{display:flex}
+.notif-head{padding:1.1rem 1.2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.notif-title{font-size:14px;font-weight:500}
+.notif-body{flex:1;overflow-y:auto;padding:.6rem .8rem}
+.notif-item{display:flex;gap:10px;padding:9px 8px;border-radius:9px;cursor:pointer;transition:background .18s}
+.notif-item:hover{background:var(--surface2)}
+.notif-item.unread{background:rgba(124,109,250,.05)}
+.notif-ico{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.notif-txt{flex:1;min-width:0}
+.notif-msg{font-size:12px;line-height:1.4;margin-bottom:2px}
+.notif-time{font-size:10px;color:var(--muted)}
+.unread-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;margin-top:4px}
+
+/* ── SEARCH OVERLAY ── */
+.search-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:180;align-items:flex-start;justify-content:center;padding-top:10vh;backdrop-filter:blur(4px)}
+.search-overlay.open{display:flex}
+.search-box{background:var(--surface);border:1px solid var(--bh);border-radius:14px;width:500px;max-width:95vw;overflow:hidden;animation:modalIn .18s ease both}
+.search-input-row{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border)}
+.search-input-row input{flex:1;background:none;border:none;outline:none;font-size:14px;color:var(--text);font-family:'DM Sans',sans-serif}
+.search-results{padding:.5rem .6rem .6rem;max-height:260px;overflow-y:auto}
+.sr-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;transition:background .18s}
+.sr-item:hover{background:var(--surface2)}
+.sr-ico{font-size:14px;width:28px;text-align:center}
+.sr-label{font-size:12px}
+.sr-sub{font-size:11px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ── SIDEBAR ── -->
+<aside class="sb">
+  <div class="logo"><div class="lm">🎓</div><div class="lt">Acade<span>mify</span></div></div>
+  <div class="nav-scroll">
+    <div class="nl">Hauptmenü</div>
+    <div class="ni" onclick="navTo(this)"><span class="ni-ico">⊞</span>Dashboard</div>
+    <div class="ni" onclick="navTo(this)"><span class="ni-ico">💬</span>Nachrichten <span class="nbadge">3</span></div>
+    <div class="ni on" onclick="navTo(this)"><span class="ni-ico">👥</span>Profil &amp; Freunde</div>
+    <div class="nl">Lernen</div>
+    <div class="ni" onclick="navTo(this)"><span class="ni-ico">📖</span>Online-Kurse <span class="nbadge">3</span></div>
+    <div class="ni" onclick="navTo(this)"><span class="ni-ico">🎓</span>Nachhilfe</div>
+    <div class="ni" onclick="navTo(this)"><span class="ni-ico">📄</span>StudyDocs</div>
+    <div class="nl">Campus &amp; Karriere</div>
+    <div class="ni" onclick="navTo(this)"><span class="ni-ico">🏫</span>Studienberatung</div>
+    <div class="ni" onclick="navTo(this)"><span class="ni-ico">🗺️</span>Community-Karte</div>
+    <div class="ni" onclick="navTo(this)"><span class="ni-ico">🚗</span>StudyRide</div>
+    <div class="ni" onclick="navTo(this)"><span class="ni-ico">💼</span>Jobs &amp; Praktika</div>
+    <div class="ni" onclick="navTo(this)"><span class="ni-ico">👕</span>Merch-Shop</div>
+  </div>
+  <div class="sb-bot">
+    <div class="uc"><div class="uav">MM</div><div><div class="un">Max Müller</div><div class="ur">WiPsy B.Sc. · Sem. 1</div></div></div>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<main class="main">
+  <div class="topbar">
+    <div class="tbl">
+      <h1>Profil &amp; <em>Freunde</em></h1>
+      <p>Dein Profil und dein Netzwerk &nbsp;<span class="vp"><span class="vd"></span>Verifiziert</span></p>
+    </div>
+    <div class="tbr">
+      <div class="ib" onclick="openSearch()" title="Suche">🔍</div>
+      <div class="ib" onclick="openNotif()" title="Benachrichtigungen">🔔<span class="nd"></span></div>
+      <div class="ib" onclick="showToast('Einstellungen — kommt bald','info')" title="Einstellungen">⚙️</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- TABS -->
+    <div class="tab-bar">
+      <div class="tab on" onclick="switchTab('profil',this)">👤 Mein Profil</div>
+      <div class="tab" onclick="switchTab('freunde',this)">👥 Freunde <span class="tab-badge">24</span></div>
+      <div class="tab" onclick="switchTab('anfragen',this)">📬 Anfragen <span class="tab-badge red" id="req-badge">2</span></div>
+    </div>
+
+    <!-- ══ PROFIL ══ -->
+    <div class="page on" id="page-profil">
+
+      <!-- Obere Reihe: Profilkarte links | Badges rechts -->
+      <div class="profil-top-grid">
+
+        <!-- Profilkarte -->
+        <div class="profile-card">
+          <div class="profile-banner">
+            <div class="profile-banner-glow"></div>
+          </div>
+          <div class="profile-body">
+            <div class="pav-row">
+              <div class="profile-av">MM<div class="av-online"></div></div>
+              <div class="pactions">
+                <button class="btn-edit" onclick="openModal('overlay-edit')">✏️ Bearbeiten</button>
+                <button class="btn-share" onclick="copyLink()">🔗 Teilen</button>
+              </div>
+            </div>
+            <div class="profile-name">Max <em>Müller</em></div>
+            <div class="profile-pills">
+              <span class="ppill">🏫 Universität zu Köln</span>
+              <span class="ppill">📚 Wirtschaftspsychologie B.Sc.</span>
+              <span class="ppill">🗓️ Semester 1</span>
+              <span class="vp"><span class="vd"></span>Verifiziert</span>
+            </div>
+            <div class="profile-bio">„Ersti hier 👋 — auf der Suche nach Lerngruppen für Statistik &amp; BWL. Schreibt mich gerne an!"</div>
+            <div class="profile-stats">
+              <div class="pstat ps1"><div class="pstat-v">7🔥</div><div class="pstat-l">Streak</div></div>
+              <div class="pstat ps2"><div class="pstat-v">24h</div><div class="pstat-l">Lernzeit</div></div>
+              <div class="pstat ps3"><div class="pstat-v">24</div><div class="pstat-l">Freunde</div></div>
+              <div class="pstat ps4"><div class="pstat-v">3</div><div class="pstat-l">Kurse</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Badges -->
+        <div class="badges-card">
+          <div class="card-head">
+            <div class="card-title">🏅 Abzeichen</div>
+            <div class="card-action" onclick="showToast('Alle 32 Badges ansehen','info')">Alle ansehen →</div>
+          </div>
+          <div class="badges-grid">
+            <div class="badge"><span class="badge-new-dot">Neu</span><div class="badge-ico">🔥</div><div class="badge-name">7-Tage Streak</div></div>
+            <div class="badge"><div class="badge-ico">✅</div><div class="badge-name">Erster Kurs</div></div>
+            <div class="badge"><div class="badge-ico">🎓</div><div class="badge-name">Verifiziert</div></div>
+            <div class="badge"><div class="badge-ico">💬</div><div class="badge-name">Erster Post</div></div>
+            <div class="badge"><div class="badge-ico">🤝</div><div class="badge-name">10 Freunde</div></div>
+            <div class="badge"><div class="badge-ico">📚</div><div class="badge-name">Bücherwurm</div></div>
+            <div class="badge locked"><div class="badge-ico">⚡</div><div class="badge-name">30-Tage Streak</div></div>
+            <div class="badge locked"><div class="badge-ico">🏆</div><div class="badge-name">Top-Bewerter</div></div>
+            <div class="badge locked"><div class="badge-ico">🌟</div><div class="badge-name">50 Freunde</div></div>
+          </div>
+          <div class="badges-progress">
+            <div class="bp-row">
+              <span>6 von 32 freigeschaltet</span>
+              <span style="color:var(--accent2)">18,75%</span>
+            </div>
+            <div class="bp-bar"><div class="bp-fill" id="bp-fill"></div></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Letzte Aktivitäten: volle Breite darunter -->
+      <div class="feed-card">
+        <div class="card-head">
+          <div class="card-title">📋 Letzte Aktivitäten</div>
+          <div class="card-action" onclick="showToast('Vollständiger Aktivitäts-Feed','info')">Alle →</div>
+        </div>
+        <div class="feed-grid">
+          <div class="feed-item">
+            <div class="feed-ico" style="background:rgba(124,109,250,.12)">📖</div>
+            <div class="feed-body"><div class="feed-title">Kurslektion abgeschlossen</div><div class="feed-sub">Einführung in die Psychologie · Lektion 8 von 12</div></div>
+            <div class="feed-time">Heute</div>
+          </div>
+          <div class="feed-item">
+            <div class="feed-ico" style="background:rgba(74,222,128,.12)">🤝</div>
+            <div class="feed-body"><div class="feed-title">Neue Freundschaft</div><div class="feed-sub">Du und Anna K. seid jetzt befreundet</div></div>
+            <div class="feed-time">Gestern</div>
+          </div>
+          <div class="feed-item">
+            <div class="feed-ico" style="background:rgba(251,191,36,.12)">⭐</div>
+            <div class="feed-body"><div class="feed-title">Hochschule bewertet</div><div class="feed-sub">Universität zu Köln · 4,2 / 5 Geister</div></div>
+            <div class="feed-time">Mo, 18. Mär</div>
+          </div>
+          <div class="feed-item">
+            <div class="feed-ico" style="background:rgba(56,189,248,.12)">📄</div>
+            <div class="feed-body"><div class="feed-title">Dokument hochgeladen</div><div class="feed-sub">Statistik Zusammenfassung Kap. 1–4 · StudyDocs</div></div>
+            <div class="feed-time">Sa, 15. Mär</div>
+          </div>
+          <div class="feed-item">
+            <div class="feed-ico" style="background:rgba(248,113,113,.12)">🔥</div>
+            <div class="feed-body"><div class="feed-title">Badge freigeschaltet</div><div class="feed-sub">„7-Tage Streak" — 7 Tage in Folge gelernt</div></div>
+            <div class="feed-time">Sa, 15. Mär</div>
+          </div>
+          <div class="feed-item">
+            <div class="feed-ico" style="background:rgba(124,109,250,.12)">💬</div>
+            <div class="feed-body"><div class="feed-title">Community-Post</div><div class="feed-sub">„Hat jemand Bortz Kap. 4?" · 18 Reaktionen</div></div>
+            <div class="feed-time">Fr, 14. Mär</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ FREUNDE ══ -->
+    <div class="page" id="page-freunde">
+      <div class="freunde-layout">
+
+        <!-- Freundesliste -->
+        <div>
+          <div class="search-bar">
+            <span style="font-size:14px;color:var(--muted2)">🔍</span>
+            <input type="text" placeholder="Freunde oder Interessen suchen …" oninput="filterFriends(this.value)">
+          </div>
+
+          <div id="friends-list">
+            <div class="sec-lbl">Online jetzt · 3</div>
+
+            <div class="friend-item" data-name="anna k." data-tags="statistik wipsy">
+              <div class="fav" style="background:rgba(124,109,250,.18)">AK<div class="odot on"></div></div>
+              <div class="finfo"><div class="fname">Anna K.</div><div class="fmeta">WiPsy B.Sc. · Sem. 1 · Uni Köln</div><div class="cpills"><span class="cp">Statistik</span><span class="cp">WiPsy</span></div></div>
+              <span class="ftag ft-on">● Online</span>
+              <div class="fbtns">
+                <button class="fbtn msg" onclick="showToast('Chat mit Anna K. öffnen …','info')">💬</button>
+                <button class="fbtn rem" onclick="removeFriend(this,'Anna K.')">✕</button>
+              </div>
+            </div>
+            <div class="friend-item" data-name="luca b." data-tags="bwl community">
+              <div class="fav" style="background:rgba(74,222,128,.18)">LB<div class="odot on"></div></div>
+              <div class="finfo"><div class="fname">Luca B.</div><div class="fmeta">BWL B.Sc. · Sem. 3 · Uni Köln</div><div class="cpills"><span class="cp">BWL</span><span class="cp">Community</span></div></div>
+              <span class="ftag ft-on">● Online</span>
+              <div class="fbtns">
+                <button class="fbtn msg" onclick="showToast('Chat mit Luca B. öffnen …','info')">💬</button>
+                <button class="fbtn rem" onclick="removeFriend(this,'Luca B.')">✕</button>
+              </div>
+            </div>
+            <div class="friend-item" data-name="mia s." data-tags="informatik studyride">
+              <div class="fav" style="background:rgba(56,189,248,.18)">MS<div class="odot on"></div></div>
+              <div class="finfo"><div class="fname">Mia S.</div><div class="fmeta">Informatik B.Sc. · Sem. 2 · RWTH Aachen</div><div class="cpills"><span class="cp">Informatik</span><span class="cp">StudyRide</span></div></div>
+              <span class="ftag ft-on">● Online</span>
+              <div class="fbtns">
+                <button class="fbtn msg" onclick="showToast('Chat mit Mia S. öffnen …','info')">💬</button>
+                <button class="fbtn rem" onclick="removeFriend(this,'Mia S.')">✕</button>
+              </div>
+            </div>
+
+            <div class="sec-lbl">Abwesend · 2</div>
+
+            <div class="friend-item" data-name="jonas r." data-tags="bwl nachhilfe">
+              <div class="fav" style="background:rgba(251,191,36,.18)">JR<div class="odot away"></div></div>
+              <div class="finfo"><div class="fname">Jonas R.</div><div class="fmeta">BWL B.Sc. · Sem. 3 · Uni Köln</div><div class="cpills"><span class="cp">BWL</span><span class="cp">Nachhilfe</span></div></div>
+              <span class="ftag ft-away">⏸ Abwesend</span>
+              <div class="fbtns">
+                <button class="fbtn msg" onclick="showToast('Chat mit Jonas R. öffnen …','info')">💬</button>
+                <button class="fbtn rem" onclick="removeFriend(this,'Jonas R.')">✕</button>
+              </div>
+            </div>
+            <div class="friend-item" data-name="lea m." data-tags="psychologie studydocs">
+              <div class="fav" style="background:rgba(248,113,113,.18)">LM<div class="odot away"></div></div>
+              <div class="finfo"><div class="fname">Lea M.</div><div class="fmeta">Psychologie B.Sc. · Sem. 2 · LMU München</div><div class="cpills"><span class="cp">Psychologie</span><span class="cp">StudyDocs</span></div></div>
+              <span class="ftag ft-away">⏸ Abwesend</span>
+              <div class="fbtns">
+                <button class="fbtn msg" onclick="showToast('Chat mit Lea M. öffnen …','info')">💬</button>
+                <button class="fbtn rem" onclick="removeFriend(this,'Lea M.')">✕</button>
+              </div>
+            </div>
+
+            <div class="sec-lbl">Offline · 19</div>
+
+            <div class="friend-item" data-name="tim w." data-tags="statistik wipsy">
+              <div class="fav" style="background:rgba(124,109,250,.1)">TW<div class="odot"></div></div>
+              <div class="finfo"><div class="fname">Tim W.</div><div class="fmeta">WiPsy B.Sc. · Sem. 1 · Uni Köln</div><div class="cpills"><span class="cp">Statistik</span><span class="cp">WiPsy</span></div></div>
+              <span class="ftag ft-off">Offline</span>
+              <div class="fbtns">
+                <button class="fbtn msg" onclick="showToast('Chat mit Tim W. öffnen …','info')">💬</button>
+                <button class="fbtn rem" onclick="removeFriend(this,'Tim W.')">✕</button>
+              </div>
+            </div>
+            <div class="friend-item" data-name="sophie h." data-tags="medizin campusleben">
+              <div class="fav" style="background:rgba(74,222,128,.1)">SH<div class="odot"></div></div>
+              <div class="finfo"><div class="fname">Sophie H.</div><div class="fmeta">Medizin · Sem. 3 · Uni Bonn</div><div class="cpills"><span class="cp">Medizin</span><span class="cp">CampusLeben</span></div></div>
+              <span class="ftag ft-off">Offline</span>
+              <div class="fbtns">
+                <button class="fbtn msg" onclick="showToast('Chat mit Sophie H. öffnen …','info')">💬</button>
+                <button class="fbtn rem" onclick="removeFriend(this,'Sophie H.')">✕</button>
+              </div>
+            </div>
+            <div class="friend-item" data-name="felix k." data-tags="informatik jobs">
+              <div class="fav" style="background:rgba(56,189,248,.1)">FK<div class="odot"></div></div>
+              <div class="finfo"><div class="fname">Felix K.</div><div class="fmeta">Informatik M.Sc. · Sem. 2 · TU Berlin</div><div class="cpills"><span class="cp">Informatik</span><span class="cp">Jobs</span></div></div>
+              <span class="ftag ft-off">Offline</span>
+              <div class="fbtns">
+                <button class="fbtn msg" onclick="showToast('Chat mit Felix K. öffnen …','info')">💬</button>
+                <button class="fbtn rem" onclick="removeFriend(this,'Felix K.')">✕</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── VORSCHLÄGE mit Priorität ── -->
+        <div class="suggest-panel">
+          <div class="card-head" style="margin-bottom:.6rem">
+            <div class="card-title">✨ Vielleicht kennst du …</div>
+          </div>
+
+          <!-- Priorität 1: Gleicher Studiengang + Semester + Uni -->
+          <div class="prio-label prio-1">⭐ Perfekter Match</div>
+
+          <div class="sug-item">
+            <div class="sug-row">
+              <div class="sav" style="background:rgba(124,109,250,.2)">KL</div>
+              <div class="sinfo">
+                <div class="sname">Klara L.</div>
+                <div class="smeta">WiPsy B.Sc. · Sem. 1 · Uni Köln</div>
+              </div>
+            </div>
+            <div class="swhy">📍 Gleicher Studiengang, Semester &amp; Uni</div>
+            <button class="btn-add" onclick="addFriend(this,'Klara L.')">+ Hinzufügen</button>
+          </div>
+
+          <div class="sug-item">
+            <div class="sug-row">
+              <div class="sav" style="background:rgba(167,139,250,.2)">RN</div>
+              <div class="sinfo">
+                <div class="sname">Robin N.</div>
+                <div class="smeta">WiPsy B.Sc. · Sem. 1 · Uni Köln</div>
+              </div>
+            </div>
+            <div class="swhy">📍 Gleicher Studiengang, Semester &amp; Uni</div>
+            <button class="btn-add" onclick="addFriend(this,'Robin N.')">+ Hinzufügen</button>
+          </div>
+
+          <!-- Priorität 2: Gleicher Studiengang + Semester, Uni egal -->
+          <div class="prio-label prio-2" style="margin-top:.8rem">📚 Gleicher Studiengang</div>
+
+          <div class="sug-item">
+            <div class="sug-row">
+              <div class="sav" style="background:rgba(56,189,248,.18)">ER</div>
+              <div class="sinfo">
+                <div class="sname">Emma R.</div>
+                <div class="smeta">WiPsy B.Sc. · Sem. 1 · Uni Düsseldorf</div>
+              </div>
+            </div>
+            <div class="swhy" style="color:var(--info)">📚 Gleicher Studiengang &amp; Semester</div>
+            <button class="btn-add" onclick="addFriend(this,'Emma R.')">+ Hinzufügen</button>
+          </div>
+
+          <div class="sug-item">
+            <div class="sug-row">
+              <div class="sav" style="background:rgba(248,113,113,.18)">YA</div>
+              <div class="sinfo">
+                <div class="sname">Yasmin A.</div>
+                <div class="smeta">WiPsy B.Sc. · Sem. 1 · FH Köln</div>
+              </div>
+            </div>
+            <div class="swhy" style="color:var(--info)">📚 Gleicher Studiengang &amp; Semester</div>
+            <button class="btn-add" onclick="addFriend(this,'Yasmin A.')">+ Hinzufügen</button>
+          </div>
+
+          <div class="sug-item">
+            <div class="sug-row">
+              <div class="sav" style="background:rgba(74,222,128,.18)">TS</div>
+              <div class="sinfo">
+                <div class="sname">Tom S.</div>
+                <div class="smeta">WiPsy B.Sc. · Sem. 1 · Uni Bochum</div>
+              </div>
+            </div>
+            <div class="swhy" style="color:var(--info)">📚 Gleicher Studiengang &amp; Semester</div>
+            <button class="btn-add" onclick="addFriend(this,'Tom S.')">+ Hinzufügen</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ANFRAGEN ══ -->
+    <div class="page" id="page-anfragen">
+      <div class="sec-lbl">Erhaltene Anfragen · 2</div>
+
+      <div class="req-item" id="req-1">
+        <div class="rav" style="background:rgba(124,109,250,.18)">SK</div>
+        <div class="rinfo"><div class="rname">Sarah K.</div><div class="rmeta">Psychologie B.Sc. · Sem. 2 · LMU München · 2 gemeinsame Freunde</div></div>
+        <div class="rbtns">
+          <button class="btn-accept" onclick="acceptReq('req-1','Sarah K.')">✓ Annehmen</button>
+          <button class="btn-decline" onclick="declineReq('req-1','Sarah K.')">✕ Ablehnen</button>
+        </div>
+      </div>
+
+      <div class="req-item" id="req-2">
+        <div class="rav" style="background:rgba(251,191,36,.18)">DM</div>
+        <div class="rinfo"><div class="rname">David M.</div><div class="rmeta">BWL B.Sc. · Sem. 1 · Uni Köln · 1 gemeinsamer Kurs: BWL Grundlagen</div></div>
+        <div class="rbtns">
+          <button class="btn-accept" onclick="acceptReq('req-2','David M.')">✓ Annehmen</button>
+          <button class="btn-decline" onclick="declineReq('req-2','David M.')">✕ Ablehnen</button>
+        </div>
+      </div>
+
+      <div class="sec-lbl" style="margin-top:1.4rem">Gesendete Anfragen · 1</div>
+
+      <div class="req-item">
+        <div class="rav" style="background:rgba(74,222,128,.18)">RN</div>
+        <div class="rinfo"><div class="rname">Robin N.</div><div class="rmeta">WiPsy B.Sc. · Sem. 1 · Uni Köln · Anfrage gesendet vor 2 Tagen</div></div>
+        <div class="rbtns">
+          <button class="btn-decline" onclick="showToast('Anfrage an Robin N. zurückgezogen','info')">✕ Zurückziehen</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- .content -->
+</main>
+</div><!-- .shell -->
+
+<div id="toasts" style="position:fixed;bottom:1.4rem;right:1.4rem;display:flex;flex-direction:column;gap:7px;z-index:9999;pointer-events:none"></div>
+
+<!-- ── MODAL: Profil bearbeiten ── -->
+<div class="overlay" id="overlay-edit" onclick="if(event.target===this)closeModal('overlay-edit')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Profil <em>bearbeiten</em></div>
+      <button class="modal-close" onclick="closeModal('overlay-edit')">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Avatar -->
+      <div class="modal-section">
+        <div class="modal-sec-label">Profilbild</div>
+        <div class="av-upload">
+          <div class="av-preview" id="av-preview">MM</div>
+          <div class="av-upload-info">
+            <div class="av-upload-name">Max Müller</div>
+            <div class="av-upload-sub">JPG oder PNG · max. 5 MB</div>
+            <button class="av-upload-btn" onclick="showToast('Bildupload — kommt bald 📸','info')">📁 Bild hochladen</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Persönliche Daten -->
+      <div class="modal-section">
+        <div class="modal-sec-label">Persönliche Daten</div>
+        <div class="field-row">
+          <div class="field"><label>Vorname</label><input type="text" id="edit-vorname" value="Max"></div>
+          <div class="field"><label>Nachname</label><input type="text" id="edit-nachname" value="Müller"></div>
+        </div>
+        <div class="field"><label>Über mich</label>
+          <textarea id="edit-bio">Ersti hier 👋 — auf der Suche nach Lerngruppen für Statistik &amp; BWL. Schreibt mich gerne an!</textarea>
+        </div>
+        <div class="field"><label>Standort (optional)</label>
+          <input type="text" id="edit-ort" value="Köln, NRW" placeholder="z.B. Köln, Berlin …">
+        </div>
+      </div>
+
+      <!-- Studium -->
+      <div class="modal-section">
+        <div class="modal-sec-label">Studium</div>
+        <div class="field"><label>Hochschule</label>
+          <input type="text" id="edit-uni" value="Universität zu Köln">
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Studiengang</label>
+            <input type="text" id="edit-studiengang" value="Wirtschaftspsychologie B.Sc.">
+          </div>
+          <div class="field"><label>Abschluss</label>
+            <select id="edit-abschluss">
+              <option selected>Bachelor (B.Sc.)</option>
+              <option>Bachelor (B.A.)</option>
+              <option>Master (M.Sc.)</option>
+              <option>Master (M.A.)</option>
+              <option>Staatsexamen</option>
+              <option>Diplom</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Semester</label>
+            <select id="edit-sem">
+              <option selected>1. Semester</option>
+              <option>2. Semester</option>
+              <option>3. Semester</option>
+              <option>4. Semester</option>
+              <option>5. Semester</option>
+              <option>6. Semester</option>
+              <option>7. Semester</option>
+              <option>8. Semester</option>
+            </select>
+          </div>
+          <div class="field"><label>Immatrikuliert seit</label>
+            <select id="edit-since">
+              <option selected>Wintersemester 2024/25</option>
+              <option>Sommersemester 2024</option>
+              <option>Wintersemester 2023/24</option>
+              <option>Sommersemester 2023</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interessen -->
+      <div class="modal-section">
+        <div class="modal-sec-label">Interessen</div>
+        <div class="tag-input-wrap" id="tag-wrap" onclick="document.getElementById('tag-input').focus()">
+          <span class="interest-tag">🧠 Psychologie <button onclick="removeTag(this)">×</button></span>
+          <span class="interest-tag">📊 BWL <button onclick="removeTag(this)">×</button></span>
+          <span class="interest-tag">Statistik <button onclick="removeTag(this)">×</button></span>
+          <span class="interest-tag">Forschung <button onclick="removeTag(this)">×</button></span>
+          <input class="tag-input" id="tag-input" placeholder="+ Interesse hinzufügen …" onkeydown="handleTag(event)">
+        </div>
+        <div style="font-size:10px;color:var(--muted);margin-top:5px">Enter drücken um ein Interesse hinzuzufügen</div>
+      </div>
+
+      <!-- Datenschutz -->
+      <div class="modal-section">
+        <div class="modal-sec-label">Sichtbarkeit</div>
+        <div class="privacy-row">
+          <div><div class="privacy-label">Profil öffentlich</div><div class="privacy-sub">Andere Studenten können dein Profil sehen</div></div>
+          <label class="toggle"><input type="checkbox" id="tog-public" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+        </div>
+        <div class="privacy-row">
+          <div><div class="privacy-label">Aktivitäten anzeigen</div><div class="privacy-sub">Feed auf deinem Profil sichtbar</div></div>
+          <label class="toggle"><input type="checkbox" id="tog-feed" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+        </div>
+        <div class="privacy-row">
+          <div><div class="privacy-label">Im Ranking sichtbar</div><div class="privacy-sub">Erscheine in Studiengang-Vorschlägen</div></div>
+          <label class="toggle"><input type="checkbox" id="tog-rank" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('overlay-edit')">Abbrechen</button>
+      <button class="btn-save" onclick="saveProfile()">💾 Änderungen speichern</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── NOTIFICATION DRAWER ── -->
+<div class="notif-drawer" id="notif-drawer">
+  <div class="notif-head">
+    <div class="notif-title">🔔 Benachrichtigungen</div>
+    <button class="modal-close" onclick="closeNotif()">✕</button>
+  </div>
+  <div class="notif-body">
+    <div class="notif-item unread">
+      <div class="notif-ico" style="background:rgba(124,109,250,.15)">🤝</div>
+      <div class="notif-txt"><div class="notif-msg"><strong>Sarah K.</strong> hat eine Freundschaftsanfrage gesendet</div><div class="notif-time">Vor 5 Minuten</div></div>
+      <div class="unread-dot"></div>
+    </div>
+    <div class="notif-item unread">
+      <div class="notif-ico" style="background:rgba(74,222,128,.15)">💬</div>
+      <div class="notif-txt"><div class="notif-msg"><strong>Anna K.</strong> hat auf deinen Post geantwortet</div><div class="notif-time">Vor 23 Minuten</div></div>
+      <div class="unread-dot"></div>
+    </div>
+    <div class="notif-item">
+      <div class="notif-ico" style="background:rgba(251,191,36,.15)">🔥</div>
+      <div class="notif-txt"><div class="notif-msg">Deine Lern-Streak ist auf <strong>7 Tage</strong> gestiegen!</div><div class="notif-time">Heute, 00:01</div></div>
+    </div>
+    <div class="notif-item">
+      <div class="notif-ico" style="background:rgba(56,189,248,.15)">📖</div>
+      <div class="notif-txt"><div class="notif-msg">Neue Lektion in <strong>BWL Grundlagen</strong> verfügbar</div><div class="notif-time">Gestern, 18:30</div></div>
+    </div>
+    <div class="notif-item">
+      <div class="notif-ico" style="background:rgba(248,113,113,.15)">🏅</div>
+      <div class="notif-txt"><div class="notif-msg">Badge freigeschaltet: <strong>7-Tage Streak</strong></div><div class="notif-time">Sa, 15. Mär</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SEARCH OVERLAY ── -->
+<div class="search-overlay" id="search-overlay" onclick="if(event.target===this)closeSearch()">
+  <div class="search-box">
+    <div class="search-input-row">
+      <span style="font-size:16px;color:var(--muted)">🔍</span>
+      <input type="text" id="search-input" placeholder="Studenten, Kurse, Dokumente suchen …" oninput="runSearch(this.value)" autofocus>
+      <button class="modal-close" onclick="closeSearch()">✕</button>
+    </div>
+    <div class="search-results" id="search-results">
+      <div class="sr-item" onclick="showToast('Anna K. — Profil öffnen','info')"><div class="sr-ico">👤</div><div><div class="sr-label">Anna K.</div><div class="sr-sub">WiPsy B.Sc. · Sem. 1 · Uni Köln</div></div></div>
+      <div class="sr-item" onclick="showToast('Tim W. — Profil öffnen','info')"><div class="sr-ico">👤</div><div><div class="sr-label">Tim W.</div><div class="sr-sub">WiPsy B.Sc. · Sem. 1 · Uni Köln</div></div></div>
+      <div class="sr-item" onclick="showToast('Einführung in die Psychologie öffnen','info')"><div class="sr-ico">📖</div><div><div class="sr-label">Einführung in die Psychologie</div><div class="sr-sub">Kurs · Lektion 8 von 12</div></div></div>
+      <div class="sr-item" onclick="showToast('Statistik Zusammenfassung öffnen','info')"><div class="sr-ico">📄</div><div><div class="sr-label">Statistik Zusammenfassung Kap. 1–4</div><div class="sr-sub">StudyDocs · hochgeladen von dir</div></div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── TABS ─────────────────────────────────────────────────────────────────────
+function switchTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('page-' + name).classList.add('on');
+}
+
+// ── SIDEBAR ──────────────────────────────────────────────────────────────────
+function navTo(el) {
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('on'));
+  el.classList.add('on');
+}
+
+// ── FRIEND SEARCH FILTER ─────────────────────────────────────────────────────
+function filterFriends(q) {
+  const lq = q.toLowerCase();
+  document.querySelectorAll('#friends-list .friend-item').forEach(item => {
+    const match = !lq || item.dataset.name.includes(lq) || (item.dataset.tags||'').includes(lq);
+    item.style.display = match ? '' : 'none';
+  });
+}
+
+// ── REMOVE FRIEND ─────────────────────────────────────────────────────────────
+function removeFriend(btn, name) {
+  if (!confirm('Freundschaft mit ' + name + ' wirklich beenden?')) return;
+  const item = btn.closest('.friend-item');
+  item.style.transition = 'opacity .3s,transform .3s';
+  item.style.opacity = '0'; item.style.transform = 'translateX(14px)';
+  setTimeout(() => item.remove(), 300);
+  showToast(name + ' aus Freundesliste entfernt', 'warn');
+}
+
+// ── ADD FRIEND (suggestion) ───────────────────────────────────────────────────
+function addFriend(btn, name) {
+  btn.textContent = '✓ Anfrage gesendet';
+  btn.classList.add('sent');
+  showToast('Anfrage an ' + name + ' gesendet 📬', 'success');
+}
+
+// ── ACCEPT / DECLINE REQUEST ──────────────────────────────────────────────────
+function acceptReq(id, name) {
+  animateOut(id, -10);
+  showToast('🤝 Du und ' + name + ' seid jetzt befreundet!', 'success');
+  tickReqBadge();
+}
+function declineReq(id, name) {
+  animateOut(id, 10);
+  showToast('Anfrage von ' + name + ' abgelehnt', 'warn');
+  tickReqBadge();
+}
+function animateOut(id, dx) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.transition = 'opacity .3s,transform .3s';
+  el.style.opacity = '0'; el.style.transform = 'translateX('+dx+'px)';
+  setTimeout(() => el.remove(), 300);
+}
+function tickReqBadge() {
+  const b = document.getElementById('req-badge');
+  if (!b) return;
+  const n = parseInt(b.textContent||'0') - 1;
+  b.textContent = n > 0 ? n : '';
+}
+
+// ── COPY LINK ─────────────────────────────────────────────────────────────────
+function copyLink() {
+  navigator.clipboard?.writeText('https://academify.xyz/profil/maxmueller').catch(()=>{});
+  showToast('🔗 Profil-Link kopiert!', 'success');
+}
+
+// ── MODAL ─────────────────────────────────────────────────────────────────────
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ── SAVE PROFILE ──────────────────────────────────────────────────────────────
+function saveProfile() {
+  // Read values and apply them live to the profile card
+  const vn = document.getElementById('edit-vorname').value.trim();
+  const nn = document.getElementById('edit-nachname').value.trim();
+  const bio = document.getElementById('edit-bio').value.trim();
+  const uni = document.getElementById('edit-uni').value.trim();
+  const sg = document.getElementById('edit-studiengang').value.trim();
+  const sem = document.getElementById('edit-sem').value;
+
+  // Update profile name
+  const nameEl = document.querySelector('.profile-name');
+  if (nameEl && vn && nn) {
+    nameEl.innerHTML = vn + ' <em>' + nn + '</em>';
+  }
+  // Update bio
+  const bioEl = document.querySelector('.profile-bio');
+  if (bioEl && bio) bioEl.textContent = '„' + bio + '"';
+
+  // Update pills
+  const pills = document.querySelectorAll('.profile-pills .ppill');
+  if (pills[0]) pills[0].textContent = '🏫 ' + uni;
+  if (pills[1]) pills[1].textContent = '📚 ' + sg;
+  if (pills[2]) pills[2].textContent = '🗓️ ' + sem;
+
+  // Update sidebar user row
+  const unEl = document.querySelector('.un');
+  if (unEl && vn && nn) unEl.textContent = vn + ' ' + nn;
+
+  // Update avatar initials
+  const avEls = document.querySelectorAll('.profile-av, .av-preview');
+  const initials = (vn[0]||'') + (nn[0]||'');
+  avEls.forEach(el => {
+    // preserve online dot inside profile-av
+    const dot = el.querySelector('.av-online');
+    el.textContent = initials;
+    if (dot) el.appendChild(dot);
+  });
+
+  closeModal('overlay-edit');
+  showToast('✓ Profil erfolgreich gespeichert', 'success');
+}
+
+// ── INTEREST TAGS ─────────────────────────────────────────────────────────────
+function handleTag(e) {
+  if (e.key !== 'Enter' && e.key !== ',') return;
+  e.preventDefault();
+  const inp = document.getElementById('tag-input');
+  const val = inp.value.trim().replace(',','');
+  if (!val) return;
+  const wrap = document.getElementById('tag-wrap');
+  const tag = document.createElement('span');
+  tag.className = 'interest-tag';
+  tag.innerHTML = val + ' <button onclick="removeTag(this)">×</button>';
+  wrap.insertBefore(tag, inp);
+  inp.value = '';
+}
+function removeTag(btn) {
+  btn.closest('.interest-tag').remove();
+}
+
+// ── NOTIFICATIONS ─────────────────────────────────────────────────────────────
+function openNotif() {
+  document.getElementById('notif-drawer').classList.add('open');
+  // Clear badge dot
+  const nd = document.querySelector('.topbar .nd');
+  if (nd) nd.style.display = 'none';
+}
+function closeNotif() {
+  document.getElementById('notif-drawer').classList.remove('open');
+}
+
+// ── SEARCH ────────────────────────────────────────────────────────────────────
+function openSearch() {
+  document.getElementById('search-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('search-input').focus(), 80);
+}
+function closeSearch() {
+  document.getElementById('search-overlay').classList.remove('open');
+}
+function runSearch(q) {
+  // In a real app this would query the backend; here we just show a toast for non-empty queries
+  if (q.length > 2) showToast('Suche nach „' + q + '" …', 'info');
+}
+// Close search on Escape
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeSearch();
+    closeNotif();
+    closeModal('overlay-edit');
+  }
+});
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+function showToast(msg, type) {
+  const c = document.getElementById('toasts');
+  const t = document.createElement('div');
+  const bg = {success:'rgba(74,222,128,.14)',warn:'rgba(251,191,36,.12)',info:'rgba(124,109,250,.14)',error:'rgba(248,113,113,.12)'};
+  const bd = {success:'rgba(74,222,128,.28)',warn:'rgba(251,191,36,.22)',info:'rgba(124,109,250,.28)',error:'rgba(248,113,113,.22)'};
+  t.style.cssText = `background:${bg[type]||bg.info};border:1px solid ${bd[type]||bd.info};border-radius:10px;padding:10px 14px;font-size:12px;color:#e8e6f0;max-width:300px;box-shadow:0 4px 20px rgba(0,0,0,.35);font-family:'DM Sans',sans-serif;pointer-events:auto;line-height:1.4;animation:up .2s ease both`;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => { t.style.transition='opacity .3s,transform .3s'; t.style.opacity='0'; t.style.transform='translateY(6px)'; setTimeout(()=>t.remove(),300); }, 3000);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+(function(){
+  const fill = document.getElementById('bp-fill');
+  if (fill) setTimeout(() => fill.style.width = '18.75%', 400);
+})();
+</script>
+</body>
+</html>
