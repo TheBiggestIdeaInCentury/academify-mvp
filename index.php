@@ -89,7 +89,7 @@ body {
 <div class="particle" style="left:90%;animation-duration:7s;animation-delay:5s;"></div>
 
 <div class="gate-container">
-  <div class="logo">Acade<span>mify</span></div>
+  <div class="logo">Project<span>XYZ</span></div>
   <p class="subtitle">Plattform im Aufbau</p>
   <div class="login-card">
     <div class="shield-icon">🛡️</div>
