@@ -5,7 +5,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = strtolower(trim($_POST['email'] ?? ''));
     $password = $_POST['password'] ?? '';
 
-    if ($email === 'admin@academify.xyz' && $password === ':;(Balu/971):;') {
+    if ($email === 'admin@academify.xyz' && $password === 'CreateTheFutureAct-2026') {
         setcookie('academify_session', 'granted', 0, '/', '', true, true);
         header('Location: landing.html');
         exit;
