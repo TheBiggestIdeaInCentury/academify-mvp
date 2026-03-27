@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "academify-mvp",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8081", "--directory", "/Users/trade4life/Desktop/academify-mvp"],
+      "port": 8081
+    }
+  ]
+}

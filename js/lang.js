@@ -84,6 +84,36 @@ var LANG = {
     'label-career': 'Career',
     'label-main': 'Main Menu',
     'label-campus-career': 'Campus & Career',
+
+    // Dashboard
+    'dash-greeting': 'Good Morning, <em>Max</em> 👋',
+    'dash-search': '🔍 &nbsp;Search...',
+    'dash-verified': 'Verified',
+    'dash-welcome-title': 'Welcome to the <em>Universe</em>',
+    'dash-welcome-desc': 'Your personalized student area — everything in one place.',
+    'dash-stat-books': 'Books recommended',
+    'dash-stat-messages': 'New messages',
+    'dash-stat-community': 'Community members',
+    'dash-stat-rides': 'Rides available',
+
+    // Login
+    'login-title': 'Welcome back',
+    'login-subtitle': 'Log in to access your study universe.',
+    'login-register': 'No account yet? <a href="register.html">Register now</a>',
+
+    // Register
+    'register-title': 'Create Account',
+    'register-login': 'Already a member? <a href="login.html">Log in</a>',
+
+    // Kurse (Courses)
+    'kurse-tab-mine': 'My Courses',
+    'kurse-tab-discover': 'Discover',
+    'kurse-tab-create': 'Create Course',
+    'kurse-tab-manage': 'Management',
+    'kurse-tab-analytics': 'Analytics',
+
+    // Skill-Tree
+    'skill-title': 'Academify Skill-Tree System',
   },
 
   de: {} // German is the default in HTML, no overrides needed

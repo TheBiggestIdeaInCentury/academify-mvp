@@ -228,26 +228,26 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
     <div class="logo-text">Acade<span>mify</span></div>
   </div>
   <div class="nav-section">
-    <div class="nav-label">Übersicht</div>
+    <div class="nav-label" data-i18n="label-overview">Übersicht</div>
     <div class="nav-item active" onclick="window.location.href='dashboard.html'"><span class="nav-icon">⊞</span>Dashboard</div>
     <div class="nav-item" onclick="window.location.href='nachrichten.html'"><span class="nav-icon">💬</span>Nachrichten<span class="nav-badge red">5</span></div>
     <div class="nav-item" onclick="window.location.href='profil.html'"><span class="nav-icon">👤</span>Profil & Freunde<span class="nav-badge red">2</span></div>
   </div>
   <div class="nav-section">
-    <div class="nav-label">Lernen</div>
+    <div class="nav-label" data-i18n="label-learning">Lernen</div>
     <div class="nav-item" onclick="window.location.href='kurse.html'"><span class="nav-icon">📚</span>Online-Kurse</div>
     <div class="nav-item" onclick="navigate('nachhilfe',this)"><span class="nav-icon">🎓</span>Nachhilfe<span class="nav-badge red">3</span></div>
     <div class="nav-item" onclick="navigate('docs',this)"><span class="nav-icon">📄</span>StudyDocs</div>
   </div>
   <div class="nav-section">
-    <div class="nav-label">Campus & Leben</div>
+    <div class="nav-label" data-i18n="label-campus">Campus & Leben</div>
     <div class="nav-item" onclick="navigate('campus',this)"><span class="nav-icon">🏛️</span>CampusLeben</div>
     <div class="nav-item" onclick="navigate('karte',this)"><span class="nav-icon">🗺️</span>Community-Karte<span class="nav-badge">6</span></div>
     <div class="nav-item" onclick="navigate('ride',this)"><span class="nav-icon">🚗</span>StudyRide</div>
     <div class="nav-item" onclick="navigate('merch',this)"><span class="nav-icon">👕</span>Merch-Shop</div>
   </div>
   <div class="nav-section">
-    <div class="nav-label">Karriere</div>
+    <div class="nav-label" data-i18n="label-career">Karriere</div>
     <div class="nav-item" onclick="navigate('jobs',this)"><span class="nav-icon">💼</span>Jobs & Praktika</div>
   </div>
   <div class="sidebar-footer">
@@ -268,10 +268,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 <!-- MAIN -->
 <main class="main">
   <div class="topbar">
-    <div class="topbar-title" id="topbarTitle">Guten Morgen, <em>Max</em> 👋</div>
+    <div class="topbar-title" id="topbarTitle" data-i18n="dash-greeting">Guten Morgen, <em>Max</em> 👋</div>
     <div class="topbar-right">
-      <div class="search-bar">🔍 &nbsp;Suchen...</div>
-      <div class="verified-pill"><div class="v-dot"></div>Verifiziert</div>
+      <div class="search-bar" data-i18n="dash-search">🔍 &nbsp;Suchen...</div>
+      <div class="verified-pill"><div class="v-dot"></div><span data-i18n="dash-verified">Verifiziert</span></div>
       <div class="icon-btn">🔔<div class="notif-dot"></div></div>
       <div class="icon-btn">⚙️</div>
     </div>
@@ -284,8 +284,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
       <div class="welcome-banner">
         <div class="welcome-emoji">🎓</div>
         <div class="welcome-text">
-          <h2>Willkommen im <em>Universum</em></h2>
-          <p>Dein personalisierter Studentenbereich — alles an einem Ort.</p>
+          <h2 data-i18n="dash-welcome-title">Willkommen im <em>Universum</em></h2>
+          <p data-i18n="dash-welcome-desc">Dein personalisierter Studentenbereich — alles an einem Ort.</p>
         </div>
         <div class="welcome-meta">
           <div class="meta-pill accent">Wirtschaftspsychologie B.Sc.</div>
@@ -293,10 +293,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
         </div>
       </div>
       <div class="stats-row">
-        <div class="stat-card"><div class="stat-icon">📚</div><div class="stat-value">3</div><div class="stat-label">Bücher empfohlen</div><div class="stat-delta up">↑ Neu</div></div>
-        <div class="stat-card"><div class="stat-icon">💬</div><div class="stat-value">5</div><div class="stat-label">Neue Nachrichten</div><div class="stat-delta warn">⏳ Ungelesen</div></div>
-        <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-value">847</div><div class="stat-label">Community-Mitglieder</div><div class="stat-delta up">↑ +23</div></div>
-        <div class="stat-card"><div class="stat-icon">🚗</div><div class="stat-value">5</div><div class="stat-label">Fahrten verfügbar</div><div class="stat-delta up">→ Köln ↔ FFM</div></div>
+        <div class="stat-card"><div class="stat-icon">📚</div><div class="stat-value">3</div><div class="stat-label" data-i18n="dash-stat-books">Bücher empfohlen</div><div class="stat-delta up">↑ Neu</div></div>
+        <div class="stat-card"><div class="stat-icon">💬</div><div class="stat-value">5</div><div class="stat-label" data-i18n="dash-stat-messages">Neue Nachrichten</div><div class="stat-delta warn">⏳ Ungelesen</div></div>
+        <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-value">847</div><div class="stat-label" data-i18n="dash-stat-community">Community-Mitglieder</div><div class="stat-delta up">↑ +23</div></div>
+        <div class="stat-card"><div class="stat-icon">🚗</div><div class="stat-value">5</div><div class="stat-label" data-i18n="dash-stat-rides">Fahrten verfügbar</div><div class="stat-delta up">→ Köln ↔ FFM</div></div>
       </div>
       <div class="quick-actions">
         <div class="quick-btn" onclick="navigate('chat',null)"><div class="quick-icon">💬</div><div class="quick-label">Gruppe öffnen</div></div>
