@@ -1,4 +1,8 @@
-AuthType Basic
-AuthName "Academify - Geschuetzter Zugang"
-AuthUserFile /home/u608741343/domains/academify.xyz/public_html/.htpasswd
-Require valid-user
+RewriteEngine On
+
+# Allow access to index.php itself
+RewriteRule ^index\.php$ - [L]
+
+# If no auth cookie, redirect to index.php
+RewriteCond %{HTTP_COOKIE} !academify_session=granted
+RewriteRule ^(.*)$ /index.php [R=302,L]
