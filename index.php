@@ -6,7 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
 
     if ($email === 'admin@academify.xyz' && $password === ':;(Balu/971):;') {
-        setcookie('academify_session', 'granted', time() + 86400 * 30, '/', '', true, true);
+        setcookie('academify_session', 'granted', 0, '/', '', true, true);
         header('Location: landing.html');
         exit;
     } else {
