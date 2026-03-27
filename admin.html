@@ -128,6 +128,43 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 /* ── ADD BTN ── */
 .add-node-btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;border:2px dashed var(--border);border-radius:12px;color:var(--muted);font-size:12px;cursor:pointer;transition:all .2s;min-width:180px}
 .add-node-btn:hover{border-color:var(--accent);color:var(--accent2);background:rgba(124,109,250,0.05)}
+
+/* ── API PAGE ── */
+.api-key-box{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:1rem;display:flex;align-items:center;gap:10px;margin-bottom:1rem}
+.api-key-val{flex:1;font-family:'Courier New',monospace;font-size:13px;color:var(--accent2);letter-spacing:.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.api-key-val.hidden-key{color:var(--muted);letter-spacing:2px}
+.api-copy-btn{padding:6px 14px;background:rgba(124,109,250,0.1);border:1px solid rgba(124,109,250,0.25);border-radius:8px;color:var(--accent2);font-size:11px;font-weight:500;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.api-copy-btn:hover{background:rgba(124,109,250,0.2);border-color:var(--accent)}
+.api-toggle-btn{padding:6px 10px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:14px;cursor:pointer;transition:all .15s}
+.api-toggle-btn:hover{border-color:var(--accent);color:var(--accent2)}
+
+.endpoint-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:1rem;margin-bottom:8px;transition:all .2s}
+.endpoint-card:hover{border-color:var(--border-hover)}
+.endpoint-header{display:flex;align-items:center;gap:10px;margin-bottom:.5rem}
+.endpoint-method{padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;font-family:'Courier New',monospace;letter-spacing:.5px}
+.method-get{background:rgba(74,222,128,0.12);color:var(--success)}
+.method-post{background:rgba(56,189,248,0.12);color:var(--info)}
+.method-put{background:rgba(251,191,36,0.12);color:var(--warn)}
+.method-delete{background:rgba(248,113,113,0.12);color:var(--coral)}
+.endpoint-path{font-family:'Courier New',monospace;font-size:13px;color:var(--text)}
+.endpoint-desc{font-size:11px;color:var(--muted);line-height:1.5}
+
+.usage-bar{height:8px;background:var(--surface2);border-radius:4px;overflow:hidden;margin-bottom:4px}
+.usage-fill{height:100%;border-radius:4px;transition:width .5s ease}
+
+.webhook-item{display:flex;align-items:center;gap:10px;padding:.8rem;background:var(--surface2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px}
+.webhook-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.webhook-dot.active{background:var(--success);box-shadow:0 0 8px rgba(74,222,128,0.4)}
+.webhook-dot.inactive{background:var(--muted2)}
+.webhook-info{flex:1}
+.webhook-name{font-size:12px;font-weight:500;margin-bottom:1px}
+.webhook-url{font-size:11px;color:var(--muted);font-family:'Courier New',monospace}
+.webhook-toggle{width:36px;height:20px;border-radius:10px;border:none;cursor:pointer;position:relative;transition:background .2s}
+.webhook-toggle.on{background:var(--success)}
+.webhook-toggle.off{background:var(--muted2)}
+.webhook-toggle::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:2px;transition:left .2s}
+.webhook-toggle.on::after{left:18px}
+.webhook-toggle.off::after{left:2px}
 </style>
 </head>
 <body>
@@ -154,6 +191,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
     <div class="nav-label">Verwaltung</div>
     <div class="nav-item"><span class="nav-icon">📋</span>Bewertungen<span class="nav-badge">12</span></div>
     <div class="nav-item"><span class="nav-icon">📊</span>Statistiken</div>
+    <div class="nav-item" onclick="showPage('api')"><span class="nav-icon">🔌</span>API-Zugang<span class="nav-badge" style="background:rgba(74,222,128,0.15);color:var(--success)">Live</span></div>
     <div class="nav-item"><span class="nav-icon">⚙️</span>Einstellungen</div>
   </div>
 
@@ -437,6 +475,192 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
       </div>
     </div>
 
+    <!-- PAGE: API-Zugang -->
+    <div class="page" id="page-api">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+        <div>
+          <h2 style="font-family:'DM Serif Display',serif;font-size:22px">🔌 API-Zugang</h2>
+          <p style="font-size:13px;color:var(--muted)">Verbinde dein System mit Academify</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.2);border-radius:100px;padding:4px 12px">
+          <div style="width:6px;height:6px;border-radius:50%;background:var(--success);animation:pulse 2s infinite"></div>
+          <span style="font-size:11px;color:var(--success);font-weight:500">API Aktiv</span>
+        </div>
+      </div>
+
+      <!-- API Key -->
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">🔑 API-Schlüssel</span>
+          <span class="card-action" onclick="showToast('⚠️ Neuer API-Key generiert!')">Neu generieren</span>
+        </div>
+        <div class="api-key-box">
+          <span class="api-key-val hidden-key" id="apiKeyVal">••••••••••••••••••••••••••••••••</span>
+          <button class="api-toggle-btn" onclick="toggleApiKey()" title="Anzeigen/Verbergen" id="apiToggleBtn">👁️</button>
+          <button class="api-copy-btn" onclick="copyApiKey()">Kopieren</button>
+        </div>
+        <div style="display:flex;gap:12px;font-size:11px;color:var(--muted)">
+          <span>📋 Format: <strong style="color:var(--text)">Bearer Token</strong></span>
+          <span>🔒 Berechtigung: <strong style="color:var(--text)">Read/Write</strong></span>
+          <span>📅 Erstellt: <strong style="color:var(--text)">15.03.2026</strong></span>
+        </div>
+      </div>
+
+      <!-- Nutzung -->
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">📊 API-Nutzung — März 2026</span>
+          <span class="card-action">Details →</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:1rem">
+          <div style="text-align:center">
+            <div style="font-family:'DM Serif Display',serif;font-size:24px">2.847</div>
+            <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Requests</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-family:'DM Serif Display',serif;font-size:24px;color:var(--success)">99.8%</div>
+            <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Uptime</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-family:'DM Serif Display',serif;font-size:24px">42ms</div>
+            <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Ø Latenz</div>
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:4px;display:flex;justify-content:space-between">
+          <span>2.847 / 10.000 Requests</span>
+          <span>28%</span>
+        </div>
+        <div class="usage-bar">
+          <div class="usage-fill" style="width:28%;background:linear-gradient(90deg,var(--accent),var(--accent2))"></div>
+        </div>
+      </div>
+
+      <!-- Endpunkte -->
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">📡 API-Endpunkte</span>
+          <span style="font-size:10px;color:var(--muted)">Base URL: <code style="color:var(--accent2)">api.academify.xyz/v1</code></span>
+        </div>
+
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <span class="endpoint-method method-get">GET</span>
+            <span class="endpoint-path">/students</span>
+          </div>
+          <div class="endpoint-desc">Alle Studierenden der Organisation abrufen. Unterstützt Pagination & Filter nach Fakultät, Semester.</div>
+        </div>
+
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <span class="endpoint-method method-post">POST</span>
+            <span class="endpoint-path">/students/import</span>
+          </div>
+          <div class="endpoint-desc">Studierende per CSV oder JSON-Array importieren. Automatische Zuordnung über E-Mail-Domain.</div>
+        </div>
+
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <span class="endpoint-method method-get">GET</span>
+            <span class="endpoint-path">/structure</span>
+          </div>
+          <div class="endpoint-desc">Komplette Organisationsstruktur als JSON-Baum abrufen (Fakultäten, Institute, Lehrstühle).</div>
+        </div>
+
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <span class="endpoint-method method-put">PUT</span>
+            <span class="endpoint-path">/structure/{id}</span>
+          </div>
+          <div class="endpoint-desc">Organisationseinheit aktualisieren (Name, Leitung, Beschreibung, übergeordnete Einheit).</div>
+        </div>
+
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <span class="endpoint-method method-get">GET</span>
+            <span class="endpoint-path">/reviews</span>
+          </div>
+          <div class="endpoint-desc">Ghost-Bewertungen (👻) abrufen. Filter nach Studiengang, Zeitraum, Bewertungsskala.</div>
+        </div>
+
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <span class="endpoint-method method-post">POST</span>
+            <span class="endpoint-path">/sync/moodle</span>
+          </div>
+          <div class="endpoint-desc">Moodle-Kursdaten synchronisieren. Automatischer Abgleich von Kursen, Teilnehmern und Noten.</div>
+        </div>
+
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <span class="endpoint-method method-delete">DELETE</span>
+            <span class="endpoint-path">/students/{id}</span>
+          </div>
+          <div class="endpoint-desc">Studierenden aus der Organisation entfernen. DSGVO-konform mit vollständiger Datenlöschung.</div>
+        </div>
+      </div>
+
+      <!-- Webhooks -->
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">🔔 Webhooks</span>
+          <span class="card-action" onclick="showToast('✓ Neuer Webhook hinzugefügt')">+ Hinzufügen</span>
+        </div>
+
+        <div class="webhook-item">
+          <div class="webhook-dot active"></div>
+          <div class="webhook-info">
+            <div class="webhook-name">Neue Bewertung</div>
+            <div class="webhook-url">https://uni-koeln.de/api/webhooks/review</div>
+          </div>
+          <button class="webhook-toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off');showToast(this.classList.contains('on')?'✓ Webhook aktiviert':'Webhook deaktiviert')"></button>
+        </div>
+
+        <div class="webhook-item">
+          <div class="webhook-dot active"></div>
+          <div class="webhook-info">
+            <div class="webhook-name">Student registriert</div>
+            <div class="webhook-url">https://uni-koeln.de/api/webhooks/student</div>
+          </div>
+          <button class="webhook-toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off');showToast(this.classList.contains('on')?'✓ Webhook aktiviert':'Webhook deaktiviert')"></button>
+        </div>
+
+        <div class="webhook-item">
+          <div class="webhook-dot inactive"></div>
+          <div class="webhook-info">
+            <div class="webhook-name">Strukturänderung</div>
+            <div class="webhook-url">https://uni-koeln.de/api/webhooks/structure</div>
+          </div>
+          <button class="webhook-toggle off" onclick="this.classList.toggle('on');this.classList.toggle('off');showToast(this.classList.contains('on')?'✓ Webhook aktiviert':'Webhook deaktiviert')"></button>
+        </div>
+      </div>
+
+      <!-- Code-Beispiel -->
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">💻 Schnellstart-Beispiel</span>
+          <span class="api-copy-btn" onclick="showToast('✓ Code kopiert!')">Kopieren</span>
+        </div>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem;font-family:'Courier New',monospace;font-size:12px;color:var(--muted);line-height:1.8;overflow-x:auto">
+          <span style="color:var(--coral)">curl</span> -X GET <span style="color:var(--success)">https://api.academify.xyz/v1/students</span> \<br>
+          &nbsp;&nbsp;-H <span style="color:var(--warn)">"Authorization: Bearer YOUR_API_KEY"</span> \<br>
+          &nbsp;&nbsp;-H <span style="color:var(--warn)">"Content-Type: application/json"</span><br><br>
+          <span style="color:var(--muted2)">// Response:</span><br>
+          {<br>
+          &nbsp;&nbsp;<span style="color:var(--info)">"total"</span>: <span style="color:var(--accent2)">51400</span>,<br>
+          &nbsp;&nbsp;<span style="color:var(--info)">"students"</span>: [<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;{<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--info)">"id"</span>: <span style="color:var(--accent2)">1</span>,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--info)">"name"</span>: <span style="color:var(--success)">"Max Müller"</span>,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--info)">"email"</span>: <span style="color:var(--success)">"max@stud.uni-koeln.de"</span>,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--info)">"faculty"</span>: <span style="color:var(--success)">"WiSo"</span>,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--info)">"semester"</span>: <span style="color:var(--accent2)">3</span><br>
+          &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+          &nbsp;&nbsp;]<br>
+          }
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -490,6 +714,28 @@ function closeModal() {
 function saveModal() {
   closeModal();
   showToast('✓ Änderungen erfolgreich gespeichert!');
+}
+
+let apiKeyVisible = false;
+const DEMO_API_KEY = 'ak_live_7x9Kf2mPqR4wL8nJ5vBtYhGc3sDe6uAi';
+
+function toggleApiKey() {
+  apiKeyVisible = !apiKeyVisible;
+  const el = document.getElementById('apiKeyVal');
+  if (apiKeyVisible) {
+    el.textContent = DEMO_API_KEY;
+    el.classList.remove('hidden-key');
+    document.getElementById('apiToggleBtn').textContent = '🙈';
+  } else {
+    el.textContent = '••••••••••••••••••••••••••••••••';
+    el.classList.add('hidden-key');
+    document.getElementById('apiToggleBtn').textContent = '👁️';
+  }
+}
+
+function copyApiKey() {
+  navigator.clipboard.writeText(DEMO_API_KEY).catch(() => {});
+  showToast('✓ API-Key in Zwischenablage kopiert!');
 }
 
 function showToast(msg) {
