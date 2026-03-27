@@ -71,6 +71,42 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 .org-stats{display:flex;gap:12px;font-size:11px;color:var(--muted)}
 .org-status{font-size:10px;padding:2px 8px;border-radius:100px}
 
+/* ── TEAM ── */
+.team-card{display:flex;align-items:center;gap:14px;padding:1rem;background:var(--surface2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;transition:all .2s}
+.team-card:hover{border-color:var(--gold);transform:translateY(-1px)}
+.team-av{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;flex-shrink:0}
+.team-info{flex:1}
+.team-name{font-size:14px;font-weight:500;margin-bottom:2px}
+.team-role{font-size:11px;color:var(--gold);font-weight:500}
+.team-dept{font-size:11px;color:var(--muted);margin-top:1px}
+.team-actions{display:flex;gap:6px}
+.team-btn{width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;transition:all .15s}
+.team-btn:hover{border-color:var(--gold);color:var(--gold)}
+.team-btn.delete:hover{border-color:var(--coral);color:var(--coral)}
+.role-tag{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:100px;font-size:10px;font-weight:500}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:100}
+.modal-overlay.show{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.8rem;width:100%;max-width:480px;animation:fadeIn .2s ease}
+.modal h2{font-family:'DM Serif Display',serif;font-size:20px;font-weight:400;margin-bottom:.3rem}
+.modal h2 em{font-style:italic;color:var(--gold)}
+.modal p{font-size:12px;color:var(--muted);margin-bottom:1.2rem}
+.modal-field{margin-bottom:1rem}
+.modal-field label{display:block;font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.modal-field input,.modal-field select,.modal-field textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 13px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border-color .2s;appearance:none;-webkit-appearance:none}
+.modal-field input:focus,.modal-field select:focus,.modal-field textarea:focus{border-color:var(--gold)}
+.modal-field textarea{height:70px;resize:vertical}
+.modal-field .select-wrap{position:relative}
+.modal-field .select-wrap::after{content:'↓';position:absolute;right:13px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:12px;pointer-events:none}
+.modal-field select option{background:var(--surface2)}
+.modal-btns{display:flex;gap:8px;margin-top:1.2rem}
+.btn-gold{padding:10px 20px;background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;border-radius:10px;color:#0d0e14;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .2s;flex:1}
+.btn-gold:hover{opacity:.9}
+.btn-ghost{padding:10px 20px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .15s;flex:1}
+.btn-ghost:hover{border-color:var(--border-hover);color:var(--text)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
 .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 20px;font-size:13px;color:var(--text);box-shadow:0 8px 32px rgba(0,0,0,0.4);opacity:0;transition:all .3s ease;z-index:999;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
@@ -99,6 +135,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
     <div class="nav-item" onclick="showPage('whitelist')"><span class="nav-icon">✅</span>Whitelist<span class="nav-badge" style="background:rgba(74,222,128,0.15);color:var(--success)">24</span></div>
     <div class="nav-item" onclick="showPage('blacklist')"><span class="nav-icon">🚫</span>Blacklist<span class="nav-badge" style="background:rgba(248,113,113,0.15);color:var(--coral)">3</span></div>
     <div class="nav-item"><span class="nav-icon">👻</span>Bewertungen<span class="nav-badge" style="background:rgba(124,109,250,0.15);color:var(--accent2)">48.290</span></div>
+
+    <div class="nav-label">Mein Unternehmen</div>
+    <div class="nav-item" onclick="showPage('team')"><span class="nav-icon">🧙‍♂️</span>Mein Team<span class="nav-badge" style="background:rgba(255,215,0,0.15);color:var(--gold)">5</span></div>
 
     <div class="nav-label">System</div>
     <div class="nav-item"><span class="nav-icon">🔌</span>API-Management</div>
@@ -361,6 +400,168 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
       </div>
     </div>
 
+    <!-- PAGE: Mein Team -->
+    <div class="page" id="page-team">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+        <div>
+          <h2 style="font-family:'DM Serif Display',serif;font-size:22px">🧙‍♂️ Mein Team</h2>
+          <p style="font-size:13px;color:var(--muted)">Academify — Interne Mitarbeiter & Rollen</p>
+        </div>
+        <button style="padding:10px 18px;background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;border-radius:10px;color:#0d0e14;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer" onclick="openTeamModal()">+ Mitarbeiter hinzufügen</button>
+      </div>
+
+      <!-- Abteilungen -->
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">👔 Geschäftsführung & Gründer</span>
+        </div>
+        <div class="team-card">
+          <div class="team-av" style="background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0d0e14">👑</div>
+          <div class="team-info">
+            <div class="team-name">Andreas Schieder</div>
+            <div class="team-role">Gründer & CEO</div>
+            <div class="team-dept">Geschäftsführung · Vollzugriff</div>
+          </div>
+          <span class="role-tag" style="background:rgba(255,215,0,0.1);color:var(--gold)">🧙‍♂️ Master</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">💻 Entwicklung & Technik</span>
+          <span class="card-action" onclick="openTeamModal('Entwicklung & Technik')">+ Hinzufügen</span>
+        </div>
+        <div class="team-card">
+          <div class="team-av" style="background:rgba(124,109,250,0.1);color:var(--accent2)">CL</div>
+          <div class="team-info">
+            <div class="team-name">Claude AI</div>
+            <div class="team-role">CTO / Lead Developer</div>
+            <div class="team-dept">Entwicklung & Technik · Frontend, Backend, Architektur</div>
+          </div>
+          <span class="role-tag" style="background:rgba(124,109,250,0.1);color:var(--accent2)">💻 Tech</span>
+          <div class="team-actions">
+            <button class="team-btn" onclick="openTeamModal('Entwicklung & Technik','Claude AI','CTO / Lead Developer','Frontend, Backend, Architektur')">✏️</button>
+          </div>
+        </div>
+        <div style="border:2px dashed var(--border);border-radius:10px;padding:12px;text-align:center;color:var(--muted);font-size:12px;cursor:pointer;transition:all .2s" onclick="openTeamModal('Entwicklung & Technik')" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">+ Entwickler hinzufügen</div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">📱 Marketing & Social Media</span>
+          <span class="card-action" onclick="openTeamModal('Marketing & Social Media')">+ Hinzufügen</span>
+        </div>
+        <div style="border:2px dashed var(--border);border-radius:10px;padding:12px;text-align:center;color:var(--muted);font-size:12px;cursor:pointer;transition:all .2s" onclick="openTeamModal('Marketing & Social Media')" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">+ Ersten Mitarbeiter hinzufügen</div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">📊 Business & Vertrieb</span>
+          <span class="card-action" onclick="openTeamModal('Business & Vertrieb')">+ Hinzufügen</span>
+        </div>
+        <div style="border:2px dashed var(--border);border-radius:10px;padding:12px;text-align:center;color:var(--muted);font-size:12px;cursor:pointer;transition:all .2s" onclick="openTeamModal('Business & Vertrieb')" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">+ Ersten Mitarbeiter hinzufügen</div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">⚖️ Legal & Compliance</span>
+          <span class="card-action" onclick="openTeamModal('Legal & Compliance')">+ Hinzufügen</span>
+        </div>
+        <div style="border:2px dashed var(--border);border-radius:10px;padding:12px;text-align:center;color:var(--muted);font-size:12px;cursor:pointer;transition:all .2s" onclick="openTeamModal('Legal & Compliance')" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">+ Ersten Mitarbeiter hinzufügen</div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">🎨 Design & UX</span>
+          <span class="card-action" onclick="openTeamModal('Design & UX')">+ Hinzufügen</span>
+        </div>
+        <div style="border:2px dashed var(--border);border-radius:10px;padding:12px;text-align:center;color:var(--muted);font-size:12px;cursor:pointer;transition:all .2s" onclick="openTeamModal('Design & UX')" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">+ Ersten Mitarbeiter hinzufügen</div>
+      </div>
+
+      <div style="text-align:center;margin-top:1rem">
+        <button style="padding:10px 20px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;transition:all .2s" onclick="showToast('✓ Neue Abteilung wird erstellt...')" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">+ Neue Abteilung erstellen</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL: Mitarbeiter hinzufügen/bearbeiten -->
+<div class="modal-overlay" id="teamModalOverlay" onclick="if(event.target===this)closeTeamModal()">
+  <div class="modal">
+    <h2 id="teamModalTitle">Mitarbeiter <em>hinzufügen</em></h2>
+    <p id="teamModalSub">Neuen Mitarbeiter dem Academify-Team hinzufügen.</p>
+
+    <div class="field-row">
+      <div class="modal-field">
+        <label>Vorname</label>
+        <input type="text" id="tmFirstname" placeholder="Max">
+      </div>
+      <div class="modal-field">
+        <label>Nachname</label>
+        <input type="text" id="tmLastname" placeholder="Mustermann">
+      </div>
+    </div>
+
+    <div class="modal-field">
+      <label>E-Mail</label>
+      <input type="email" id="tmEmail" placeholder="max@academify.xyz">
+    </div>
+
+    <div class="field-row">
+      <div class="modal-field">
+        <label>Position / Rolle</label>
+        <input type="text" id="tmRole" placeholder="z.B. Frontend Developer">
+      </div>
+      <div class="modal-field">
+        <label>Abteilung</label>
+        <div class="select-wrap">
+          <select id="tmDept">
+            <option value="">Abteilung wählen</option>
+            <option>Geschäftsführung</option>
+            <option>Entwicklung & Technik</option>
+            <option>Marketing & Social Media</option>
+            <option>Business & Vertrieb</option>
+            <option>Legal & Compliance</option>
+            <option>Design & UX</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="modal-field">
+        <label>Zugriffsrechte</label>
+        <div class="select-wrap">
+          <select id="tmAccess">
+            <option>Lesen</option>
+            <option>Lesen & Schreiben</option>
+            <option>Admin</option>
+            <option selected>Vollzugriff (Master)</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-field">
+        <label>Status</label>
+        <div class="select-wrap">
+          <select id="tmStatus">
+            <option selected>Aktiv</option>
+            <option>Eingeladen</option>
+            <option>Inaktiv</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-field">
+      <label>Notizen (optional)</label>
+      <textarea id="tmNotes" placeholder="z.B. Startdatum, besondere Aufgaben..."></textarea>
+    </div>
+
+    <div class="modal-btns">
+      <button class="btn-ghost" onclick="closeTeamModal()">Abbrechen</button>
+      <button class="btn-gold" onclick="saveTeamMember()">👑 Mitarbeiter speichern</button>
+    </div>
   </div>
 </div>
 
@@ -372,6 +573,41 @@ function showPage(id) {
   document.getElementById('page-' + id).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   if(event && event.currentTarget) event.currentTarget.classList.add('active');
+}
+
+function openTeamModal(dept, name, role, notes) {
+  if (name) {
+    document.getElementById('teamModalTitle').innerHTML = 'Mitarbeiter <em>bearbeiten</em>';
+    var parts = name.split(' ');
+    document.getElementById('tmFirstname').value = parts[0] || '';
+    document.getElementById('tmLastname').value = parts.slice(1).join(' ') || '';
+    document.getElementById('tmRole').value = role || '';
+    document.getElementById('tmNotes').value = notes || '';
+  } else {
+    document.getElementById('teamModalTitle').innerHTML = 'Mitarbeiter <em>hinzufügen</em>';
+    document.getElementById('tmFirstname').value = '';
+    document.getElementById('tmLastname').value = '';
+    document.getElementById('tmEmail').value = '';
+    document.getElementById('tmRole').value = '';
+    document.getElementById('tmNotes').value = '';
+  }
+  if (dept) {
+    var sel = document.getElementById('tmDept');
+    for (var i = 0; i < sel.options.length; i++) {
+      if (sel.options[i].text === dept) { sel.selectedIndex = i; break; }
+    }
+  }
+  document.getElementById('teamModalOverlay').classList.add('show');
+}
+
+function closeTeamModal() {
+  document.getElementById('teamModalOverlay').classList.remove('show');
+}
+
+function saveTeamMember() {
+  var name = document.getElementById('tmFirstname').value + ' ' + document.getElementById('tmLastname').value;
+  closeTeamModal();
+  showToast('👑 ' + name.trim() + ' wurde zum Team hinzugefügt!');
 }
 
 function showToast(msg) {
