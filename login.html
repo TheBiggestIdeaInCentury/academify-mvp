@@ -114,9 +114,10 @@
 <script>
   // MVP Demo-Datenbank (wird später durch echte Datenbank ersetzt)
   const users = [
-    { email: 'demo@academify.xyz', pw: 'Demo1234' },
-    { email: 'student@academify.xyz', pw: 'Student1234' },
-    { email: 'admin@academify.xyz', pw: 'Admin1234' }
+    { email: 'demo@academify.xyz', pw: 'Demo1234', redirect: 'dashboard.html' },
+    { email: 'student@academify.xyz', pw: 'Student1234', redirect: 'dashboard.html' },
+    { email: 'admin@academify.xyz', pw: 'Admin1234', redirect: 'admin.html' },
+    { email: 'master@academify.xyz', pw: 'Master1234', redirect: 'master.html' }
   ];
 
   function handleLogin() {
@@ -144,7 +145,7 @@
 
       if (user) {
         showToast('✓ Erfolgreich angemeldet!');
-        setTimeout(() => { window.location.href = 'dashboard.html'; }, 700);
+        setTimeout(() => { window.location.href = user.redirect || 'dashboard.html'; }, 700);
       } else {
         btn.textContent = 'Anmelden →';
         btn.style.opacity = '1';

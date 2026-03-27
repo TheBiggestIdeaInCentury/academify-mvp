@@ -211,6 +211,13 @@ input[type=file]{display:none}
             <div class="sg-icon">🏛️</div><div class="sg-name">Regierungen</div>
           </div>
         </div>
+        <!-- MasterOfTheUniverse — langer Balken -->
+        <div style="display:grid;grid-template-columns:1fr;gap:8px;margin-top:8px">
+          <div class="sg-card" id="role-master" onclick="selectRole('master')" style="padding:14px 12px;background:linear-gradient(135deg,rgba(124,109,250,0.08),rgba(167,139,250,0.05));border-color:rgba(124,109,250,0.2)">
+            <div class="sg-icon" style="font-size:24px">🧙‍♂️</div><div class="sg-name" style="font-size:13px;font-weight:700">MasterOfTheUniverse</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:2px">Super-Admin · Vollzugriff auf alle Organisationen</div>
+          </div>
+        </div>
       </div>
 
       <div class="field">
@@ -548,6 +555,12 @@ function handleSignUp(){
   if(pw.length<8){document.getElementById('err-regPw').style.display='block';ok=false}else document.getElementById('err-regPw').style.display='none';
   if(!ok)return;
   verifiedEmail=email;
+
+  // 🧙‍♂️ MasterOfTheUniverse → Super-Admin Dashboard
+  if(selectedRole==='master'){
+    window.location.href='master.html';
+    return;
+  }
 
   // ICH & DU! → direkt ins Dashboard
   if(selectedRole==='ich'){
