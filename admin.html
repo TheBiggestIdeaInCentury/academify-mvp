@@ -165,6 +165,17 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 .webhook-toggle::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:2px;transition:left .2s}
 .webhook-toggle.on::after{left:18px}
 .webhook-toggle.off::after{left:2px}
+
+/* ── ANONYMISIERUNG ── */
+.anon-banner{display:flex;align-items:center;gap:10px;padding:12px 16px;background:rgba(124,109,250,0.06);border:1px solid rgba(124,109,250,0.2);border-radius:12px;margin-bottom:1rem;font-size:12px;color:var(--muted);line-height:1.5}
+.anon-banner .anon-icon{font-size:20px;flex-shrink:0}
+.anon-banner strong{color:var(--accent2)}
+.anon-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(124,109,250,0.1);border:1px solid rgba(124,109,250,0.2);border-radius:100px;padding:2px 10px;font-size:10px;color:var(--accent2);font-weight:500}
+.anon-bar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;margin-bottom:6px}
+.anon-bar-label{font-size:11px;color:var(--muted);flex:1}
+.anon-bar-val{font-size:13px;font-weight:500}
+.anon-bar-fill{height:6px;border-radius:3px;flex:2;background:var(--surface3);overflow:hidden}
+.anon-bar-fill div{height:100%;border-radius:3px}
 </style>
 </head>
 <body>
@@ -189,8 +200,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
     <div class="nav-item" onclick="showPage('mitarbeiter')"><span class="nav-icon">👥</span>Mitarbeiter</div>
 
     <div class="nav-label">Verwaltung</div>
-    <div class="nav-item"><span class="nav-icon">📋</span>Bewertungen<span class="nav-badge">12</span></div>
-    <div class="nav-item"><span class="nav-icon">📊</span>Statistiken</div>
+    <div class="nav-item" onclick="showPage('bewertungen')"><span class="nav-icon">📋</span>Bewertungen<span class="nav-badge">12</span></div>
+    <div class="nav-item" onclick="showPage('statistiken')"><span class="nav-icon">📊</span>Statistiken</div>
     <div class="nav-item" onclick="showPage('api')"><span class="nav-icon">🔌</span>API-Zugang<span class="nav-badge" style="background:rgba(74,222,128,0.15);color:var(--success)">Live</span></div>
     <div class="nav-item"><span class="nav-icon">⚙️</span>Einstellungen</div>
   </div>
@@ -216,6 +227,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
     <div class="page active" id="page-dashboard">
       <h2 style="font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:1.2rem">Willkommen, <em style="color:var(--accent2);font-style:italic">Admin</em> 👋</h2>
 
+      <div class="anon-banner">
+        <span class="anon-icon">🔒</span>
+        <div><strong>Datenschutz by Design</strong> — Alle Studierenden-Daten sind vollständig anonymisiert. Sie sehen ausschließlich aggregierte Statistiken. Einzelne Studierende können weder identifiziert noch überwacht werden. <span class="anon-badge">🛡️ DSGVO-konform</span></div>
+      </div>
+
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-icon">🏛️</div>
@@ -233,13 +249,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
           <div class="stat-icon">🎓</div>
           <div class="stat-val">51.400</div>
           <div class="stat-label">Studierende</div>
-          <div class="stat-change">↑ +320 Neuzugänge</div>
+          <div class="stat-change" style="color:var(--accent2)">🔒 Anonymisiert</div>
         </div>
         <div class="stat-card">
           <div class="stat-icon">👻</div>
           <div class="stat-val">2.841</div>
           <div class="stat-label">Bewertungen</div>
-          <div class="stat-change">↑ +67 diese Woche</div>
+          <div class="stat-change" style="color:var(--accent2)">🔒 Anonymisiert</div>
         </div>
       </div>
 
@@ -472,6 +488,210 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
             </tr>
           </tbody>
         </table>
+      </div>
+    </div>
+
+    <!-- PAGE: Bewertungen (anonymisiert) -->
+    <div class="page" id="page-bewertungen">
+      <h2 style="font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:1.2rem">👻 Bewertungen</h2>
+
+      <div class="anon-banner">
+        <span class="anon-icon">🔒</span>
+        <div><strong>Alle Bewertungen sind anonymisiert.</strong> Einzelne Studierende können nicht identifiziert werden. Ergebnisse werden erst ab mindestens 5 Bewertungen angezeigt (k-Anonymität).</div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">👻</div>
+          <div class="stat-val">4.2</div>
+          <div class="stat-label">Ø Ghost-Rating</div>
+          <div class="stat-change">↑ +0.3 vs. Vorjahr</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📝</div>
+          <div class="stat-val">2.841</div>
+          <div class="stat-label">Bewertungen gesamt</div>
+          <div class="stat-change" style="color:var(--accent2)">🔒 Anonymisiert</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">👍</div>
+          <div class="stat-val">78%</div>
+          <div class="stat-label">Weiterempfehlung</div>
+          <div class="stat-change">↑ +5% vs. Vorjahr</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📊</div>
+          <div class="stat-val">12</div>
+          <div class="stat-label">Neue diese Woche</div>
+          <div class="stat-change" style="color:var(--accent2)">🔒 Anonymisiert</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">📊 Bewertungen nach Fakultät (Durchschnitt)</span>
+          <span class="anon-badge">🔒 Anonymisiert</span>
+        </div>
+        <div class="anon-bar">
+          <span class="anon-bar-label">WiSo</span>
+          <div class="anon-bar-fill"><div style="width:84%;background:var(--success)"></div></div>
+          <span class="anon-bar-val">4.2 👻</span>
+          <span style="font-size:10px;color:var(--muted)">623 Bew.</span>
+        </div>
+        <div class="anon-bar">
+          <span class="anon-bar-label">Philosophie</span>
+          <div class="anon-bar-fill"><div style="width:90%;background:var(--success)"></div></div>
+          <span class="anon-bar-val">4.5 👻</span>
+          <span style="font-size:10px;color:var(--muted)">412 Bew.</span>
+        </div>
+        <div class="anon-bar">
+          <span class="anon-bar-label">Math.-Naturwiss.</span>
+          <div class="anon-bar-fill"><div style="width:76%;background:var(--warn)"></div></div>
+          <span class="anon-bar-val">3.8 👻</span>
+          <span style="font-size:10px;color:var(--muted)">534 Bew.</span>
+        </div>
+        <div class="anon-bar">
+          <span class="anon-bar-label">Medizin</span>
+          <div class="anon-bar-fill"><div style="width:72%;background:var(--warn)"></div></div>
+          <span class="anon-bar-val">3.6 👻</span>
+          <span style="font-size:10px;color:var(--muted)">489 Bew.</span>
+        </div>
+        <div class="anon-bar">
+          <span class="anon-bar-label">Rechtswiss.</span>
+          <div class="anon-bar-fill"><div style="width:82%;background:var(--success)"></div></div>
+          <span class="anon-bar-val">4.1 👻</span>
+          <span style="font-size:10px;color:var(--muted)">398 Bew.</span>
+        </div>
+        <div class="anon-bar">
+          <span class="anon-bar-label">Humanwiss.</span>
+          <div class="anon-bar-fill"><div style="width:88%;background:var(--success)"></div></div>
+          <span class="anon-bar-val">4.4 👻</span>
+          <span style="font-size:10px;color:var(--muted)">385 Bew.</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">💬 Letzte anonyme Kommentare</span>
+          <span class="anon-badge">🔒 Identität geschützt</span>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon" style="background:rgba(124,109,250,0.1)">👻</div>
+          <div class="activity-text"><strong>Anonymer Studierender</strong> · WiSo · Sem. 3–4<br><span style="font-style:italic;color:var(--muted)">"Gute Dozenten, aber Raumplanung könnte besser sein."</span></div>
+          <div class="activity-time">👻👻👻👻</div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon" style="background:rgba(74,222,128,0.1)">👻</div>
+          <div class="activity-text"><strong>Anonymer Studierender</strong> · Humanwiss. · Sem. 1–2<br><span style="font-style:italic;color:var(--muted)">"Sehr engagierte Professoren. Fühle mich gut aufgehoben."</span></div>
+          <div class="activity-time">👻👻👻👻👻</div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon" style="background:rgba(251,191,36,0.1)">👻</div>
+          <div class="activity-text"><strong>Anonymer Studierender</strong> · Medizin · Sem. 5–6<br><span style="font-style:italic;color:var(--muted)">"Praxisbezug könnte stärker sein. Theorie überwiegt."</span></div>
+          <div class="activity-time">👻👻👻</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: Statistiken (anonymisiert) -->
+    <div class="page" id="page-statistiken">
+      <h2 style="font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:1.2rem">📊 Statistiken</h2>
+
+      <div class="anon-banner">
+        <span class="anon-icon">🛡️</span>
+        <div><strong>Anonymisierung by Design.</strong> Alle Statistiken zeigen ausschließlich aggregierte, nicht rückverfolgbare Daten. Keine Einzelprofile, keine Überwachung. Die Ranking-Logik wird in Zusammenarbeit mit der Community definiert.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">🎓 Studierende — Übersicht</span>
+          <span class="anon-badge">🔒 Nur Aggregat-Daten</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:1rem">
+          <div style="text-align:center;padding:1rem;background:var(--surface2);border-radius:10px">
+            <div style="font-family:'DM Serif Display',serif;font-size:26px">51.400</div>
+            <div style="font-size:10px;color:var(--muted);text-transform:uppercase">Gesamt registriert</div>
+          </div>
+          <div style="text-align:center;padding:1rem;background:var(--surface2);border-radius:10px">
+            <div style="font-family:'DM Serif Display',serif;font-size:26px;color:var(--success)">68%</div>
+            <div style="font-size:10px;color:var(--muted);text-transform:uppercase">Aktive Nutzer</div>
+          </div>
+          <div style="text-align:center;padding:1rem;background:var(--surface2);border-radius:10px">
+            <div style="font-family:'DM Serif Display',serif;font-size:26px">4.2</div>
+            <div style="font-size:10px;color:var(--muted);text-transform:uppercase">Ø Zufriedenheit 👻</div>
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--muted);padding:8px 12px;background:rgba(124,109,250,0.04);border-radius:8px;line-height:1.6;text-align:center">
+          🔒 Sie sehen keine individuellen Studierenden-Daten. Alle Werte sind Durchschnitte über mindestens 50 Datenpunkte.
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="card">
+          <div class="card-head">
+            <span class="card-title">📈 Verteilung nach Semester</span>
+            <span class="anon-badge">🔒 Anonym</span>
+          </div>
+          <div class="anon-bar">
+            <span class="anon-bar-label">Sem. 1–2</span>
+            <div class="anon-bar-fill"><div style="width:35%;background:var(--accent)"></div></div>
+            <span class="anon-bar-val">35%</span>
+          </div>
+          <div class="anon-bar">
+            <span class="anon-bar-label">Sem. 3–4</span>
+            <div class="anon-bar-fill"><div style="width:28%;background:var(--accent2)"></div></div>
+            <span class="anon-bar-val">28%</span>
+          </div>
+          <div class="anon-bar">
+            <span class="anon-bar-label">Sem. 5–6</span>
+            <div class="anon-bar-fill"><div style="width:22%;background:var(--info)"></div></div>
+            <span class="anon-bar-val">22%</span>
+          </div>
+          <div class="anon-bar">
+            <span class="anon-bar-label">Sem. 7+</span>
+            <div class="anon-bar-fill"><div style="width:15%;background:var(--warn)"></div></div>
+            <span class="anon-bar-val">15%</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <span class="card-title">🏛️ Verteilung nach Fakultät</span>
+            <span class="anon-badge">🔒 Anonym</span>
+          </div>
+          <div class="anon-bar">
+            <span class="anon-bar-label">WiSo</span>
+            <div class="anon-bar-fill"><div style="width:24%;background:var(--accent)"></div></div>
+            <span class="anon-bar-val">24%</span>
+          </div>
+          <div class="anon-bar">
+            <span class="anon-bar-label">Medizin</span>
+            <div class="anon-bar-fill"><div style="width:22%;background:var(--coral)"></div></div>
+            <span class="anon-bar-val">22%</span>
+          </div>
+          <div class="anon-bar">
+            <span class="anon-bar-label">Math.-Nat.</span>
+            <div class="anon-bar-fill"><div style="width:20%;background:var(--success)"></div></div>
+            <span class="anon-bar-val">20%</span>
+          </div>
+          <div class="anon-bar">
+            <span class="anon-bar-label">Andere</span>
+            <div class="anon-bar-fill"><div style="width:34%;background:var(--muted)"></div></div>
+            <span class="anon-bar-val">34%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <div class="card-head">
+          <span class="card-title">🏆 Studiengang-Ranking</span>
+          <span style="font-size:11px;color:var(--warn);font-style:italic">⏳ Ranking-Logik wird noch definiert</span>
+        </div>
+        <div style="text-align:center;padding:2rem 1rem;color:var(--muted)">
+          <div style="font-size:32px;margin-bottom:.8rem">🏗️</div>
+          <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:.4rem">Ranking kommt bald</div>
+          <div style="font-size:12px;line-height:1.6;max-width:400px;margin:0 auto">Die Ranking-Kriterien werden transparent und in Zusammenarbeit mit der Community definiert. Alle Daten bleiben anonymisiert.</div>
+        </div>
       </div>
     </div>
 
