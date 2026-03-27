@@ -206,7 +206,7 @@ body {
     <h2 class="card-title">Geschützter Zugang</h2>
     <p class="card-desc">Diese Plattform befindet sich im Aufbau.<br>Zugang nur mit Einladung.</p>
 
-    <form id="gateForm" onsubmit="return handleLogin()">
+    <form id="gateForm">
       <div class="input-group">
         <label>E-Mail</label>
         <input type="email" id="gateEmail" placeholder="deine@email.com" required autocomplete="email">
@@ -223,25 +223,49 @@ body {
   <p class="footer-text">© 2026 Academify. Alle Rechte vorbehalten.</p>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-function handleLogin() {
-  const email = document.getElementById('gateEmail').value.trim().toLowerCase();
-  const password = document.getElementById('gatePassword').value;
+document.addEventListener('DOMContentLoaded', function() {
+  const SUPABASE_URL = 'https://izbokhexirglwthffkis.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_5ojCJQblvrXTf4lk1rNQ0A_fzmkvz4q';
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  const authorized = {
-    'admin@academify.xyz': ':;(Balu/971):;'
-  };
+  // Check if already logged in
+  sb.auth.getSession().then(function(result) {
+    if (result.data.session) {
+      window.location.href = 'landing.html';
+    }
+  });
 
-  if (authorized[email] && authorized[email] === password) {
-    sessionStorage.setItem('academify_auth', 'true');
-    window.location.href = 'landing.html';
-  } else {
-    const err = document.getElementById('errorMsg');
-    err.style.display = 'block';
-    setTimeout(() => { err.style.display = 'none'; }, 3000);
-  }
-  return false;
-}
+  // Handle form submit
+  document.getElementById('gateForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var email = document.getElementById('gateEmail').value.trim().toLowerCase();
+    var password = document.getElementById('gatePassword').value;
+    var btn = document.querySelector('.login-btn');
+    var err = document.getElementById('errorMsg');
+
+    btn.textContent = 'Wird geprüft...';
+    btn.disabled = true;
+
+    sb.auth.signInWithPassword({ email: email, password: password })
+      .then(function(result) {
+        if (result.error) {
+          err.style.display = 'block';
+          btn.textContent = 'Zugang erhalten →';
+          btn.disabled = false;
+          setTimeout(function() { err.style.display = 'none'; }, 3000);
+        } else {
+          window.location.href = 'landing.html';
+        }
+      })
+      .catch(function() {
+        err.style.display = 'block';
+        btn.textContent = 'Zugang erhalten →';
+        btn.disabled = false;
+      });
+  });
+});
 </script>
 
 </body>
