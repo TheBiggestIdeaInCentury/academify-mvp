@@ -325,11 +325,11 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <div class="logo"><div class="lm">🎓</div><div class="lt">Acade<span>mify</span></div></div>
   <div class="nav-scroll">
     <div class="nl">Hauptmenü</div>
-    <div class="ni" onclick="navTo(this)"><span class="ni-ico">⊞</span>Dashboard</div>
-    <div class="ni" onclick="navTo(this)"><span class="ni-ico">💬</span>Nachrichten <span class="nbadge">3</span></div>
-    <div class="ni on" onclick="navTo(this)"><span class="ni-ico">👥</span>Profil &amp; Freunde</div>
+    <div class="ni" onclick="window.location.href='dashboard.html'"><span class="ni-ico">⊞</span>Dashboard</div>
+    <div class="ni" onclick="window.location.href='nachrichten.html'"><span class="ni-ico">💬</span>Nachrichten <span class="nbadge">3</span></div>
+    <div class="ni on" onclick="window.location.href='profil.html'"><span class="ni-ico">👥</span>Profil &amp; Freunde</div>
     <div class="nl">Lernen</div>
-    <div class="ni" onclick="navTo(this)"><span class="ni-ico">📖</span>Online-Kurse <span class="nbadge">3</span></div>
+    <div class="ni" onclick="window.location.href='kurse.html'"><span class="ni-ico">📖</span>Online-Kurse <span class="nbadge">3</span></div>
     <div class="ni" onclick="navTo(this)"><span class="ni-ico">🎓</span>Nachhilfe</div>
     <div class="ni" onclick="navTo(this)"><span class="ni-ico">📄</span>StudyDocs</div>
     <div class="nl">Campus &amp; Karriere</div>
@@ -1038,5 +1038,6 @@ function showToast(msg, type) {
   if (fill) setTimeout(() => fill.style.width = '18.75%', 400);
 })();
 </script>
+<script src="js/lang.js"></script>
 </body>
 </html>

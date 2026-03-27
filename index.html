@@ -68,8 +68,8 @@
 </div>
 </div>
 <div class="flex items-center gap-6">
-<button class="text-on-surface hover:text-primary transition-colors font-medium" onclick="navigate('login')">Login</button>
-<button class="bg-primary text-white px-6 py-2.5 rounded-lg font-bold shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all" onclick="navigate('login')">Sign Up</button>
+<button class="text-on-surface hover:text-primary transition-colors font-medium" onclick="window.location.href='login.html'">Login</button>
+<button class="bg-primary text-white px-6 py-2.5 rounded-lg font-bold shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all" onclick="window.location.href='register.html'">Sign Up</button>
 </div>
 </nav>
 <!-- SIDE NAVIGATION (Dashboard Only) -->
@@ -126,16 +126,16 @@
 <div class="relative min-h-[85vh] flex flex-col items-center justify-center px-8 text-center overflow-hidden">
 <div class="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] -z-10"></div>
 <div class="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-secondary/10 rounded-full blur-[100px] -z-10"></div>
-<h1 class="text-5xl md:text-8xl font-black mb-8 tracking-tight leading-[1.1]">
+<h1 class="text-5xl md:text-8xl font-black mb-8 tracking-tight leading-[1.1]" data-i18n="hero-title">
                     Dein Studium.<br/>
 <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-primary text-glow">Deine Regeln.</span>
 </h1>
-<p class="text-lg md:text-xl text-on-surface-variant max-w-3xl mb-12 font-body leading-relaxed">
-                    Vergiss das Chaos aus Excel-Listen, PDF-Ordnern und verpassten Fristen. ProjectXYZ ist die smarte Schaltzentrale, die alles vereint, was du für ein erfolgreiches Studium brauchst.
+<p class="text-lg md:text-xl text-on-surface-variant max-w-3xl mb-12 font-body leading-relaxed" data-i18n="hero-desc">
+                    Vergiss das Chaos aus Excel-Listen, PDF-Ordnern und verpassten Fristen. Academify ist die smarte Schaltzentrale, die alles vereint, was du für ein erfolgreiches Studium brauchst.
                 </p>
 <div class="flex flex-wrap gap-4 justify-center">
-<button class="bg-primary text-white px-10 py-4 rounded-2xl font-bold text-lg hover:scale-105 transition-transform shadow-xl shadow-primary/25" onclick="navigate('login')">Jetzt kostenlos starten</button>
-<button class="bg-surface-container-highest px-10 py-4 rounded-2xl font-bold text-lg border border-white/10 hover:bg-surface-bright transition-colors">Tour ansehen</button>
+<button class="bg-primary text-white px-10 py-4 rounded-2xl font-bold text-lg hover:scale-105 transition-transform shadow-xl shadow-primary/25" onclick="window.location.href='register.html'" data-i18n="hero-cta">Jetzt kostenlos starten</button>
+<button class="bg-surface-container-highest px-10 py-4 rounded-2xl font-bold text-lg border border-white/10 hover:bg-surface-bright transition-colors" data-i18n="hero-tour">Tour ansehen</button>
 </div>
 <!-- Hero Image Concept -->
 <div class="mt-20 w-full max-w-6xl rounded-[40px] overflow-hidden border border-white/10 shadow-2xl relative group">
@@ -148,37 +148,37 @@
 <div class="w-10 h-10 rounded-full border-2 border-surface bg-gray-700 overflow-hidden"><img alt="" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAt0Lf0y67dDrR-DNbsJOgmsuAoI6shgu79nIx8qHlRfDAet1C3eZZDOGpyHqdrQbcc9oImVCQcPzDUqDs1mhgx5X29mEKGxfR4TfZ6YbgWXYMtcjZvhwlM9JC3wy1oto76b3CurEcD1Rb8_vtiQJzxeetwjFJ0IbBIvvlJd5jg-YeqgqqFKJuwz14BWgBpuBpl6fl8xav2OYqfetuCU0UxyYrgFM2hIrFimHzI5oJExtlit7k_afr_iR4zgiRIsEokMmwCyThh5sk"/></div>
 <div class="w-10 h-10 rounded-full border-2 border-surface bg-primary flex items-center justify-center text-[10px] font-bold">+50k</div>
 </div>
-<p class="text-white font-bold text-lg">Über 50.000 aktive Studierende vertrauen uns bereits.</p>
+<p class="text-white font-bold text-lg" data-i18n="hero-social">Über 50.000 aktive Studierende vertrauen uns bereits.</p>
 </div>
 </div>
 </div>
 <!-- "So funktioniert's" -->
 <div class="py-32 px-8 max-w-7xl mx-auto" id="features">
 <div class="text-center mb-20">
-<h2 class="text-4xl md:text-5xl font-black mb-6">In drei Schritten zum Master-Plan.</h2>
-<p class="text-on-surface-variant max-w-2xl mx-auto">Wir haben ProjectXYZ so intuitiv gebaut, dass du keine Anleitung brauchst. In weniger als zwei Minuten bist du startklar für ein stressfreieres Semester.</p>
+<h2 class="text-4xl md:text-5xl font-black mb-6" data-i18n="steps-title">In drei Schritten zum Master-Plan.</h2>
+<p class="text-on-surface-variant max-w-2xl mx-auto" data-i18n="steps-desc">Wir haben Academify so intuitiv gebaut, dass du keine Anleitung brauchst. In weniger als zwei Minuten bist du startklar für ein stressfreieres Semester.</p>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
 <div class="flex flex-col items-center text-center group">
 <div class="w-20 h-20 rounded-3xl bg-primary/10 flex items-center justify-center text-primary mb-8 group-hover:scale-110 transition-transform duration-300">
 <span class="text-3xl font-black">1</span>
 </div>
-<h3 class="text-2xl font-bold mb-4">Profil erstellen</h3>
-<p class="text-on-surface-variant leading-relaxed">Wähle deine Hochschule und deinen Studiengang aus. Wir passen uns deinen spezifischen Anforderungen an.</p>
+<h3 class="text-2xl font-bold mb-4" data-i18n="step1-title">Profil erstellen</h3>
+<p class="text-on-surface-variant leading-relaxed" data-i18n="step1-desc">Wähle deine Hochschule und deinen Studiengang aus. Wir passen uns deinen spezifischen Anforderungen an.</p>
 </div>
 <div class="flex flex-col items-center text-center group">
 <div class="w-20 h-20 rounded-3xl bg-secondary/10 flex items-center justify-center text-secondary mb-8 group-hover:scale-110 transition-transform duration-300">
 <span class="text-3xl font-black">2</span>
 </div>
-<h3 class="text-2xl font-bold mb-4">Studium organisieren</h3>
-<p class="text-on-surface-variant leading-relaxed">Importiere deine Kurse und setze deine persönlichen Lernziele. Alles synchronisiert an einem Ort.</p>
+<h3 class="text-2xl font-bold mb-4" data-i18n="step2-title">Studium organisieren</h3>
+<p class="text-on-surface-variant leading-relaxed" data-i18n="step2-desc">Importiere deine Kurse und setze deine persönlichen Lernziele. Alles synchronisiert an einem Ort.</p>
 </div>
 <div class="flex flex-col items-center text-center group">
 <div class="w-20 h-20 rounded-3xl bg-tertiary/10 flex items-center justify-center text-tertiary mb-8 group-hover:scale-110 transition-transform duration-300">
 <span class="text-3xl font-black">3</span>
 </div>
-<h3 class="text-2xl font-bold mb-4">Netzwerk nutzen</h3>
-<p class="text-on-surface-variant leading-relaxed">Verbinde dich mit Kommilitonen und teile Ressourcen blitzschnell über unseren Hub.</p>
+<h3 class="text-2xl font-bold mb-4" data-i18n="step3-title">Netzwerk nutzen</h3>
+<p class="text-on-surface-variant leading-relaxed" data-i18n="step3-desc">Verbinde dich mit Kommilitonen und teile Ressourcen blitzschnell über unseren Hub.</p>
 </div>
 </div>
 </div>
@@ -190,8 +190,8 @@
 <div class="absolute -right-10 -top-10 w-40 h-40 bg-primary/20 blur-3xl rounded-full"></div>
 <div>
 <span class="material-symbols-outlined text-5xl text-primary mb-8">auto_awesome</span>
-<h3 class="text-3xl font-bold mb-6">KI-gestütztes Lernen</h3>
-<p class="text-on-surface-variant text-lg max-w-lg mb-8">Lass dir Zusammenfassungen erstellen, übe mit generierten Quiz-Fragen und erhalte personalisierte Lernpläne basierend auf deinem Tempo.</p>
+<h3 class="text-3xl font-bold mb-6" data-i18n="feat-ai-title">KI-gestütztes Lernen</h3>
+<p class="text-on-surface-variant text-lg max-w-lg mb-8" data-i18n="feat-ai-desc">Lass dir Zusammenfassungen erstellen, übe mit generierten Quiz-Fragen und erhalte personalisierte Lernpläne basierend auf deinem Tempo.</p>
 <div class="flex gap-3">
 <span class="px-4 py-2 bg-white/5 rounded-full text-xs font-bold border border-white/5">GPT-4 Integration</span>
 <span class="px-4 py-2 bg-white/5 rounded-full text-xs font-bold border border-white/5">Smart Flashcards</span>
@@ -200,18 +200,18 @@
 </div>
 <div class="md:col-span-4 bg-gradient-to-br from-secondary/20 to-surface-container p-12 rounded-[2.5rem] border border-white/5">
 <span class="material-symbols-outlined text-5xl text-secondary mb-8">group</span>
-<h3 class="text-3xl font-bold mb-6">Community</h3>
-<p class="text-on-surface-variant text-lg mb-8">Finde automatisch Lernpartner basierend auf deinen belegten Kursen in deiner Stadt.</p>
-<button class="text-secondary font-bold hover:underline flex items-center gap-2">Match finden <span class="material-symbols-outlined">arrow_forward</span></button>
+<h3 class="text-3xl font-bold mb-6" data-i18n="feat-community-title">Community</h3>
+<p class="text-on-surface-variant text-lg mb-8" data-i18n="feat-community-desc">Finde automatisch Lernpartner basierend auf deinen belegten Kursen in deiner Stadt.</p>
+<button class="text-secondary font-bold hover:underline flex items-center gap-2" data-i18n="feat-community-btn">Match finden <span class="material-symbols-outlined">arrow_forward</span></button>
 </div>
 <div class="md:col-span-4 bg-surface-container p-12 rounded-[2.5rem] border border-white/5">
 <span class="material-symbols-outlined text-5xl text-tertiary mb-8">speed</span>
-<h3 class="text-2xl font-bold mb-4">Deadline Radar</h3>
-<p class="text-on-surface-variant leading-relaxed">Verpasse nie wieder eine Abgabe. Intelligente Push-Erinnerungen synchronisiert mit deinem Kalender.</p>
+<h3 class="text-2xl font-bold mb-4" data-i18n="feat-deadline-title">Deadline Radar</h3>
+<p class="text-on-surface-variant leading-relaxed" data-i18n="feat-deadline-desc">Verpasse nie wieder eine Abgabe. Intelligente Push-Erinnerungen synchronisiert mit deinem Kalender.</p>
 </div>
 <div class="md:col-span-8 glass-card p-12 rounded-[2.5rem] flex flex-col justify-center">
-<h3 class="text-3xl font-bold mb-8">Partner-Universitäten</h3>
-<p class="text-on-surface-variant text-lg mb-10">Wir unterstützen bereits über 150 Hochschulen in DACH mit direkter Anbindung an Moodle &amp; Canvas.</p>
+<h3 class="text-3xl font-bold mb-8" data-i18n="feat-uni-title">Partner-Universitäten</h3>
+<p class="text-on-surface-variant text-lg mb-10" data-i18n="feat-uni-desc">Wir unterstützen bereits über 150 Hochschulen in DACH mit direkter Anbindung an Moodle &amp; Canvas.</p>
 <div class="flex flex-wrap gap-x-12 gap-y-8 grayscale opacity-60">
 <span class="text-2xl font-black">TU München</span>
 <span class="text-2xl font-black">RWTH Aachen</span>
@@ -224,18 +224,18 @@
 </div>
 <!-- Vision / Mission -->
 <div class="py-32 px-8 max-w-4xl mx-auto text-center" id="vision">
-<h2 class="text-primary font-bold tracking-widest uppercase text-xs mb-8">Warum wir ProjectXYZ bauen</h2>
-<p class="text-3xl md:text-5xl font-black italic leading-tight mb-12">
+<h2 class="text-primary font-bold tracking-widest uppercase text-xs mb-8" data-i18n="vision-label">Warum wir Academify bauen</h2>
+<p class="text-3xl md:text-5xl font-black italic leading-tight mb-12" data-i18n="vision-quote">
                     "Wir glauben, dass Bildung inspirieren sollte, statt durch Bürokratie und Organisationschaos zu bremsen."
                 </p>
 <div class="w-16 h-1 bg-primary/30 mx-auto mb-12"></div>
-<p class="text-xl text-on-surface-variant leading-relaxed">
+<p class="text-xl text-on-surface-variant leading-relaxed" data-i18n="vision-mission">
                     Unsere Mission ist es, jedem Studierenden die Werkzeuge an die Hand zu geben, um das volle Potenzial auszuschöpfen – effizient, vernetzt und mit Spaß am Lernen.
                 </p>
 </div>
 <!-- Social Proof -->
 <div class="py-24 px-8 max-w-7xl mx-auto">
-<h2 class="text-center text-4xl font-black mb-16">Von Studierenden geliebt.</h2>
+<h2 class="text-center text-4xl font-black mb-16" data-i18n="social-title">Von Studierenden geliebt.</h2>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
 <div class="glass-card p-10 rounded-3xl">
 <div class="flex gap-1 text-yellow-500 mb-6">
@@ -262,16 +262,16 @@
 <h2 class="text-4xl font-black mb-12 text-center">FAQ</h2>
 <div class="space-y-4">
 <div class="bg-surface-container p-6 rounded-2xl border border-white/5">
-<h4 class="font-bold mb-2">Ist ProjectXYZ wirklich kostenlos?</h4>
-<p class="text-sm text-on-surface-variant">Ja, die Basis-Version für Studierende ist und bleibt komplett kostenlos.</p>
+<h4 class="font-bold mb-2" data-i18n="faq-q1">Ist Academify wirklich kostenlos?</h4>
+<p class="text-sm text-on-surface-variant" data-i18n="faq-a1">Ja, die Basis-Version für Studierende ist und bleibt komplett kostenlos.</p>
 </div>
 <div class="bg-surface-container p-6 rounded-2xl border border-white/5">
-<h4 class="font-bold mb-2">Wie sicher sind meine Daten?</h4>
-<p class="text-sm text-on-surface-variant">Deine Privatsphäre steht an erster Stelle. Wir nutzen Banken-Standard-Verschlüsselung und Server in Deutschland (DSGVO-konform).</p>
+<h4 class="font-bold mb-2" data-i18n="faq-q2">Wie sicher sind meine Daten?</h4>
+<p class="text-sm text-on-surface-variant" data-i18n="faq-a2">Deine Privatsphäre steht an erster Stelle. Wir nutzen Banken-Standard-Verschlüsselung und Server in Deutschland (DSGVO-konform).</p>
 </div>
 <div class="bg-surface-container p-6 rounded-2xl border border-white/5">
-<h4 class="font-bold mb-2">Funktioniert es mit meiner Uni?</h4>
-<p class="text-sm text-on-surface-variant">Wir unterstützen bereits über 150 Hochschulen in Deutschland, Österreich und der Schweiz.</p>
+<h4 class="font-bold mb-2" data-i18n="faq-q3">Funktioniert es mit meiner Uni?</h4>
+<p class="text-sm text-on-surface-variant" data-i18n="faq-a3">Wir unterstützen bereits über 150 Hochschulen in Deutschland, Österreich und der Schweiz.</p>
 </div>
 </div>
 </div>
@@ -407,7 +407,7 @@
 </div>
 </div>
 <div class="mt-12 text-center">
-<p class="text-on-surface-variant text-sm">Du hast bereits ein Konto? <a class="text-primary font-bold hover:underline" href="#">Hier anmelden</a></p>
+<p class="text-on-surface-variant text-sm">Du hast bereits ein Konto? <a class="text-primary font-bold hover:underline" href="login.html">Hier anmelden</a></p>
 </div>
 </div>
 </section>
@@ -992,4 +992,5 @@
         /* Cookie-Banner mit leichter Verzögerung starten */
         setTimeout(initCookieBanner, 900);
     </script>
+<script src="js/lang.js"></script>
 </body></html>

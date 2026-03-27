@@ -427,19 +427,19 @@
 
       <div class="divider">oder schnell einsteigen</div>
       <div class="demo-grid">
-        <a href="academify_complete (1).html#student" class="demo-btn">
+        <a href="dashboard.html#student" class="demo-btn">
           <span class="demo-btn-icon">🎓</span>Student-Demo
         </a>
-        <a href="academify_complete (1).html#company" class="demo-btn">
+        <a href="dashboard.html#company" class="demo-btn">
           <span class="demo-btn-icon">🏢</span>Firmen-Demo
         </a>
-        <a href="academify_complete (1).html#uni" class="demo-btn">
+        <a href="dashboard.html#uni" class="demo-btn">
           <span class="demo-btn-icon">🏛️</span>Uni-Demo
         </a>
       </div>
 
       <div class="register-link">
-        Noch kein Konto? <a href="academify_register.html">Jetzt registrieren</a>
+        Noch kein Konto? <a href="register.html">Jetzt registrieren</a>
       </div>
     </div>
 
@@ -626,7 +626,7 @@
       // Unternehmen & Hochschule: direkt zum Dashboard
       const hash = selectedRole === 'company' ? 'company' : 'uni';
       showToast('Anmelden...');
-      setTimeout(() => { window.location.href = 'academify_complete (1).html#' + hash; }, 700);
+      setTimeout(() => { window.location.href = 'dashboard.html#' + hash; }, 700);
       return;
     }
 
@@ -684,7 +684,7 @@
       document.getElementById('progressBar').style.width = '100%';
     }, 100);
     setTimeout(() => {
-      window.location.href = 'academify_complete (1).html#student';
+      window.location.href = 'dashboard.html#student';
     }, 1800);
   }
 
@@ -727,7 +727,7 @@
         showSection('sec2');
         updateSteps(3);
         setTimeout(() => { document.getElementById('progressBar').style.width = '100%'; }, 100);
-        setTimeout(() => { window.location.href = 'academify_complete (1).html#student'; }, 1800);
+        setTimeout(() => { window.location.href = 'dashboard.html#student'; }, 1800);
       }, 900);
     }, 1800);
   }
@@ -740,7 +740,7 @@
       showSection('sec2');
       updateSteps(3);
       setTimeout(() => { document.getElementById('progressBar').style.width = '100%'; }, 100);
-      setTimeout(() => { window.location.href = 'academify_complete (1).html#student'; }, 1800);
+      setTimeout(() => { window.location.href = 'dashboard.html#student'; }, 1800);
     }, 1200);
   }
 
@@ -774,5 +774,6 @@
   document.getElementById('stepsBar').style.display = 'flex';
   updateSteps(1);
 </script>
+<script src="js/lang.js"></script>
 </body>
 </html>
