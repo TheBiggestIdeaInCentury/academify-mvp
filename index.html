@@ -515,6 +515,111 @@
         .cot-banner:hover .cot-arrow {
             transform: translateX(4px);
         }
+
+        /* ── Code of Trust Modal ── */
+        #cot-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.78);
+            backdrop-filter: blur(10px);
+            z-index: 9000;
+            display: none; align-items: center; justify-content: center;
+            padding: 1rem;
+        }
+        #cot-overlay.open { display: flex; }
+        #cot-modal {
+            background: #0e0e11;
+            border: 1px solid rgba(157,123,255,0.2);
+            border-radius: 20px;
+            width: 100%; max-width: 780px;
+            max-height: 90vh; overflow-y: auto;
+            animation: cotModalIn .3s cubic-bezier(.34,1.56,.64,1);
+            position: relative;
+            padding: 2.5rem;
+        }
+        #cot-modal::-webkit-scrollbar { width: 4px; }
+        #cot-modal::-webkit-scrollbar-thumb { background: rgba(157,123,255,0.3); border-radius: 2px; }
+        @keyframes cotModalIn {
+            from { opacity:0; transform:scale(.92) translateY(16px); }
+            to   { opacity:1; transform:scale(1) translateY(0); }
+        }
+        .cot-close {
+            position: absolute; top: 16px; right: 18px;
+            width: 32px; height: 32px; border-radius: 50%;
+            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 14px; color: #acaaae;
+            transition: all 0.2s;
+        }
+        .cot-close:hover { background: rgba(255,255,255,0.12); color: #fff; }
+        .cot-story-label {
+            font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+            color: #9D7BFF; font-weight: 600; margin-bottom: 12px;
+        }
+        .cot-story-title {
+            font-family: 'Manrope', sans-serif;
+            font-size: 26px; font-weight: 800; margin-bottom: 20px;
+            background: linear-gradient(135deg, #9D7BFF, #c08ffb, #ff96b8);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .cot-story-text {
+            font-size: 14px; line-height: 1.8; color: #acaaae; margin-bottom: 16px;
+        }
+        .cot-story-text em { color: #c08ffb; font-style: normal; font-weight: 500; }
+        .cot-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(157,123,255,0.3), transparent);
+            margin: 28px 0;
+        }
+
+        /* Maslow Pyramid */
+        .pyramid-section-title {
+            font-family: 'Manrope', sans-serif;
+            font-size: 18px; font-weight: 700; text-align: center;
+            margin-bottom: 8px; color: #f0edf1;
+        }
+        .pyramid-section-sub {
+            font-size: 12px; color: #767579; text-align: center; margin-bottom: 28px;
+        }
+        .pyramid { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-bottom: 32px; }
+        .pyramid-level {
+            display: flex; align-items: center; justify-content: center;
+            text-align: center; padding: 12px 16px;
+            border-radius: 10px; font-size: 12px; font-weight: 600;
+            transition: all 0.3s; cursor: default; position: relative;
+            border: 1px solid transparent;
+        }
+        .pyramid-level:hover { transform: scale(1.03); }
+        .p-level-5 { width: 38%; background: linear-gradient(135deg, rgba(157,123,255,0.2), rgba(192,143,251,0.1)); border-color: rgba(157,123,255,0.3); color: #c08ffb; }
+        .p-level-4 { width: 50%; background: rgba(255,150,184,0.1); border-color: rgba(255,150,184,0.2); color: #ff96b8; }
+        .p-level-3 { width: 62%; background: rgba(56,189,248,0.08); border-color: rgba(56,189,248,0.2); color: #38bdf8; }
+        .p-level-2 { width: 74%; background: rgba(251,191,36,0.08); border-color: rgba(251,191,36,0.2); color: #fbbf24; }
+        .p-level-1 { width: 86%; background: rgba(74,222,128,0.08); border-color: rgba(74,222,128,0.2); color: #4ade80; }
+
+        .pyramid-level .p-icon { font-size: 16px; margin-right: 8px; }
+        .pyramid-level .p-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+
+        .level-explain {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px; padding: 16px 18px; margin-bottom: 10px;
+        }
+        .level-explain-head {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+        }
+        .level-explain-dot {
+            width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+        }
+        .level-explain-title { font-size: 13px; font-weight: 700; }
+        .level-explain ul {
+            list-style: none; padding: 0; margin: 0;
+        }
+        .level-explain li {
+            font-size: 12px; color: #acaaae; line-height: 1.7;
+            padding-left: 16px; position: relative;
+        }
+        .level-explain li::before {
+            content: '→'; position: absolute; left: 0; color: #767579;
+        }
     </style>
 </head>
 <body class="bg-surface text-on-surface selection:bg-primary selection:text-white">
@@ -608,7 +713,7 @@
 
 <!-- Code of Trust Statement -->
 <div class="mt-16 flex justify-center px-4">
-  <div class="cot-banner" onclick="navigate('cot-detail')">
+  <div class="cot-banner" onclick="document.getElementById('cot-overlay').classList.add('open')">
     <div class="cot-shimmer"></div>
     <div class="cot-inner">
       <div class="cot-dot"></div>
@@ -3581,6 +3686,106 @@ function sb_initApp() {
      IN HONOR OVERLAY — Danksagung an die Gründungsunterstützer
      Offen für 3–4 Monate nach Firmengründung
      ══════════════════════════════════════════════════════════ -->
+<!-- ══════ CODE OF TRUST — MODAL ══════ -->
+<div id="cot-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div id="cot-modal">
+    <div class="cot-close" onclick="document.getElementById('cot-overlay').classList.remove('open')">✕</div>
+
+    <div class="cot-story-label">Die Geschichte hinter der Vision</div>
+    <h2 class="cot-story-title">Code of Trust 👻</h2>
+
+    <p class="cot-story-text">
+      In den 1940er Jahren stellte <em>Abraham Harold Maslow</em> eine Frage, die die Psychologie für immer verändern sollte: Was treibt den Menschen wirklich an — und was braucht er, um sein volles Potenzial zu entfalten?
+    </p>
+    <p class="cot-story-text">
+      Während seine Zeitgenossen sich auf psychische Störungen und Defizite konzentrierten, wählte Maslow einen radikal anderen Weg. Er studierte nicht die Kranken — er studierte die <em>Gesündesten, Erfolgreichsten und Erfülltesten</em>. Menschen wie Albert Einstein, Eleanor Roosevelt und Frederick Douglass. Er wollte verstehen, was sie antrieb.
+    </p>
+    <p class="cot-story-text">
+      Seine Erkenntnis war ebenso einfach wie revolutionär: Menschliche Bedürfnisse folgen einer natürlichen Hierarchie. Erst wenn die grundlegenden Bedürfnisse erfüllt sind, strebt der Mensch nach Höherem — bis hin zur <em>Selbstverwirklichung</em>.
+    </p>
+    <p class="cot-story-text">
+      Mit dieser Idee legte Maslow den Grundstein für die <em>Humanistische Psychologie</em> — eine Bewegung, die den Menschen nicht als gebrochenes Wesen sah, sondern als jemanden mit unbegrenztem Wachstumspotenzial. Jahrzehnte später wurde daraus die <em>Positive Psychologie</em>: die Wissenschaft davon, was das Leben lebenswert macht.
+    </p>
+    <p class="cot-story-text">
+      Genau dieses Prinzip steckt im Kern von Academify. Wir glauben: Wenn Studierende ihre Grundbedürfnisse — Organisation, Sicherheit, Gemeinschaft — erfüllt haben, können sie sich auf das konzentrieren, was wirklich zählt: <em>Wachstum, Vertrauen und die Verwirklichung ihres Potenzials.</em>
+    </p>
+
+    <div class="cot-divider"></div>
+
+    <p class="pyramid-section-title">Maslows Bedürfnispyramide</p>
+    <p class="pyramid-section-sub">Die fünf Stufen menschlicher Motivation — von der Basis bis zur Spitze</p>
+
+    <div class="pyramid">
+      <div class="pyramid-level p-level-5"><span class="p-icon">✨</span><span class="p-label">Selbstverwirklichung</span></div>
+      <div class="pyramid-level p-level-4"><span class="p-icon">🏆</span><span class="p-label">Wertschätzung & Anerkennung</span></div>
+      <div class="pyramid-level p-level-3"><span class="p-icon">💜</span><span class="p-label">Soziale Bedürfnisse</span></div>
+      <div class="pyramid-level p-level-2"><span class="p-icon">🛡️</span><span class="p-label">Sicherheitsbedürfnisse</span></div>
+      <div class="pyramid-level p-level-1"><span class="p-icon">🌱</span><span class="p-label">Grundbedürfnisse</span></div>
+    </div>
+
+    <div class="level-explain">
+      <div class="level-explain-head">
+        <div class="level-explain-dot" style="background:#4ade80"></div>
+        <div class="level-explain-title" style="color:#4ade80">Stufe 1 — Grundbedürfnisse (Physiologisch)</div>
+      </div>
+      <ul>
+        <li>Essen, Trinken, Schlaf, ein Dach über dem Kopf</li>
+        <li>Ohne diese Basis ist kein Lernen, kein Wachstum möglich</li>
+        <li>Bei Academify: Finanzielle Orientierung, Wohnungssuche, Grundversorgung für Studierende</li>
+      </ul>
+    </div>
+
+    <div class="level-explain">
+      <div class="level-explain-head">
+        <div class="level-explain-dot" style="background:#fbbf24"></div>
+        <div class="level-explain-title" style="color:#fbbf24">Stufe 2 — Sicherheit</div>
+      </div>
+      <ul>
+        <li>Stabilität, Ordnung, Schutz, Planbarkeit</li>
+        <li>Der Mensch braucht das Gefühl, dass morgen nicht alles zusammenbricht</li>
+        <li>Bei Academify: Deadline-Radar, Studienplan-Organisation, DSGVO-konforme Datensicherheit</li>
+      </ul>
+    </div>
+
+    <div class="level-explain">
+      <div class="level-explain-head">
+        <div class="level-explain-dot" style="background:#38bdf8"></div>
+        <div class="level-explain-title" style="color:#38bdf8">Stufe 3 — Zugehörigkeit & Liebe</div>
+      </div>
+      <ul>
+        <li>Freundschaften, Gemeinschaft, das Gefühl dazuzugehören</li>
+        <li>Einsamkeit ist einer der Hauptgründe für Studienabbrüche</li>
+        <li>Bei Academify: Community-Matching, Lerngruppen, StudyRide — Verbindungen schaffen</li>
+      </ul>
+    </div>
+
+    <div class="level-explain">
+      <div class="level-explain-head">
+        <div class="level-explain-dot" style="background:#ff96b8"></div>
+        <div class="level-explain-title" style="color:#ff96b8">Stufe 4 — Wertschätzung & Anerkennung</div>
+      </div>
+      <ul>
+        <li>Respekt, Erfolg, Kompetenz, Selbstvertrauen</li>
+        <li>Maslow unterschied: Anerkennung von anderen und Selbstachtung</li>
+        <li>Bei Academify: Skill-Tree, Badges, Zertifikate, Streak-System — sichtbarer Fortschritt</li>
+      </ul>
+    </div>
+
+    <div class="level-explain">
+      <div class="level-explain-head">
+        <div class="level-explain-dot" style="background:#c08ffb"></div>
+        <div class="level-explain-title" style="color:#c08ffb">Stufe 5 — Selbstverwirklichung</div>
+      </div>
+      <ul>
+        <li>Das volle Potenzial ausschöpfen, kreativ sein, einen Beitrag leisten</li>
+        <li>Maslow: „Was ein Mensch sein kann, muss er sein."</li>
+        <li>Bei Academify: Kurse erstellen, Wissen teilen, Mentor werden — vom Lernenden zum Gestalter</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
 <div id="in-honor-overlay" role="dialog" aria-modal="true" aria-labelledby="in-honor-title"
      onclick="if(event.target===this)this.classList.remove('open')">
   <div id="in-honor-modal">
