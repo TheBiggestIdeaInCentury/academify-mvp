@@ -759,49 +759,68 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
           </div>
         </div>
 
-        <!-- Step 4: Deine Person -->
+        <!-- Step 4: Deine Person — ALLES GESPERRT, aus Profil/Hochschule gezogen -->
         <div class="step-panel" id="bwp4">
-          <div class="info-note"><span style="font-size:14px;flex-shrink:0">🔒</span><div>Deine persönlichen Daten werden anonymisiert dargestellt. Nur Altersgruppe, Geschlecht und Studieninfos sind öffentlich sichtbar.</div></div>
+          <div class="info-note" style="background:rgba(124,109,250,0.05);border-color:rgba(124,109,250,0.2)"><span style="font-size:14px;flex-shrink:0">🔒</span><div><strong style="color:var(--accent2)">Alle Daten sind gesperrt.</strong> Deine persönlichen Informationen werden automatisch aus deinem Profil und den Daten deiner Hochschule übernommen. Du kannst diese nicht manuell ändern — das sorgt für maximale Transparenz und Verifizierbarkeit.</div></div>
 
           <div class="field-row">
             <div class="field">
-              <label>Geschlecht</label>
-              <div class="select-wrap"><select><option>Weiblich</option><option>Männlich</option><option>Divers</option><option>Keine Angabe</option></select></div>
+              <label>Geschlecht <span style="font-size:9px;color:var(--accent2);letter-spacing:0;text-transform:none">🔒 Hochschule</span></label>
+              <div style="background:var(--surface2);border:1px solid rgba(124,109,250,0.2);border-radius:9px;padding:10px 13px;display:flex;align-items:center;gap:7px;cursor:not-allowed">
+                <span style="font-size:13px;color:var(--muted2)">🔒</span>
+                <span style="font-size:13px;color:var(--muted)">Männlich <span style="font-size:10px;color:var(--muted2)">(gepflegt von Hochschule)</span></span>
+              </div>
             </div>
             <div class="field">
-              <label>Altersgruppe <span style="font-size:9px;color:var(--muted2);letter-spacing:0;text-transform:none">(aus Profil)</span></label>
-              <div style="background:var(--surface2);border:1px solid rgba(124,109,250,0.2);border-radius:9px;padding:10px 13px;display:flex;align-items:center;gap:7px">
+              <label>Altersgruppe <span style="font-size:9px;color:var(--accent2);letter-spacing:0;text-transform:none">🔒 Hochschule</span></label>
+              <div style="background:var(--surface2);border:1px solid rgba(124,109,250,0.2);border-radius:9px;padding:10px 13px;display:flex;align-items:center;gap:7px;cursor:not-allowed">
                 <span style="font-size:13px;color:var(--muted2)">🔒</span>
-                <span style="font-size:13px;color:var(--muted)">21–23 <span style="font-size:11px;color:var(--muted2)">(aus Profil)</span></span>
+                <span style="font-size:13px;color:var(--muted)">21–23 <span style="font-size:10px;color:var(--muted2)">(gepflegt von Hochschule)</span></span>
               </div>
             </div>
           </div>
 
           <div class="field-row">
             <div class="field">
-              <label>Abschluss vorhanden?</label>
-              <div class="select-wrap"><select><option selected>Ja</option><option>Nein</option><option>Ich studiere noch!</option></select></div>
+              <label>Status <span style="font-size:9px;color:var(--accent2);letter-spacing:0;text-transform:none">🔒 Automatisch</span></label>
+              <div style="background:var(--surface2);border:1px solid rgba(74,222,128,0.2);border-radius:9px;padding:10px 13px;display:flex;align-items:center;gap:7px;cursor:not-allowed">
+                <span style="font-size:13px">📖</span>
+                <span style="font-size:13px;color:var(--success)">Studium <span style="font-size:10px;color:var(--muted2)">(Hochschule: nicht abgeschlossen)</span></span>
+              </div>
+              <div style="font-size:10px;color:var(--muted);margin-top:4px;line-height:1.5">
+                ✓ <strong style="color:var(--text)">Abschluss</strong> = automatisch nach 6 abgeschlossenen Semestern · <strong style="color:var(--text)">Studium</strong> = Studium läuft noch laut Hochschule
+              </div>
             </div>
             <div class="field">
-              <label>Studienbeginn</label>
-              <div class="select-wrap"><select><option selected>2026</option><option>2025</option><option>2024</option><option>2023</option><option>2022</option><option>2021</option><option>2020</option><option>2019</option><option>2018</option></select></div>
+              <label>Studienbeginn <span style="font-size:9px;color:var(--accent2);letter-spacing:0;text-transform:none">🔒 Registrierung</span></label>
+              <div style="background:var(--surface2);border:1px solid rgba(124,109,250,0.2);border-radius:9px;padding:10px 13px;display:flex;align-items:center;gap:7px;cursor:not-allowed">
+                <span style="font-size:13px;color:var(--muted2)">🔒</span>
+                <span style="font-size:13px;color:var(--muted)">WS 2025/26 <span style="font-size:10px;color:var(--muted2)">(Registrierungsdatum)</span></span>
+              </div>
             </div>
           </div>
 
           <div class="field-row">
             <div class="field">
-              <label>Aktuelles Fachsemester</label>
-              <input value="1" type="number" min="1" max="20">
+              <label>Aktuelles Fachsemester <span style="font-size:9px;color:var(--accent2);letter-spacing:0;text-transform:none">🔒 Berechnet</span></label>
+              <div style="background:var(--surface2);border:1px solid rgba(124,109,250,0.2);border-radius:9px;padding:10px 13px;display:flex;align-items:center;gap:7px;cursor:not-allowed">
+                <span style="font-size:13px;color:var(--muted2)">🔒</span>
+                <span style="font-size:13px;color:var(--muted)">1. Semester <span style="font-size:10px;color:var(--muted2)">(berechnet ab Registrierung)</span></span>
+              </div>
+              <div style="font-size:10px;color:var(--muted);margin-top:4px">Semester wird automatisch anhand deines Registrierungsdatums berechnet</div>
             </div>
             <div class="field">
-              <label>E-Mail-Adresse</label>
-              <input value="max.mueller@example.de" type="email" style="color:var(--muted)">
-              <div class="field-hint">Aus deinem Profil — wird nicht veröffentlicht</div>
+              <label>E-Mail-Adresse <span style="font-size:9px;color:var(--accent2);letter-spacing:0;text-transform:none">🔒 Gesperrt</span></label>
+              <div style="background:var(--surface2);border:1px solid rgba(124,109,250,0.2);border-radius:9px;padding:10px 13px;display:flex;align-items:center;gap:7px;cursor:not-allowed">
+                <span style="font-size:13px;color:var(--muted2)">🔒</span>
+                <span style="font-size:13px;color:var(--muted)">m•••••@stud.uni-koeln.de</span>
+              </div>
+              <div style="font-size:10px;color:var(--muted);margin-top:4px">Wird nicht veröffentlicht · Kann nicht geändert werden</div>
             </div>
           </div>
 
-          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px 13px;font-size:12px;color:var(--muted);margin-bottom:1rem">
-            ✓ Geschrieben & veröffentlicht wird automatisch vermerkt.
+          <div style="background:rgba(124,109,250,0.04);border:1px solid rgba(124,109,250,0.15);border-radius:9px;padding:10px 13px;font-size:11px;color:var(--muted);margin-bottom:1rem;line-height:1.6">
+            🛡️ <strong style="color:var(--accent2)">Warum ist alles gesperrt?</strong> — Deine Bildungseinrichtung pflegt diese Daten zentral. Das verhindert Manipulation und stellt sicher, dass nur echte, verifizierte Studierende bewerten können. Alle Daten werden in der Bewertung anonymisiert dargestellt.
           </div>
 
           <div style="display:flex;gap:8px">
