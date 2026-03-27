@@ -421,6 +421,100 @@
         /* Smooth transitions */
         .fade-in { animation: fadeIn 0.4s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ── Code of Trust Banner ── */
+        .cot-banner {
+            position: relative;
+            max-width: 640px;
+            width: 100%;
+            border: 1.5px solid rgba(157,123,255,0.25);
+            border-radius: 18px;
+            padding: 2px;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            animation: cotPulse 3s ease-in-out infinite;
+        }
+        .cot-banner:hover {
+            border-color: rgba(157,123,255,0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(157,123,255,0.25), 0 0 60px rgba(157,123,255,0.08);
+        }
+        .cot-shimmer {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(157,123,255,0.1), transparent);
+            transform: translateX(-100%);
+            animation: cotShimmer 3s ease-in-out infinite;
+        }
+        @keyframes cotShimmer {
+            0%   { transform: translateX(-100%); }
+            50%  { transform: translateX(100%); }
+            100% { transform: translateX(100%); }
+        }
+        @keyframes cotPulse {
+            0%,100% { box-shadow: 0 0 0 0 rgba(157,123,255,0); border-color: rgba(157,123,255,0.25); }
+            50%     { box-shadow: 0 0 0 6px rgba(157,123,255,0); border-color: rgba(157,123,255,0.5); }
+        }
+        .cot-inner {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 1.2rem 1.6rem;
+            background: linear-gradient(135deg, rgba(157,123,255,0.06), rgba(192,143,251,0.03));
+            border-radius: 16px;
+        }
+        .cot-dot {
+            width: 9px; height: 9px;
+            border-radius: 50%;
+            background: #9D7BFF;
+            animation: cotDotPulse 2s ease-in-out infinite;
+            flex-shrink: 0;
+        }
+        @keyframes cotDotPulse {
+            0%,100% { opacity:1; transform:scale(1); box-shadow: 0 0 0 0 rgba(157,123,255,0.4); }
+            50%     { opacity:.6; transform:scale(.8); box-shadow: 0 0 0 6px rgba(157,123,255,0); }
+        }
+        .cot-content { flex: 1; min-width: 0; }
+        .cot-label {
+            font-size: 10px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #acaaae;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        .cot-title {
+            font-family: 'Manrope', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #9D7BFF, #c08ffb, #ff96b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 4px;
+            letter-spacing: -0.3px;
+        }
+        .cot-ghost {
+            -webkit-text-fill-color: initial;
+            font-size: 20px;
+        }
+        .cot-sub {
+            font-size: 12px;
+            color: #767579;
+            line-height: 1.5;
+        }
+        .cot-arrow {
+            font-size: 20px;
+            color: #9D7BFF;
+            flex-shrink: 0;
+            transition: transform 0.2s;
+        }
+        .cot-banner:hover .cot-arrow {
+            transform: translateX(4px);
+        }
     </style>
 </head>
 <body class="bg-surface text-on-surface selection:bg-primary selection:text-white">
@@ -511,6 +605,23 @@
 <button class="bg-primary text-white px-10 py-4 rounded-2xl font-bold text-lg hover:scale-105 transition-transform shadow-xl shadow-primary/25" onclick="window.location.href='register.html'">Jetzt kostenlos starten</button>
 <button class="bg-surface-container-highest px-10 py-4 rounded-2xl font-bold text-lg border border-white/10 hover:bg-surface-bright transition-colors" onclick="navigate('ratingagency')">👻 Hochschulen bewerten</button>
 </div>
+
+<!-- Code of Trust Statement -->
+<div class="mt-16 flex justify-center px-4">
+  <div class="cot-banner" onclick="navigate('cot-detail')">
+    <div class="cot-shimmer"></div>
+    <div class="cot-inner">
+      <div class="cot-dot"></div>
+      <div class="cot-content">
+        <p class="cot-label">Unsere Vision für eine neue Ära der Bildung — in drei Worten</p>
+        <h3 class="cot-title">Code of Trust <span class="cot-ghost">👻</span></h3>
+        <p class="cot-sub">Warum wir überzeugt sind, dass Academify einen Meilenstein setzen wird — und die Art verändert, wie wir Bildung, Vertrauen und Zusammenarbeit verstehen.</p>
+      </div>
+      <span class="cot-arrow">→</span>
+    </div>
+  </div>
+</div>
+
 </div>
 <!-- "So funktioniert's" -->
 <div class="py-32 px-8 max-w-7xl mx-auto" id="features">
