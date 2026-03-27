@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Academify — Admin-Bereich</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@20..48,100..700,0..1" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0e14;--surface:#13141c;--surface2:#1a1b26;--surface3:#1f2030;
+  --accent:#7c6dfa;--accent2:#a78bfa;
+  --text:#e8e6f0;--muted:#6b6880;--muted2:#4a4860;
+  --success:#4ade80;--warn:#fbbf24;--info:#38bdf8;--coral:#f87171;
+  --border:rgba(255,255,255,0.06);--border-hover:rgba(255,255,255,0.13);
+  --sidebar-w:240px;
+  --gold:#FFD700;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;overflow-x:hidden}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar-w);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:10}
+.sidebar-header{padding:1.5rem 1.2rem;border-bottom:1px solid var(--border)}
+.org-badge{display:flex;align-items:center;gap:10px;margin-bottom:.8rem}
+.org-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.org-name{font-family:'DM Serif Display',serif;font-size:16px;line-height:1.2}
+.org-type{font-size:11px;color:var(--muted)}
+.whitelist-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.2);border-radius:100px;padding:3px 10px;font-size:10px;color:var(--success);margin-top:.5rem}
+.wl-dot{width:5px;height:5px;background:var(--success);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.nav-section{padding:1rem 0;flex:1;overflow-y:auto}
+.nav-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted2);padding:0 1.2rem;margin-bottom:.5rem;margin-top:.8rem}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 1.2rem;font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s;position:relative}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:rgba(124,109,250,0.1);color:var(--accent2)}
+.nav-item.active::before{content:'';position:absolute;left:0;top:4px;bottom:4px;width:2.5px;background:var(--accent);border-radius:0 2px 2px 0}
+.nav-icon{font-size:16px;width:20px;text-align:center}
+.nav-badge{margin-left:auto;font-size:10px;background:rgba(124,109,250,0.15);color:var(--accent2);padding:1px 7px;border-radius:100px}
+
+.sidebar-footer{padding:1rem 1.2rem;border-top:1px solid var(--border)}
+.sidebar-footer .nav-item{padding:9px 0;color:var(--coral)}
+.sidebar-footer .nav-item:hover{background:none;color:#ff8888}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.5rem;border-bottom:1px solid var(--border);background:var(--surface)}
+.topbar-title{font-family:'DM Serif Display',serif;font-size:18px}
+.topbar-title em{font-style:italic;color:var(--accent2)}
+.topbar-actions{display:flex;gap:8px;align-items:center}
+.topbar-btn{width:32px;height:32px;border-radius:9px;border:1px solid var(--border);background:none;color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all .15s}
+.topbar-btn:hover{border-color:var(--accent);color:var(--accent2)}
+
+.content{padding:1.5rem;flex:1;overflow-y:auto}
+
+/* ── PAGE SECTIONS ── */
+.page{display:none;animation:fadeIn .3s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── STAT CARDS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.5rem}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem;transition:all .2s}
+.stat-card:hover{border-color:var(--border-hover);transform:translateY(-1px)}
+.stat-icon{font-size:16px;margin-bottom:.5rem}
+.stat-val{font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:2px}
+.stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.stat-change{font-size:10px;color:var(--success);margin-top:4px}
+
+/* ── CARDS ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:1.2rem;margin-bottom:1rem}
+.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.9rem}
+.card-title{font-size:13px;font-weight:500}
+.card-action{font-size:11px;color:var(--accent2);cursor:pointer}
+.card-action:hover{text-decoration:underline}
+
+/* ── ORGANIGRAMM ── */
+.org-tree{display:flex;flex-direction:column;align-items:center;gap:0}
+.org-level{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;position:relative;width:100%}
+.org-connector{width:2px;height:24px;background:var(--border);margin:0 auto}
+.org-branch-line{display:flex;justify-content:center;margin-bottom:0}
+.org-branch-line::before{content:'';display:block;height:2px;background:var(--border);width:80%;margin:0 auto}
+
+.org-node{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:1rem;min-width:180px;max-width:220px;transition:all .2s;position:relative;text-align:center}
+.org-node:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 4px 20px rgba(124,109,250,0.1)}
+.org-node.top{background:linear-gradient(135deg,rgba(124,109,250,0.12),rgba(167,139,250,0.08));border-color:rgba(124,109,250,0.3);min-width:260px}
+.org-node-icon{font-size:24px;margin-bottom:.5rem}
+.org-node-name{font-size:13px;font-weight:500;margin-bottom:2px}
+.org-node-role{font-size:11px;color:var(--muted);margin-bottom:.5rem}
+.org-node-count{font-size:10px;color:var(--accent2);background:rgba(124,109,250,0.1);padding:2px 8px;border-radius:100px;display:inline-block}
+.org-node-actions{display:flex;gap:6px;justify-content:center;margin-top:.6rem;opacity:0;transition:opacity .2s}
+.org-node:hover .org-node-actions{opacity:1}
+.org-act{width:26px;height:26px;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;transition:all .15s}
+.org-act:hover{border-color:var(--accent);color:var(--accent2);background:rgba(124,109,250,0.08)}
+.org-act.delete:hover{border-color:var(--coral);color:var(--coral);background:rgba(248,113,113,0.08)}
+
+/* ── ACTIVITY LOG ── */
+.activity-item{display:flex;align-items:center;gap:10px;padding:.7rem 0;border-bottom:1px solid var(--border);font-size:12px}
+.activity-item:last-child{border-bottom:none}
+.activity-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.activity-text{flex:1;color:var(--muted);line-height:1.4}
+.activity-text strong{color:var(--text);font-weight:500}
+.activity-time{font-size:10px;color:var(--muted2);white-space:nowrap}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:100}
+.modal-overlay.show{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.8rem;width:100%;max-width:440px;animation:fadeIn .2s ease}
+.modal h2{font-family:'DM Serif Display',serif;font-size:20px;font-weight:400;margin-bottom:.3rem}
+.modal h2 em{font-style:italic;color:var(--accent2)}
+.modal p{font-size:12px;color:var(--muted);margin-bottom:1.2rem}
+.modal-field{margin-bottom:1rem}
+.modal-field label{display:block;font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.modal-field input,.modal-field textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 13px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border-color .2s}
+.modal-field input:focus,.modal-field textarea:focus{border-color:var(--accent)}
+.modal-field textarea{height:80px;resize:vertical}
+.modal-btns{display:flex;gap:8px;margin-top:1.2rem}
+.btn-primary{padding:10px 20px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:10px;color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:opacity .2s;flex:1}
+.btn-primary:hover{opacity:.9}
+.btn-ghost{padding:10px 20px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .15s;flex:1}
+.btn-ghost:hover{border-color:var(--border-hover);color:var(--text)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 20px;font-size:13px;color:var(--text);box-shadow:0 8px 32px rgba(0,0,0,0.4);opacity:0;transition:all .3s ease;z-index:999;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── ADD BTN ── */
+.add-node-btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;border:2px dashed var(--border);border-radius:12px;color:var(--muted);font-size:12px;cursor:pointer;transition:all .2s;min-width:180px}
+.add-node-btn:hover{border-color:var(--accent);color:var(--accent2);background:rgba(124,109,250,0.05)}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="org-badge">
+      <div class="org-icon">🏫</div>
+      <div>
+        <div class="org-name">Universität zu Köln</div>
+        <div class="org-type">Bildungseinrichtung · Edu</div>
+      </div>
+    </div>
+    <div class="whitelist-badge"><div class="wl-dot"></div> Whitelist verifiziert</div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Administration</div>
+    <div class="nav-item active" onclick="showPage('dashboard')"><span class="nav-icon">📊</span>Dashboard</div>
+    <div class="nav-item" onclick="showPage('organigramm')"><span class="nav-icon">🏛️</span>Organigramm<span class="nav-badge">Neu</span></div>
+    <div class="nav-item" onclick="showPage('mitarbeiter')"><span class="nav-icon">👥</span>Mitarbeiter</div>
+
+    <div class="nav-label">Verwaltung</div>
+    <div class="nav-item"><span class="nav-icon">📋</span>Bewertungen<span class="nav-badge">12</span></div>
+    <div class="nav-item"><span class="nav-icon">📊</span>Statistiken</div>
+    <div class="nav-item"><span class="nav-icon">⚙️</span>Einstellungen</div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="nav-item" onclick="window.location.href='index.html'"><span class="nav-icon">🚪</span>Abmelden</div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">Admin<em>-Bereich</em></div>
+    <div class="topbar-actions">
+      <button class="topbar-btn" title="Benachrichtigungen">🔔</button>
+      <button class="topbar-btn" title="Hilfe">❓</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- PAGE: Dashboard -->
+    <div class="page active" id="page-dashboard">
+      <h2 style="font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:1.2rem">Willkommen, <em style="color:var(--accent2);font-style:italic">Admin</em> 👋</h2>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">🏛️</div>
+          <div class="stat-val">6</div>
+          <div class="stat-label">Fakultäten</div>
+          <div class="stat-change">✓ Vollständig</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-val">4.832</div>
+          <div class="stat-label">Mitarbeiter</div>
+          <div class="stat-change">↑ +48 diesen Monat</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🎓</div>
+          <div class="stat-val">51.400</div>
+          <div class="stat-label">Studierende</div>
+          <div class="stat-change">↑ +320 Neuzugänge</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">👻</div>
+          <div class="stat-val">2.841</div>
+          <div class="stat-label">Bewertungen</div>
+          <div class="stat-change">↑ +67 diese Woche</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="card">
+          <div class="card-head">
+            <span class="card-title">📋 Letzte Aktivitäten</span>
+            <span class="card-action">Alle →</span>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon" style="background:rgba(74,222,128,0.1)">✅</div>
+            <div class="activity-text"><strong>Wirtschaftsfakultät</strong> wurde aktualisiert</div>
+            <div class="activity-time">vor 2h</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon" style="background:rgba(124,109,250,0.1)">👤</div>
+            <div class="activity-text"><strong>Prof. Dr. Müller</strong> als Dekan hinzugefügt</div>
+            <div class="activity-time">vor 5h</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon" style="background:rgba(56,189,248,0.1)">📊</div>
+            <div class="activity-text">Neue <strong>Bewertung</strong> für Psychologie</div>
+            <div class="activity-time">gestern</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon" style="background:rgba(251,191,36,0.1)">🏛️</div>
+            <div class="activity-text"><strong>Institut für Informatik</strong> erstellt</div>
+            <div class="activity-time">vor 3 Tagen</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <span class="card-title">🏛️ Schnellzugriff</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;cursor:pointer;transition:all .2s" onclick="showPage('organigramm')" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="font-size:24px;margin-bottom:.4rem">🏛️</div>
+              <div style="font-size:12px;font-weight:500">Organigramm</div>
+              <div style="font-size:10px;color:var(--muted)">Struktur bearbeiten</div>
+            </div>
+            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;cursor:pointer;transition:all .2s" onclick="showPage('mitarbeiter')" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="font-size:24px;margin-bottom:.4rem">👥</div>
+              <div style="font-size:12px;font-weight:500">Mitarbeiter</div>
+              <div style="font-size:10px;color:var(--muted)">Team verwalten</div>
+            </div>
+            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="font-size:24px;margin-bottom:.4rem">👻</div>
+              <div style="font-size:12px;font-weight:500">Bewertungen</div>
+              <div style="font-size:10px;color:var(--muted)">12 neue</div>
+            </div>
+            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="font-size:24px;margin-bottom:.4rem">⚙️</div>
+              <div style="font-size:12px;font-weight:500">Einstellungen</div>
+              <div style="font-size:10px;color:var(--muted)">Profil & Daten</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: Organigramm -->
+    <div class="page" id="page-organigramm">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+        <div>
+          <h2 style="font-family:'DM Serif Display',serif;font-size:22px">Organigramm</h2>
+          <p style="font-size:13px;color:var(--muted)">Organisationsstruktur von oben nach unten</p>
+        </div>
+        <button class="btn-primary" style="flex:none;padding:10px 16px" onclick="openModal('Neue Einheit','','','Neue Organisationseinheit hinzufügen')">+ Einheit hinzufügen</button>
+      </div>
+
+      <div class="org-tree">
+        <!-- EBENE 1: Rektorat -->
+        <div class="org-level">
+          <div class="org-node top" onclick="openModal('Rektorat','Prof. Dr. Joybrato Mukherjee','Leitung der gesamten Universität','Rektorat bearbeiten')">
+            <div class="org-node-icon">🎓</div>
+            <div class="org-node-name">Rektorat</div>
+            <div class="org-node-role">Prof. Dr. Joybrato Mukherjee</div>
+            <div class="org-node-count">6 Fakultäten · 4.832 Mitarbeiter</div>
+            <div class="org-node-actions">
+              <div class="org-act" title="Bearbeiten">✏️</div>
+              <div class="org-act" title="Hinzufügen">➕</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="org-connector"></div>
+        <div class="org-branch-line"></div>
+
+        <!-- EBENE 2: Fakultäten -->
+        <div class="org-level">
+          <div class="org-node" onclick="openModal('Wirtschafts- & Sozialwiss. Fakultät','Prof. Dr. Werner Mellis','Wirtschaftswissenschaften, Sozialwissenschaften, VWL','Fakultät bearbeiten')">
+            <div class="org-node-icon">📊</div>
+            <div class="org-node-name">Wirtschafts- & Sozialwiss.</div>
+            <div class="org-node-role">Prof. Dr. Werner Mellis</div>
+            <div class="org-node-count">812 Mitarbeiter</div>
+            <div class="org-node-actions">
+              <div class="org-act" title="Bearbeiten">✏️</div>
+              <div class="org-act" title="Hinzufügen">➕</div>
+              <div class="org-act delete" title="Entfernen">🗑️</div>
+            </div>
+          </div>
+
+          <div class="org-node" onclick="openModal('Philosophische Fakultät','Prof. Dr. Anja Bettenworth','Germanistik, Philosophie, Geschichte, Sprachen','Fakultät bearbeiten')">
+            <div class="org-node-icon">📖</div>
+            <div class="org-node-name">Philosophische Fakultät</div>
+            <div class="org-node-role">Prof. Dr. Anja Bettenworth</div>
+            <div class="org-node-count">680 Mitarbeiter</div>
+            <div class="org-node-actions">
+              <div class="org-act" title="Bearbeiten">✏️</div>
+              <div class="org-act" title="Hinzufügen">➕</div>
+              <div class="org-act delete" title="Entfernen">🗑️</div>
+            </div>
+          </div>
+
+          <div class="org-node" onclick="openModal('Mathematisch-Naturwiss. Fakultät','Prof. Dr. Susanne Crewell','Mathematik, Physik, Chemie, Biologie, Informatik','Fakultät bearbeiten')">
+            <div class="org-node-icon">🔬</div>
+            <div class="org-node-name">Math.-Naturwiss. Fakultät</div>
+            <div class="org-node-role">Prof. Dr. Susanne Crewell</div>
+            <div class="org-node-count">920 Mitarbeiter</div>
+            <div class="org-node-actions">
+              <div class="org-act" title="Bearbeiten">✏️</div>
+              <div class="org-act" title="Hinzufügen">➕</div>
+              <div class="org-act delete" title="Entfernen">🗑️</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:12px"></div>
+
+        <div class="org-level">
+          <div class="org-node" onclick="openModal('Medizinische Fakultät','Prof. Dr. Edgar Schömig','Humanmedizin, Zahnmedizin, Uniklinik','Fakultät bearbeiten')">
+            <div class="org-node-icon">🩺</div>
+            <div class="org-node-name">Medizinische Fakultät</div>
+            <div class="org-node-role">Prof. Dr. Edgar Schömig</div>
+            <div class="org-node-count">1.540 Mitarbeiter</div>
+            <div class="org-node-actions">
+              <div class="org-act" title="Bearbeiten">✏️</div>
+              <div class="org-act" title="Hinzufügen">➕</div>
+              <div class="org-act delete" title="Entfernen">🗑️</div>
+            </div>
+          </div>
+
+          <div class="org-node" onclick="openModal('Rechtswiss. Fakultät','Prof. Dr. Barbara Dauner-Lieb','Zivilrecht, Strafrecht, Öffentliches Recht','Fakultät bearbeiten')">
+            <div class="org-node-icon">⚖️</div>
+            <div class="org-node-name">Rechtswiss. Fakultät</div>
+            <div class="org-node-role">Prof. Dr. Barbara Dauner-Lieb</div>
+            <div class="org-node-count">420 Mitarbeiter</div>
+            <div class="org-node-actions">
+              <div class="org-act" title="Bearbeiten">✏️</div>
+              <div class="org-act" title="Hinzufügen">➕</div>
+              <div class="org-act delete" title="Entfernen">🗑️</div>
+            </div>
+          </div>
+
+          <div class="org-node" onclick="openModal('Humanwiss. Fakultät','Prof. Dr. Birgit Weber','Erziehungswissenschaft, Psychologie, Heilpädagogik','Fakultät bearbeiten')">
+            <div class="org-node-icon">🧠</div>
+            <div class="org-node-name">Humanwiss. Fakultät</div>
+            <div class="org-node-role">Prof. Dr. Birgit Weber</div>
+            <div class="org-node-count">460 Mitarbeiter</div>
+            <div class="org-node-actions">
+              <div class="org-act" title="Bearbeiten">✏️</div>
+              <div class="org-act" title="Hinzufügen">➕</div>
+              <div class="org-act delete" title="Entfernen">🗑️</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:16px"></div>
+
+        <div class="org-level">
+          <div class="add-node-btn" onclick="openModal('Neue Fakultät','','','Neue Fakultät hinzufügen')">➕ Neue Fakultät hinzufügen</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: Mitarbeiter -->
+    <div class="page" id="page-mitarbeiter">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+        <div>
+          <h2 style="font-family:'DM Serif Display',serif;font-size:22px">Mitarbeiter</h2>
+          <p style="font-size:13px;color:var(--muted)">Alle Mitarbeiter der Universität zu Köln</p>
+        </div>
+        <button class="btn-primary" style="flex:none;padding:10px 16px" onclick="openModal('Neuer Mitarbeiter','','','Mitarbeiter hinzufügen')">+ Mitarbeiter</button>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">👥 Führungspositionen</span>
+          <span class="card-action">Alle anzeigen →</span>
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border);color:var(--muted);text-align:left">
+              <th style="padding:8px 0;font-weight:500">Name</th>
+              <th style="padding:8px 0;font-weight:500">Position</th>
+              <th style="padding:8px 0;font-weight:500">Fakultät</th>
+              <th style="padding:8px 0;font-weight:500">Status</th>
+              <th style="padding:8px 0;font-weight:500"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border)">
+              <td style="padding:10px 0"><div style="display:flex;align-items:center;gap:8px"><div style="width:30px;height:30px;border-radius:8px;background:rgba(124,109,250,0.1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">JM</div><strong>Prof. Dr. Joybrato Mukherjee</strong></div></td>
+              <td style="padding:10px 0;color:var(--muted)">Rektor</td>
+              <td style="padding:10px 0;color:var(--muted)">Rektorat</td>
+              <td style="padding:10px 0"><span style="background:rgba(74,222,128,0.1);color:var(--success);padding:2px 8px;border-radius:100px;font-size:10px">Aktiv</span></td>
+              <td style="padding:10px 0;text-align:right"><span style="cursor:pointer;color:var(--muted)" onclick="openModal('Prof. Dr. Joybrato Mukherjee','Rektor','Leitung der gesamten Universität zu Köln','Mitarbeiter bearbeiten')">✏️</span></td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border)">
+              <td style="padding:10px 0"><div style="display:flex;align-items:center;gap:8px"><div style="width:30px;height:30px;border-radius:8px;background:rgba(56,189,248,0.1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">WM</div><strong>Prof. Dr. Werner Mellis</strong></div></td>
+              <td style="padding:10px 0;color:var(--muted)">Dekan</td>
+              <td style="padding:10px 0;color:var(--muted)">Wirtschafts- & Sozialwiss.</td>
+              <td style="padding:10px 0"><span style="background:rgba(74,222,128,0.1);color:var(--success);padding:2px 8px;border-radius:100px;font-size:10px">Aktiv</span></td>
+              <td style="padding:10px 0;text-align:right"><span style="cursor:pointer;color:var(--muted)" onclick="openModal('Prof. Dr. Werner Mellis','Dekan','Wirtschafts- und Sozialwissenschaftliche Fakultät','Mitarbeiter bearbeiten')">✏️</span></td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border)">
+              <td style="padding:10px 0"><div style="display:flex;align-items:center;gap:8px"><div style="width:30px;height:30px;border-radius:8px;background:rgba(251,191,36,0.1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">SC</div><strong>Prof. Dr. Susanne Crewell</strong></div></td>
+              <td style="padding:10px 0;color:var(--muted)">Dekanin</td>
+              <td style="padding:10px 0;color:var(--muted)">Math.-Naturwiss.</td>
+              <td style="padding:10px 0"><span style="background:rgba(74,222,128,0.1);color:var(--success);padding:2px 8px;border-radius:100px;font-size:10px">Aktiv</span></td>
+              <td style="padding:10px 0;text-align:right"><span style="cursor:pointer;color:var(--muted)" onclick="openModal('Prof. Dr. Susanne Crewell','Dekanin','Mathematisch-Naturwissenschaftliche Fakultät','Mitarbeiter bearbeiten')">✏️</span></td>
+            </tr>
+            <tr>
+              <td style="padding:10px 0"><div style="display:flex;align-items:center;gap:8px"><div style="width:30px;height:30px;border-radius:8px;background:rgba(248,113,113,0.1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">ES</div><strong>Prof. Dr. Edgar Schömig</strong></div></td>
+              <td style="padding:10px 0;color:var(--muted)">Dekan</td>
+              <td style="padding:10px 0;color:var(--muted)">Medizinische Fakultät</td>
+              <td style="padding:10px 0"><span style="background:rgba(74,222,128,0.1);color:var(--success);padding:2px 8px;border-radius:100px;font-size:10px">Aktiv</span></td>
+              <td style="padding:10px 0;text-align:right"><span style="cursor:pointer;color:var(--muted)" onclick="openModal('Prof. Dr. Edgar Schömig','Dekan','Medizinische Fakultät und Uniklinik Köln','Mitarbeiter bearbeiten')">✏️</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <h2 id="modalTitle">Bearbeiten</h2>
+    <p id="modalSubtitle">Änderungen vornehmen</p>
+    <div class="modal-field">
+      <label>Name</label>
+      <input type="text" id="modalName">
+    </div>
+    <div class="modal-field">
+      <label>Position / Leitung</label>
+      <input type="text" id="modalRole">
+    </div>
+    <div class="modal-field">
+      <label>Beschreibung</label>
+      <textarea id="modalDesc"></textarea>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-ghost" onclick="closeModal()">Abbrechen</button>
+      <button class="btn-primary" onclick="saveModal()">Speichern ✓</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+}
+
+function openModal(name, role, desc, title) {
+  document.getElementById('modalTitle').innerHTML = title.replace(/bearbeiten/i, '<em>bearbeiten</em>').replace(/hinzufügen/i, '<em>hinzufügen</em>');
+  document.getElementById('modalSubtitle').textContent = 'Änderungen werden nach dem Speichern sofort übernommen.';
+  document.getElementById('modalName').value = name;
+  document.getElementById('modalRole').value = role;
+  document.getElementById('modalDesc').value = desc;
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('show');
+}
+
+function saveModal() {
+  closeModal();
+  showToast('✓ Änderungen erfolgreich gespeichert!');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>

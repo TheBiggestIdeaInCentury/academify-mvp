@@ -173,10 +173,101 @@ input[type=file]{display:none}
       <div class="step-dot" id="dot4"></div>
     </div>
 
-    <!-- SCHRITT 1: Verifizierung -->
-    <div class="form-section active" id="sec-verify">
+    <!-- SCHRITT 0: Rollenauswahl -->
+    <div class="form-section active" id="sec-role">
       <div class="card-header">
-        <h1>Nur für <em>Studenten</em></h1>
+        <h1>Konto <em>erstellen</em></h1>
+        <p>Wähle deine Rolle und registriere dich.</p>
+      </div>
+
+      <span style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:block">Ich bin...</span>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:1.4rem">
+        <div style="display:grid;grid-template-columns:1fr;gap:8px">
+          <div class="sg-card selected" id="role-ich" onclick="selectRole('ich')" style="padding:12px 8px">
+            <div class="sg-icon">🧠</div><div class="sg-name">ICH & DU!</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div class="sg-card" id="role-student" onclick="selectRole('student')" style="padding:12px 8px">
+            <div class="sg-icon">🎓</div><div class="sg-name">Individuen mit akademischem Potenzial</div>
+          </div>
+          <div class="sg-card" id="role-eduind" onclick="selectRole('eduind')" style="padding:12px 8px">
+            <div class="sg-icon">🏛️</div><div class="sg-name">EduIndividuen</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div class="sg-card" id="role-edu" onclick="selectRole('edu')" style="padding:12px 8px">
+            <div class="sg-icon">🏫</div><div class="sg-name">Edu</div>
+          </div>
+          <div class="sg-card" id="role-company" onclick="selectRole('company')" style="padding:12px 8px">
+            <div class="sg-icon">🏢</div><div class="sg-name">Unternehmen</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div class="sg-card" id="role-stiftung" onclick="selectRole('stiftung')" style="padding:12px 8px">
+            <div class="sg-icon">💰</div><div class="sg-name">Stiftungen & Förderanstalten</div>
+          </div>
+          <div class="sg-card" id="role-gov" onclick="selectRole('gov')" style="padding:12px 8px">
+            <div class="sg-icon">🏛️</div><div class="sg-name">Regierungen</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>E-Mail</label>
+        <input type="email" id="regEmail" placeholder="max.mueller@email.de">
+        <div class="error-msg" id="err-regEmail">Bitte eine gültige E-Mail eingeben</div>
+      </div>
+      <div class="field">
+        <label>Passwort</label>
+        <input type="password" id="regPw" placeholder="Mindestens 8 Zeichen">
+        <div class="error-msg" id="err-regPw">Mindestens 8 Zeichen</div>
+      </div>
+
+      <button class="btn-primary" onclick="handleSignUp()">Registrieren →</button>
+
+      <div class="login-link">Bereits Mitglied? <a href="login.html">Einloggen</a></div>
+    </div>
+
+    <!-- WHITELIST / CALENDLY (für EduIndividuen, Edu, Unternehmen, Stiftungen, Regierungen) -->
+    <div class="form-section" id="sec-whitelist">
+      <button class="btn-back" onclick="show('sec-role',1)">← Zurück</button>
+      <div style="text-align:center;padding:1rem 0">
+        <div style="width:64px;height:64px;background:rgba(124,109,250,0.1);border:1px solid rgba(124,109,250,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 1.5rem">🔐</div>
+        <h2 style="font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;margin-bottom:.5rem">Doppelte <em style="font-style:italic;color:var(--accent2)">Verifizierung</em></h2>
+        <p style="font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:1.5rem">Um die Identität zu überprüfen, arbeiten wir ausschließlich mit einem Whitelist- & Blacklist-System.</p>
+
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.2rem;margin-bottom:1rem;text-align:left">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:.8rem">
+            <span style="font-size:18px">✅</span>
+            <span style="font-size:13px;font-weight:500">Whitelist — Zugang erlauben</span>
+          </div>
+          <p style="font-size:12px;color:var(--muted);line-height:1.6">Verifizierte Organisationen erhalten nach Prüfung direkten Zugang zur Plattform.</p>
+        </div>
+
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.2rem;margin-bottom:1.5rem;text-align:left">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:.8rem">
+            <span style="font-size:18px">🚫</span>
+            <span style="font-size:13px;font-weight:500">Blacklist — Zugang verweigern</span>
+          </div>
+          <p style="font-size:12px;color:var(--muted);line-height:1.6">Nicht verifizierte oder abgelehnte Anfragen werden transparent entfernt.</p>
+        </div>
+
+        <p style="font-size:13px;color:var(--muted);margin-bottom:1.5rem;line-height:1.6">Um den Prozess zu starten, buche bitte einen Termin über Calendly:</p>
+
+        <a href="https://calendly.com" target="_blank" class="btn-primary" style="display:block;text-decoration:none;text-align:center">
+          📅 Termin vereinbaren über Calendly →
+        </a>
+
+        <p style="font-size:11px;color:var(--muted);margin-top:1rem;line-height:1.6;font-style:italic">Nach dem Gespräch wird deine Organisation geprüft und bei Eignung der Whitelist hinzugefügt.</p>
+      </div>
+    </div>
+
+    <!-- SCHRITT 1: Verifizierung (für Individuen mit akademischem Potenzial) -->
+    <div class="form-section" id="sec-verify">
+      <button class="btn-back" onclick="show('sec-role',1)">← Zurück</button>
+      <div class="card-header">
+        <h1>Identität <em>bestätigen</em></h1>
         <p>Wähle wie du dich als Student verifizierst.</p>
       </div>
 
@@ -431,7 +522,49 @@ input[type=file]{display:none}
 </div>
 
 <script>
-let selectedSG='',selectedSem=0,verifiedEmail='',uploadedFile=null;
+let selectedSG='',selectedSem=0,verifiedEmail='',uploadedFile=null,selectedRole='ich';
+
+function selectRole(role){
+  selectedRole=role;
+  document.querySelectorAll('[id^="role-"]').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('role-'+role).classList.add('selected');
+  const placeholders={
+    ich:'max.mueller@email.de',
+    student:'max.mueller@stud.uni-koeln.de',
+    eduind:'prof.schmidt@uni-koeln.de',
+    edu:'admin@uni-koeln.de',
+    stiftung:'kontakt@studienstiftung.de',
+    company:'recruiting@unternehmen.de',
+    gov:'kontakt@ministerium.de'
+  };
+  document.getElementById('regEmail').placeholder=placeholders[role]||'email@beispiel.de';
+}
+
+function handleSignUp(){
+  const email=document.getElementById('regEmail').value.trim();
+  const pw=document.getElementById('regPw').value;
+  let ok=true;
+  if(!email||!email.includes('@')){document.getElementById('err-regEmail').style.display='block';ok=false}else document.getElementById('err-regEmail').style.display='none';
+  if(pw.length<8){document.getElementById('err-regPw').style.display='block';ok=false}else document.getElementById('err-regPw').style.display='none';
+  if(!ok)return;
+  verifiedEmail=email;
+
+  // ICH & DU! → direkt ins Dashboard
+  if(selectedRole==='ich'){
+    window.location.href='dashboard.html';
+    return;
+  }
+
+  // Individuen mit akademischem Potenzial → Verifizierung
+  if(selectedRole==='student'){
+    document.getElementById('uniEmail').value=email;
+    show('sec-verify',2);
+    return;
+  }
+
+  // Alle anderen → Whitelist/Calendly
+  show('sec-whitelist',2);
+}
 
 const books={
   'Wirtschaftspsychologie':{
