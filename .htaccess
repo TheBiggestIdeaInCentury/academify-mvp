@@ -1,0 +1,9 @@
+RewriteEngine On
+
+# If not already on index.php and no valid session cookie, redirect to gate
+RewriteCond %{REQUEST_URI} !^/index\.php$
+RewriteCond %{HTTP_COOKIE} !academify_auth=granted
+RewriteRule ^(.*)$ /index.php [R=302,L]
+
+# Make index.php the default page
+DirectoryIndex index.php index.html
