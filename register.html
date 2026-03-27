@@ -30,6 +30,7 @@ body::after{content:'';position:fixed;top:-200px;right:-200px;width:600px;height
 .form-section{display:none;animation:fadeIn 0.28s ease}
 .form-section.active{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes masterGlow{0%,100%{box-shadow:0 0 20px rgba(124,109,250,0.15),0 0 40px rgba(124,109,250,0.05),inset 0 0 20px rgba(124,109,250,0.05);border-color:rgba(124,109,250,0.4)}50%{box-shadow:0 0 30px rgba(124,109,250,0.25),0 0 60px rgba(124,109,250,0.1),inset 0 0 30px rgba(124,109,250,0.08);border-color:rgba(167,139,250,0.6)}}
 .card-header{margin-bottom:1.4rem}
 .card-header h1{font-family:'DM Serif Display',serif;font-size:25px;font-weight:400;line-height:1.2;margin-bottom:0.35rem}
 .card-header h1 em{font-style:italic;color:var(--accent2)}
@@ -213,9 +214,9 @@ input[type=file]{display:none}
         </div>
         <!-- MasterOfTheUniverse — langer Balken -->
         <div style="display:grid;grid-template-columns:1fr;gap:8px;margin-top:8px">
-          <div class="sg-card" id="role-master" onclick="selectRole('master')" style="padding:14px 12px;background:linear-gradient(135deg,rgba(124,109,250,0.08),rgba(167,139,250,0.05));border-color:rgba(124,109,250,0.2)">
-            <div class="sg-icon" style="font-size:24px">🧙‍♂️</div><div class="sg-name" style="font-size:13px;font-weight:700">MasterOfTheUniverse</div>
-            <div style="font-size:10px;color:var(--muted);margin-top:2px">Super-Admin · Vollzugriff auf alle Organisationen</div>
+          <div class="sg-card" id="role-master" onclick="selectRole('master')" style="padding:14px 12px;background:linear-gradient(135deg,rgba(124,109,250,0.12),rgba(167,139,250,0.08));border:2px solid rgba(124,109,250,0.4);box-shadow:0 0 20px rgba(124,109,250,0.15),0 0 40px rgba(124,109,250,0.05),inset 0 0 20px rgba(124,109,250,0.05);animation:masterGlow 3s ease-in-out infinite">
+            <div class="sg-icon" style="font-size:24px">🧙‍♂️</div><div class="sg-name" style="font-size:13px;font-weight:700;color:var(--accent2)">MasterOfTheUniverse</div>
+            <div style="font-size:10px;color:var(--accent2);margin-top:2px;opacity:.7">Super-Admin · Vollzugriff auf alle Organisationen</div>
           </div>
         </div>
       </div>
