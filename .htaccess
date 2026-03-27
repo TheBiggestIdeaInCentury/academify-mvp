@@ -1,0 +1,4 @@
+AuthType Basic
+AuthName "Academify - Geschuetzter Zugang"
+AuthUserFile /home/u608741343/domains/academify.xyz/public_html/.htpasswd
+Require valid-user
