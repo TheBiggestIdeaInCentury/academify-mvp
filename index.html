@@ -3,8 +3,10 @@
 <html class="dark" lang="de"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Academify - Dein Studium. Deine Regeln. Deine Zentrale.</title>
+<title>Academify — Dein Studium. Deine Regeln. Deine Zentrale.</title>
+<script>/* Tailwind CDN-Produktionswarnung deaktivieren */window.tailwind={config:{}};(function(){var w=console.warn;console.warn=function(){var a=arguments[0]?String(arguments[0]):'';if(a.indexOf('cdn.tailwindcss.com')!==-1)return;w.apply(console,arguments);};})();</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&amp;family=DM+Sans:wght@300;400;500&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
@@ -49,6 +51,373 @@
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
         .fill-1 { font-variation-settings: 'FILL' 1; }
         
+
+        /* ═══ CSS-VARS: RatingAgency-Palette (kompatibel mit dark-theme) ═══ */
+        :root {
+          --sb-bg:#0d0e14;--surface:#13141c;--surface2:#1a1b26;--surface3:#1f2030;
+          --border:rgba(255,255,255,0.06);--border-hover:rgba(255,255,255,0.13);
+          --accent:#7c6dfa;--accent2:#a78bfa;--text:#e8e6f0;--muted:#6b6880;--muted2:#4a4860;
+          --success:#4ade80;--warn:#fbbf24;--info:#38bdf8;--coral:#f87171;
+          --gold:#f59e0b;--gold2:#fcd34d;--gold-bg:rgba(245,158,11,0.08);--gold-border:rgba(245,158,11,0.25);
+        }
+        #view-ratingagency { font-family: 'DM Sans', sans-serif; }
+        #view-ratingagency .shell { position:relative; z-index:1; }
+
+
+
+
+
+
+/* ── SHELL ── */
+.shell{display:flex;height:100vh;position:relative;z-index:1}
+.sidebar{width:220px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;overflow:hidden}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{display:flex;align-items:center;gap:10px;padding:.85rem 1.5rem;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--surface)}
+.content{flex:1;overflow-y:auto;padding:1.4rem 1.6rem}
+.content::-webkit-scrollbar{width:4px}
+.content::-webkit-scrollbar-thumb{background:var(--muted2);border-radius:2px}
+
+/* ── SIDEBAR ── */
+.logo{display:flex;align-items:center;gap:9px;padding:1.1rem;border-bottom:1px solid var(--border);font-family:'DM Serif Display',serif;font-size:17px}
+.logo-mark{width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.logo span{color:var(--accent2)}
+.nav-sec{padding:.5rem .7rem .1rem}
+.nav-label{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted2);padding:.3rem .5rem .15rem}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:8px;cursor:pointer;font-size:12px;color:var(--muted);transition:all .18s;margin-bottom:1px;position:relative;user-select:none}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:rgba(124,109,250,0.1);color:var(--accent2)}
+.nav-item.active::before{content:'';position:absolute;left:0;top:20%;height:60%;width:2.5px;background:var(--accent);border-radius:0 2px 2px 0}
+.nav-icon{font-size:13px;width:16px;text-align:center;flex-shrink:0}
+.sidebar-footer{margin-top:auto;padding:.8rem .7rem;border-top:1px solid var(--border)}
+.user-row{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:9px;cursor:pointer;transition:background .18s}
+.user-row:hover{background:var(--surface2)}
+.user-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
+
+/* ── TOPBAR ── */
+.topbar-title{font-family:'DM Serif Display',serif;font-size:18px;font-weight:400}
+.topbar-title em{font-style:italic;color:var(--accent2)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+
+/* ── RUBRIK TABS ── */
+.rubrik-bar{display:flex;gap:6px;margin-bottom:1.4rem;flex-wrap:wrap}
+.rubrik{display:flex;align-items:center;gap:7px;padding:8px 16px;border-radius:10px;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;user-select:none;border:1px solid var(--border);color:var(--muted);background:var(--surface)}
+.rubrik:hover{border-color:var(--border-hover);color:var(--text);transform:translateY(-1px)}
+.rubrik.active{background:rgba(124,109,250,0.1);border-color:rgba(124,109,250,0.3);color:var(--accent2)}
+.rubrik-gold{background:var(--gold-bg) !important;border-color:var(--gold-border) !important;color:var(--gold) !important;animation:goldPulse 2.5s ease-in-out infinite}
+.rubrik-gold:hover{background:rgba(245,158,11,0.15) !important;transform:translateY(-2px);box-shadow:0 4px 20px rgba(245,158,11,0.2)}
+@keyframes goldPulse{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,0);border-color:rgba(245,158,11,0.25)}50%{box-shadow:0 0 0 6px rgba(245,158,11,0);border-color:rgba(245,158,11,0.5)}}
+
+/* ── PAGES ── */
+.page{display:none}
+.page.active{display:block;animation:fadeIn .22s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── CARDS ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:1.1rem 1.2rem;margin-bottom:1.1rem}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem}
+.card-title{font-size:12px;font-weight:500}
+.card-action{font-size:11px;color:var(--accent2);cursor:pointer}
+
+/* ── BUTTONS ── */
+.btn-primary{padding:9px 18px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:9px;color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:opacity .2s,transform .15s}
+.btn-primary:hover{opacity:.87;transform:translateY(-1px)}
+.btn-ghost{padding:8px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;font-size:12px;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s}
+.btn-ghost:hover{border-color:var(--border-hover);color:var(--text)}
+.btn-gold{padding:9px 18px;background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;border-radius:9px;color:#0d0e14;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s}
+.btn-gold:hover{opacity:.88;transform:translateY(-1px);box-shadow:0 4px 16px rgba(245,158,11,0.3)}
+.btn-xs{padding:5px 11px;border-radius:7px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;border:none;transition:all .18s}
+
+/* ── SEARCH BAR ── */
+.search-bar{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:10px 14px;margin-bottom:1.2rem;transition:border-color .2s}
+.search-bar:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,109,250,0.1)}
+.search-icon{font-size:15px;color:var(--muted);flex-shrink:0}
+.search-input{flex:1;background:none;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text)}
+.search-input::placeholder{color:var(--muted)}
+
+/* ── FILTER PILLS ── */
+.filter-row{display:flex;gap:6px;margin-bottom:1.1rem;flex-wrap:wrap}
+.fpill{padding:5px 13px;border-radius:100px;font-size:11px;cursor:pointer;background:var(--surface2);color:var(--muted);border:1px solid var(--border);transition:all .18s;user-select:none}
+.fpill:hover{border-color:var(--border-hover);color:var(--text)}
+.fpill.on{background:rgba(124,109,250,0.1);border-color:rgba(124,109,250,0.25);color:var(--accent2)}
+
+/* ── GRID LAYOUTS ── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:1.1rem}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.1rem}
+
+/* ── RANKING CARDS ── */
+.rank-card{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:1rem 1.1rem;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;margin-bottom:8px}
+.rank-card:hover{border-color:var(--border-hover);transform:translateX(3px)}
+.rank-card.gold-rank{border-color:var(--gold-border);background:var(--gold-bg)}
+.rank-num{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;width:36px;text-align:center;flex-shrink:0}
+.rank-logo{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.rank-info{flex:1;min-width:0}
+.rank-name{font-size:13px;font-weight:500;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rank-sub{font-size:11px;color:var(--muted)}
+.rank-score{font-family:'DM Serif Display',serif;font-size:20px;font-weight:400;flex-shrink:0}
+.award-badge{font-size:9px;padding:2px 8px;border-radius:100px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0d0e14;font-weight:600;margin-left:6px}
+
+/* ── UNI CARDS ── */
+.uni-card{background:var(--surface);border:1px solid var(--border);border-radius:13px;overflow:hidden;cursor:pointer;transition:all .2s}
+.uni-card:hover{border-color:var(--border-hover);transform:translateY(-2px)}
+.uni-cover{height:80px;display:flex;align-items:center;justify-content:center;font-size:32px;position:relative}
+.uni-body{padding:.9rem 1rem}
+.uni-name{font-size:13px;font-weight:500;margin-bottom:3px}
+.uni-meta{font-size:10px;color:var(--muted);margin-bottom:.6rem}
+.uni-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:.7rem}
+.uni-tag{font-size:9px;padding:2px 7px;border-radius:100px;background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
+.uni-score{display:flex;align-items:center;gap:5px;font-size:11px}
+
+/* ── STUDIENGANG KATEGORIEN ── */
+.sg-cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:1.2rem}
+.sg-cat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:.9rem 1rem;cursor:pointer;transition:all .2s}
+.sg-cat:hover{border-color:var(--border-hover);transform:translateY(-2px)}
+.sg-cat.active{border-color:rgba(124,109,250,0.3);background:rgba(124,109,250,0.06)}
+.sg-cat-icon{font-size:22px;margin-bottom:5px}
+.sg-cat-name{font-size:12px;font-weight:500;margin-bottom:3px}
+.sg-cat-count{font-size:10px;color:var(--muted)}
+.sg-sub-list{display:none;margin-top:.8rem;display:flex;flex-direction:column;gap:4px}
+.sg-sub-item{display:flex;align-items:center;gap:7px;padding:7px 9px;background:var(--surface2);border-radius:8px;font-size:12px;color:var(--muted);cursor:pointer;transition:all .18s}
+.sg-sub-item:hover{color:var(--text);background:var(--surface3)}
+
+/* ── BEWERTUNG GEISTER ── */
+.ghost-row{display:flex;gap:8px;margin-bottom:.3rem}
+.ghost{font-size:22px;cursor:pointer;transition:all .2s;filter:grayscale(1);opacity:.35}
+.ghost:hover,.ghost.active{filter:grayscale(0);opacity:1;transform:scale(1.15)}
+.ghost-label{font-size:10px;color:var(--muted);margin-top:3px}
+.criterion-row{padding:10px 0;border-bottom:1px solid var(--border)}
+.criterion-row:last-child{border-bottom:none}
+.criterion-name{font-size:12px;font-weight:500;margin-bottom:7px}
+
+/* ── FORM FIELDS ── */
+.field{margin-bottom:.9rem}
+.field label{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.field .req{color:var(--accent2)}
+.field input,.field select,.field textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px 13px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s;appearance:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,109,250,0.1)}
+.field input::placeholder,.field textarea::placeholder{color:var(--muted)}
+.field textarea{resize:none;line-height:1.5}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.select-wrap{position:relative}
+.select-wrap::after{content:'↓';position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:11px;pointer-events:none}
+.field-hint{font-size:11px;color:var(--muted2);margin-top:4px;line-height:1.5}
+.char-count{font-size:10px;color:var(--muted2);text-align:right;margin-top:3px}
+
+/* ── STEPS ── */
+.steps{display:flex;gap:0;margin-bottom:1.5rem;position:relative}
+.steps::before{content:'';position:absolute;top:14px;left:0;right:0;height:1.5px;background:var(--border);z-index:0}
+.wstep{display:flex;flex-direction:column;align-items:center;flex:1;position:relative;z-index:1}
+.wstep-circle{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted);transition:all .3s}
+.wstep.active .wstep-circle{border-color:var(--accent);background:rgba(124,109,250,0.12);color:var(--accent2)}
+.wstep.done .wstep-circle{border-color:var(--success);background:rgba(74,222,128,0.1);color:var(--success)}
+.wstep-label{font-size:9px;color:var(--muted);margin-top:4px}
+.wstep.active .wstep-label{color:var(--accent2)}
+.wstep.done .wstep-label{color:var(--success)}
+.step-panel{display:none}
+.step-panel.active{display:block;animation:fadeIn .2s ease}
+
+/* ── MODAL ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.72);backdrop-filter:blur(5px);z-index:1000;display:none;align-items:center;justify-content:center;padding:1rem}
+.overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;width:100%;max-width:640px;max-height:90vh;overflow-y:auto;position:relative;animation:modalIn .25s ease}
+.modal::-webkit-scrollbar{width:4px}
+.modal::-webkit-scrollbar-thumb{background:var(--muted2);border-radius:2px}
+@keyframes modalIn{from{opacity:0;transform:scale(.96) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:1.3rem 1.5rem 0}
+.modal-title{font-family:'DM Serif Display',serif;font-size:20px;font-weight:400}
+.modal-title em{font-style:italic;color:var(--accent2)}
+.modal-close{width:30px;height:30px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:var(--muted);transition:all .18s;flex-shrink:0}
+.modal-close:hover{border-color:var(--border-hover);color:var(--text)}
+.modal-body{padding:1.2rem 1.5rem 1.5rem}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:11px 16px;font-size:12px;color:var(--text);z-index:9999;display:flex;align-items:center;gap:8px;animation:toastIn .3s ease;max-width:320px}
+@keyframes toastIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── INFO NOTE ── */
+.info-note{background:rgba(56,189,248,0.05);border:1px solid rgba(56,189,248,0.14);border-radius:9px;padding:10px 13px;font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:1rem;display:flex;gap:9px}
+.gold-note{background:var(--gold-bg);border:1px solid var(--gold-border);border-radius:9px;padding:10px 13px;font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:1rem;display:flex;gap:9px}
+
+/* ── BAR CHART ── */
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.bar-label{font-size:11px;color:var(--muted);width:160px;flex-shrink:0}
+.bar-track{flex:1;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px}
+.bar-val{font-size:10px;color:var(--muted);width:30px;text-align:right;flex-shrink:0}
+
+/* ── PROCON ── */
+.procon-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.9rem}
+.pro-box,.con-box{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:.8rem}
+.pro-box{border-color:rgba(74,222,128,0.15);background:rgba(74,222,128,0.04)}
+.con-box{border-color:rgba(248,113,113,0.15);background:rgba(248,113,113,0.04)}
+.pc-head{font-size:10px;font-weight:500;margin-bottom:.5rem}
+.pc-item{display:flex;gap:6px;font-size:11px;color:var(--muted);margin-bottom:3px}
+.pc-add{display:flex;align-items:center;gap:6px;margin-top:5px}
+.pc-input{flex:1;background:none;border:none;outline:none;font-size:11px;color:var(--text);font-family:'DM Sans',sans-serif;border-bottom:1px dashed var(--border)}
+.pc-input::placeholder{color:var(--muted2)}
+
+/* ── RECOMMEND BTNS ── */
+.recommend-row{display:flex;gap:10px;margin-bottom:1rem}
+.rec-btn{flex:1;padding:1rem;border-radius:12px;border:1.5px solid var(--border);background:var(--surface2);cursor:pointer;text-align:center;font-size:22px;transition:all .2s;user-select:none}
+.rec-btn:hover{transform:scale(1.04)}
+.rec-btn.selected-yes{border-color:rgba(74,222,128,0.4);background:rgba(74,222,128,0.08)}
+.rec-btn.selected-no{border-color:rgba(248,113,113,0.4);background:rgba(248,113,113,0.08)}
+.rec-label{font-size:11px;color:var(--muted);margin-top:4px}
+
+/* ── REVIEW CARD ── */
+.review-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin-bottom:9px}
+.review-head{display:flex;align-items:center;gap:9px;margin-bottom:.7rem}
+.review-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
+.review-meta{flex:1;min-width:0}
+.review-name{font-size:12px;font-weight:500}
+.review-info{font-size:10px;color:var(--muted)}
+.review-score{font-size:20px;flex-shrink:0}
+.review-body{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:.7rem}
+.review-actions{display:flex;gap:10px;font-size:11px;color:var(--muted2)}
+.review-act{cursor:pointer;display:flex;align-items:center;gap:4px;transition:color .18s}
+.review-act:hover{color:var(--text)}
+
+/* ── DIVIDER ── */
+.divider{display:flex;align-items:center;gap:10px;margin:1rem 0;color:var(--muted2);font-size:11px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ── STAT CARDS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.2rem}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem;transition:border-color .2s,transform .15s}
+.stat:hover{border-color:var(--border-hover);transform:translateY(-1px)}
+.stat-icon{font-size:16px;margin-bottom:.4rem}
+.stat-val{font-family:'DM Serif Display',serif;font-size:22px;line-height:1;margin-bottom:2px}
+.stat-label{font-size:10px;color:var(--muted)}
+
+/* ── RADIO GROUP ── */
+.radio-group{display:flex;flex-direction:column;gap:6px;margin-bottom:.9rem}
+.radio-item{display:flex;align-items:center;gap:9px;padding:9px 12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:9px;cursor:pointer;transition:all .2s;font-size:12px;color:var(--muted);user-select:none}
+.radio-item:hover{border-color:var(--border-hover);color:var(--text)}
+.radio-item.selected{border-color:var(--accent);background:rgba(124,109,250,0.06);color:var(--text)}
+.radio-dot{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--muted2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.radio-item.selected .radio-dot{border-color:var(--accent);background:var(--accent)}
+.radio-item.selected .radio-dot::after{content:'';width:6px;height:6px;border-radius:50%;background:#fff}
+
+/* ── GOLD ANIMATE SECTION ── */
+.gold-section{border:2px solid var(--gold-border);border-radius:14px;padding:1.5rem;background:var(--gold-bg);position:relative;overflow:hidden}
+.gold-section::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:conic-gradient(from 0deg,transparent 0%,rgba(245,158,11,0.05) 50%,transparent 100%);animation:rotate 8s linear infinite;pointer-events:none}
+@keyframes rotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.gold-section-inner{position:relative;z-index:1}
+
+
+        /* ── IN HONOR ── */
+        .in-honor-btn {
+            display: flex; align-items: center; gap: 7px;
+            padding: 6px 14px 6px 10px;
+            background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(252,211,77,0.08));
+            border: 1px solid rgba(245,158,11,0.35);
+            border-radius: 100px;
+            cursor: pointer;
+            font-size: 12px; font-weight: 600;
+            color: #f59e0b;
+            transition: all .22s;
+            position: relative;
+            overflow: hidden;
+        }
+        .in-honor-btn::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(245,158,11,0.08), transparent);
+            transform: translateX(-100%);
+            animation: honorShimmer 2.8s ease-in-out infinite;
+        }
+        @keyframes honorShimmer {
+            0%   { transform: translateX(-100%); }
+            50%  { transform: translateX(100%); }
+            100% { transform: translateX(100%); }
+        }
+        .in-honor-btn:hover {
+            background: linear-gradient(135deg, rgba(245,158,11,0.2), rgba(252,211,77,0.14));
+            border-color: rgba(245,158,11,0.6);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(245,158,11,0.2);
+        }
+        .in-honor-dot {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: #f59e0b;
+            animation: honorPulse 1.8s ease-in-out infinite;
+            flex-shrink: 0;
+        }
+        @keyframes honorPulse {
+            0%,100% { opacity:1; transform:scale(1); }
+            50%      { opacity:.5; transform:scale(.75); }
+        }
+
+        /* ── In Honor Modal ── */
+        #in-honor-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.72);
+            backdrop-filter: blur(8px);
+            z-index: 9000;
+            display: none; align-items: center; justify-content: center;
+            padding: 1rem;
+        }
+        #in-honor-overlay.open { display: flex; }
+        #in-honor-modal {
+            background: #0e0e11;
+            border: 1px solid rgba(245,158,11,0.2);
+            border-radius: 20px;
+            width: 100%; max-width: 680px;
+            max-height: 90vh; overflow-y: auto;
+            animation: honorModalIn .3s cubic-bezier(.34,1.56,.64,1);
+            position: relative;
+        }
+        #in-honor-modal::-webkit-scrollbar { width: 4px; }
+        #in-honor-modal::-webkit-scrollbar-thumb { background: rgba(245,158,11,0.3); border-radius: 2px; }
+        @keyframes honorModalIn {
+            from { opacity:0; transform:scale(.92) translateY(16px); }
+            to   { opacity:1; transform:scale(1) translateY(0); }
+        }
+        .honor-member-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px;
+            padding: 1.1rem 1.2rem;
+            display: flex; align-items: center; gap: 14px;
+            transition: all .2s;
+        }
+        .honor-member-card:hover {
+            background: rgba(245,158,11,0.05);
+            border-color: rgba(245,158,11,0.2);
+            transform: translateY(-2px);
+        }
+        .honor-avatar {
+            width: 48px; height: 48px; border-radius: 50%;
+            background: linear-gradient(135deg, rgba(245,158,11,0.3), rgba(252,211,77,0.1));
+            border: 2px solid rgba(245,158,11,0.4);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; font-weight: 700; color: #f59e0b;
+            flex-shrink: 0;
+        }
+        .honor-social-link {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 30px; height: 30px; border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #6b6880;
+            text-decoration: none;
+            transition: all .18s;
+            font-size: 13px;
+        }
+        .honor-social-link:hover { background: rgba(255,255,255,0.1); color: #f0edf1; border-color: rgba(255,255,255,0.2); }
+        .honor-social-link.linkedin:hover  { background: rgba(10,102,194,0.2);  border-color: rgba(10,102,194,0.4);  color:#0a66c2; }
+        .honor-social-link.instagram:hover { background: rgba(225,48,108,0.15); border-color: rgba(225,48,108,0.4);  color:#e1306c; }
+        .honor-social-link.tiktok:hover    { background: rgba(105,201,208,0.15);border-color: rgba(105,201,208,0.4); color:#69c9d0; }
+        .honor-social-link.twitter:hover   { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); color:#e7e7e7; }
+        .honor-countdown {
+            display: inline-flex; align-items: center; gap: 5px;
+            font-size: 10px; font-weight: 600;
+            color: #f59e0b; letter-spacing: .04em;
+            background: rgba(245,158,11,0.08);
+            border: 1px solid rgba(245,158,11,0.2);
+            border-radius: 100px; padding: 3px 10px;
+        }
+
         /* Smooth transitions */
         .fade-in { animation: fadeIn 0.4s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -61,8 +430,13 @@
 <nav class="fixed top-0 w-full z-50 flex justify-between items-center px-8 h-20 bg-[#0e0e11]/80 backdrop-blur-xl border-b border-white/5" id="global-header">
 <div class="flex items-center gap-12">
 <span class="text-2xl font-black text-white cursor-pointer" onclick="navigate('landing')">Acade<span class="text-primary">mify</span></span>
+<button class="in-honor-btn" onclick="document.getElementById('in-honor-overlay').classList.add('open')" aria-label="In Honor — Unsere Unterstützer">
+    <span class="in-honor-dot"></span>
+    🏅 In Honor
+  </button>
 <div class="hidden md:flex gap-8 items-center text-sm font-medium">
 <a class="text-on-surface-variant hover:text-white transition-colors" href="#features">Features</a>
+<a class="text-on-surface-variant hover:text-white transition-colors cursor-pointer" onclick="navigate('ratingagency')">👻 Bewertungen</a>
 <a class="text-on-surface-variant hover:text-white transition-colors" href="#community">Community</a>
 <a class="text-on-surface-variant hover:text-white transition-colors" href="#vision">Vision</a>
 </div>
@@ -126,16 +500,16 @@
 <div class="relative min-h-[85vh] flex flex-col items-center justify-center px-8 text-center overflow-hidden">
 <div class="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] -z-10"></div>
 <div class="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-secondary/10 rounded-full blur-[100px] -z-10"></div>
-<h1 class="text-5xl md:text-8xl font-black mb-8 tracking-tight leading-[1.1]" data-i18n="hero-title">
+<h1 class="text-5xl md:text-8xl font-black mb-8 tracking-tight leading-[1.1]">
                     Dein Studium.<br/>
 <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-primary text-glow">Deine Regeln.</span>
 </h1>
-<p class="text-lg md:text-xl text-on-surface-variant max-w-3xl mb-12 font-body leading-relaxed" data-i18n="hero-desc">
+<p class="text-lg md:text-xl text-on-surface-variant max-w-3xl mb-12 font-body leading-relaxed">
                     Vergiss das Chaos aus Excel-Listen, PDF-Ordnern und verpassten Fristen. Academify ist die smarte Schaltzentrale, die alles vereint, was du für ein erfolgreiches Studium brauchst.
                 </p>
 <div class="flex flex-wrap gap-4 justify-center">
-<button class="bg-primary text-white px-10 py-4 rounded-2xl font-bold text-lg hover:scale-105 transition-transform shadow-xl shadow-primary/25" onclick="window.location.href='register.html'" data-i18n="hero-cta">Jetzt kostenlos starten</button>
-<button class="bg-surface-container-highest px-10 py-4 rounded-2xl font-bold text-lg border border-white/10 hover:bg-surface-bright transition-colors" data-i18n="hero-tour">Tour ansehen</button>
+<button class="bg-primary text-white px-10 py-4 rounded-2xl font-bold text-lg hover:scale-105 transition-transform shadow-xl shadow-primary/25" onclick="window.location.href='register.html'">Jetzt kostenlos starten</button>
+<button class="bg-surface-container-highest px-10 py-4 rounded-2xl font-bold text-lg border border-white/10 hover:bg-surface-bright transition-colors" onclick="navigate('ratingagency')">👻 Hochschulen bewerten</button>
 </div>
 <!-- Hero Image Concept -->
 <div class="mt-20 w-full max-w-6xl rounded-[40px] overflow-hidden border border-white/10 shadow-2xl relative group">
@@ -148,37 +522,37 @@
 <div class="w-10 h-10 rounded-full border-2 border-surface bg-gray-700 overflow-hidden"><img alt="" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAt0Lf0y67dDrR-DNbsJOgmsuAoI6shgu79nIx8qHlRfDAet1C3eZZDOGpyHqdrQbcc9oImVCQcPzDUqDs1mhgx5X29mEKGxfR4TfZ6YbgWXYMtcjZvhwlM9JC3wy1oto76b3CurEcD1Rb8_vtiQJzxeetwjFJ0IbBIvvlJd5jg-YeqgqqFKJuwz14BWgBpuBpl6fl8xav2OYqfetuCU0UxyYrgFM2hIrFimHzI5oJExtlit7k_afr_iR4zgiRIsEokMmwCyThh5sk"/></div>
 <div class="w-10 h-10 rounded-full border-2 border-surface bg-primary flex items-center justify-center text-[10px] font-bold">+50k</div>
 </div>
-<p class="text-white font-bold text-lg" data-i18n="hero-social">Über 50.000 aktive Studierende vertrauen uns bereits.</p>
+<p class="text-white font-bold text-lg">Über 50.000 aktive Studierende vertrauen uns bereits.</p>
 </div>
 </div>
 </div>
 <!-- "So funktioniert's" -->
 <div class="py-32 px-8 max-w-7xl mx-auto" id="features">
 <div class="text-center mb-20">
-<h2 class="text-4xl md:text-5xl font-black mb-6" data-i18n="steps-title">In drei Schritten zum Master-Plan.</h2>
-<p class="text-on-surface-variant max-w-2xl mx-auto" data-i18n="steps-desc">Wir haben Academify so intuitiv gebaut, dass du keine Anleitung brauchst. In weniger als zwei Minuten bist du startklar für ein stressfreieres Semester.</p>
+<h2 class="text-4xl md:text-5xl font-black mb-6">In drei Schritten zum Master-Plan.</h2>
+<p class="text-on-surface-variant max-w-2xl mx-auto">Wir haben Academify so intuitiv gebaut, dass du keine Anleitung brauchst. In weniger als zwei Minuten bist du startklar für ein stressfreieres Semester.</p>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
 <div class="flex flex-col items-center text-center group">
 <div class="w-20 h-20 rounded-3xl bg-primary/10 flex items-center justify-center text-primary mb-8 group-hover:scale-110 transition-transform duration-300">
 <span class="text-3xl font-black">1</span>
 </div>
-<h3 class="text-2xl font-bold mb-4" data-i18n="step1-title">Profil erstellen</h3>
-<p class="text-on-surface-variant leading-relaxed" data-i18n="step1-desc">Wähle deine Hochschule und deinen Studiengang aus. Wir passen uns deinen spezifischen Anforderungen an.</p>
+<h3 class="text-2xl font-bold mb-4">Profil erstellen</h3>
+<p class="text-on-surface-variant leading-relaxed">Wähle deine Hochschule und deinen Studiengang aus. Wir passen uns deinen spezifischen Anforderungen an.</p>
 </div>
 <div class="flex flex-col items-center text-center group">
 <div class="w-20 h-20 rounded-3xl bg-secondary/10 flex items-center justify-center text-secondary mb-8 group-hover:scale-110 transition-transform duration-300">
 <span class="text-3xl font-black">2</span>
 </div>
-<h3 class="text-2xl font-bold mb-4" data-i18n="step2-title">Studium organisieren</h3>
-<p class="text-on-surface-variant leading-relaxed" data-i18n="step2-desc">Importiere deine Kurse und setze deine persönlichen Lernziele. Alles synchronisiert an einem Ort.</p>
+<h3 class="text-2xl font-bold mb-4">Studium organisieren</h3>
+<p class="text-on-surface-variant leading-relaxed">Importiere deine Kurse und setze deine persönlichen Lernziele. Alles synchronisiert an einem Ort.</p>
 </div>
 <div class="flex flex-col items-center text-center group">
 <div class="w-20 h-20 rounded-3xl bg-tertiary/10 flex items-center justify-center text-tertiary mb-8 group-hover:scale-110 transition-transform duration-300">
 <span class="text-3xl font-black">3</span>
 </div>
-<h3 class="text-2xl font-bold mb-4" data-i18n="step3-title">Netzwerk nutzen</h3>
-<p class="text-on-surface-variant leading-relaxed" data-i18n="step3-desc">Verbinde dich mit Kommilitonen und teile Ressourcen blitzschnell über unseren Hub.</p>
+<h3 class="text-2xl font-bold mb-4">Netzwerk nutzen</h3>
+<p class="text-on-surface-variant leading-relaxed">Verbinde dich mit Kommilitonen und teile Ressourcen blitzschnell über unseren Hub.</p>
 </div>
 </div>
 </div>
@@ -190,8 +564,8 @@
 <div class="absolute -right-10 -top-10 w-40 h-40 bg-primary/20 blur-3xl rounded-full"></div>
 <div>
 <span class="material-symbols-outlined text-5xl text-primary mb-8">auto_awesome</span>
-<h3 class="text-3xl font-bold mb-6" data-i18n="feat-ai-title">KI-gestütztes Lernen</h3>
-<p class="text-on-surface-variant text-lg max-w-lg mb-8" data-i18n="feat-ai-desc">Lass dir Zusammenfassungen erstellen, übe mit generierten Quiz-Fragen und erhalte personalisierte Lernpläne basierend auf deinem Tempo.</p>
+<h3 class="text-3xl font-bold mb-6">KI-gestütztes Lernen</h3>
+<p class="text-on-surface-variant text-lg max-w-lg mb-8">Lass dir Zusammenfassungen erstellen, übe mit generierten Quiz-Fragen und erhalte personalisierte Lernpläne basierend auf deinem Tempo.</p>
 <div class="flex gap-3">
 <span class="px-4 py-2 bg-white/5 rounded-full text-xs font-bold border border-white/5">GPT-4 Integration</span>
 <span class="px-4 py-2 bg-white/5 rounded-full text-xs font-bold border border-white/5">Smart Flashcards</span>
@@ -200,18 +574,18 @@
 </div>
 <div class="md:col-span-4 bg-gradient-to-br from-secondary/20 to-surface-container p-12 rounded-[2.5rem] border border-white/5">
 <span class="material-symbols-outlined text-5xl text-secondary mb-8">group</span>
-<h3 class="text-3xl font-bold mb-6" data-i18n="feat-community-title">Community</h3>
-<p class="text-on-surface-variant text-lg mb-8" data-i18n="feat-community-desc">Finde automatisch Lernpartner basierend auf deinen belegten Kursen in deiner Stadt.</p>
-<button class="text-secondary font-bold hover:underline flex items-center gap-2" data-i18n="feat-community-btn">Match finden <span class="material-symbols-outlined">arrow_forward</span></button>
+<h3 class="text-3xl font-bold mb-6">Community</h3>
+<p class="text-on-surface-variant text-lg mb-8">Finde automatisch Lernpartner basierend auf deinen belegten Kursen in deiner Stadt.</p>
+<button class="text-secondary font-bold hover:underline flex items-center gap-2">Match finden <span class="material-symbols-outlined">arrow_forward</span></button>
 </div>
 <div class="md:col-span-4 bg-surface-container p-12 rounded-[2.5rem] border border-white/5">
 <span class="material-symbols-outlined text-5xl text-tertiary mb-8">speed</span>
-<h3 class="text-2xl font-bold mb-4" data-i18n="feat-deadline-title">Deadline Radar</h3>
-<p class="text-on-surface-variant leading-relaxed" data-i18n="feat-deadline-desc">Verpasse nie wieder eine Abgabe. Intelligente Push-Erinnerungen synchronisiert mit deinem Kalender.</p>
+<h3 class="text-2xl font-bold mb-4">Deadline Radar</h3>
+<p class="text-on-surface-variant leading-relaxed">Verpasse nie wieder eine Abgabe. Intelligente Push-Erinnerungen synchronisiert mit deinem Kalender.</p>
 </div>
 <div class="md:col-span-8 glass-card p-12 rounded-[2.5rem] flex flex-col justify-center">
-<h3 class="text-3xl font-bold mb-8" data-i18n="feat-uni-title">Partner-Universitäten</h3>
-<p class="text-on-surface-variant text-lg mb-10" data-i18n="feat-uni-desc">Wir unterstützen bereits über 150 Hochschulen in DACH mit direkter Anbindung an Moodle &amp; Canvas.</p>
+<h3 class="text-3xl font-bold mb-8">Partner-Universitäten</h3>
+<p class="text-on-surface-variant text-lg mb-10">Wir unterstützen bereits über 150 Hochschulen in DACH mit direkter Anbindung an Moodle &amp; Canvas.</p>
 <div class="flex flex-wrap gap-x-12 gap-y-8 grayscale opacity-60">
 <span class="text-2xl font-black">TU München</span>
 <span class="text-2xl font-black">RWTH Aachen</span>
@@ -224,18 +598,18 @@
 </div>
 <!-- Vision / Mission -->
 <div class="py-32 px-8 max-w-4xl mx-auto text-center" id="vision">
-<h2 class="text-primary font-bold tracking-widest uppercase text-xs mb-8" data-i18n="vision-label">Warum wir Academify bauen</h2>
-<p class="text-3xl md:text-5xl font-black italic leading-tight mb-12" data-i18n="vision-quote">
+<h2 class="text-primary font-bold tracking-widest uppercase text-xs mb-8">Warum wir Academify bauen</h2>
+<p class="text-3xl md:text-5xl font-black italic leading-tight mb-12">
                     "Wir glauben, dass Bildung inspirieren sollte, statt durch Bürokratie und Organisationschaos zu bremsen."
                 </p>
 <div class="w-16 h-1 bg-primary/30 mx-auto mb-12"></div>
-<p class="text-xl text-on-surface-variant leading-relaxed" data-i18n="vision-mission">
+<p class="text-xl text-on-surface-variant leading-relaxed">
                     Unsere Mission ist es, jedem Studierenden die Werkzeuge an die Hand zu geben, um das volle Potenzial auszuschöpfen – effizient, vernetzt und mit Spaß am Lernen.
                 </p>
 </div>
 <!-- Social Proof -->
 <div class="py-24 px-8 max-w-7xl mx-auto">
-<h2 class="text-center text-4xl font-black mb-16" data-i18n="social-title">Von Studierenden geliebt.</h2>
+<h2 class="text-center text-4xl font-black mb-16">Von Studierenden geliebt.</h2>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
 <div class="glass-card p-10 rounded-3xl">
 <div class="flex gap-1 text-yellow-500 mb-6">
@@ -262,16 +636,16 @@
 <h2 class="text-4xl font-black mb-12 text-center">FAQ</h2>
 <div class="space-y-4">
 <div class="bg-surface-container p-6 rounded-2xl border border-white/5">
-<h4 class="font-bold mb-2" data-i18n="faq-q1">Ist Academify wirklich kostenlos?</h4>
-<p class="text-sm text-on-surface-variant" data-i18n="faq-a1">Ja, die Basis-Version für Studierende ist und bleibt komplett kostenlos.</p>
+<h4 class="font-bold mb-2">Ist Academify wirklich kostenlos?</h4>
+<p class="text-sm text-on-surface-variant">Ja, die Basis-Version für Studierende ist und bleibt komplett kostenlos.</p>
 </div>
 <div class="bg-surface-container p-6 rounded-2xl border border-white/5">
-<h4 class="font-bold mb-2" data-i18n="faq-q2">Wie sicher sind meine Daten?</h4>
-<p class="text-sm text-on-surface-variant" data-i18n="faq-a2">Deine Privatsphäre steht an erster Stelle. Wir nutzen Banken-Standard-Verschlüsselung und Server in Deutschland (DSGVO-konform).</p>
+<h4 class="font-bold mb-2">Wie sicher sind meine Daten?</h4>
+<p class="text-sm text-on-surface-variant">Deine Privatsphäre steht an erster Stelle. Wir nutzen Banken-Standard-Verschlüsselung und Server in Deutschland (DSGVO-konform).</p>
 </div>
 <div class="bg-surface-container p-6 rounded-2xl border border-white/5">
-<h4 class="font-bold mb-2" data-i18n="faq-q3">Funktioniert es mit meiner Uni?</h4>
-<p class="text-sm text-on-surface-variant" data-i18n="faq-a3">Wir unterstützen bereits über 150 Hochschulen in Deutschland, Österreich und der Schweiz.</p>
+<h4 class="font-bold mb-2">Funktioniert es mit meiner Uni?</h4>
+<p class="text-sm text-on-surface-variant">Wir unterstützen bereits über 150 Hochschulen in Deutschland, Österreich und der Schweiz.</p>
 </div>
 </div>
 </div>
@@ -307,10 +681,10 @@
       <div>
         <h5 class="font-bold mb-6 text-sm uppercase tracking-widest text-primary">Portal</h5>
         <ul class="space-y-4 text-sm text-on-surface-variant">
-          <li><a class="hover:text-white transition-colors" href="/features">Features</a></li>
-          <li><a class="hover:text-white transition-colors" href="/preise">Preise</a></li>
+          <li><a class="hover:text-white transition-colors" href="#features" onclick="navigate('landing')">Features</a></li>
+          <li><a class="hover:text-white transition-colors" href="#preise" onclick="navigate('landing')">Preise</a></li>
           <li><a class="hover:text-white transition-colors" href="/blog">Blog</a></li>
-          <li><a class="hover:text-white transition-colors" href="/ueber-uns">Über uns</a></li>
+          <li><a class="hover:text-white transition-colors" href="#ueber-uns" onclick="navigate('landing')">Über uns</a></li>
         </ul>
       </div>
 
@@ -318,8 +692,8 @@
       <div>
         <h5 class="font-bold mb-6 text-sm uppercase tracking-widest text-primary">Support</h5>
         <ul class="space-y-4 text-sm text-on-surface-variant">
-          <li><a class="hover:text-white transition-colors" href="/kontakt">Kontakt</a></li>
-          <li><a class="hover:text-white transition-colors" href="/hilfe">Hilfe-Center</a></li>
+          <li><a class="hover:text-white transition-colors" href="#kontakt" onclick="navigate('kontakt')">Kontakt</a></li>
+          <li><a class="hover:text-white transition-colors" href="#kontakt" onclick="navigate('kontakt')">Hilfe-Center</a></li>
           <li><a class="hover:text-white transition-colors" href="/status">System-Status</a></li>
           <!-- Barrierefreiheit-Erklärung empfohlen nach BFSG/WCAG -->
           <li><a class="hover:text-white transition-colors" href="/barrierefreiheit">Barrierefreiheit</a></li>
@@ -331,13 +705,13 @@
         <h5 class="font-bold mb-6 text-sm uppercase tracking-widest text-primary">Rechtliches</h5>
         <ul class="space-y-4 text-sm text-on-surface-variant">
           <!-- Pflicht §5 TMG / §5 DDG -->
-          <li><a class="hover:text-white transition-colors" href="/impressum">Impressum</a></li>
+          <li><a class="hover:text-white transition-colors" href="#impressum" onclick="navigate('impressum')">Impressum</a></li>
           <!-- Pflicht DSGVO Art. 13/14 -->
-          <li><a class="hover:text-white transition-colors" href="/datenschutz">Datenschutzerklärung</a></li>
+          <li><a class="hover:text-white transition-colors" href="#datenschutz" onclick="navigate('datenschutz')">Datenschutzerklärung</a></li>
           <!-- Vertragsbedingungen -->
-          <li><a class="hover:text-white transition-colors" href="/agb">AGB</a></li>
+          <li><a class="hover:text-white transition-colors" href="#agb" onclick="navigate('agb')">AGB</a></li>
           <!-- NEU: Pflicht §312g BGB für digitale Dienste mit Entgelt (Pro-Plan) -->
-          <li><a class="hover:text-white transition-colors" href="/widerruf">Widerrufsbelehrung</a></li>
+          <li><a class="hover:text-white transition-colors" href="#widerruf" onclick="navigate('widerruf')">Widerrufsbelehrung</a></li>
           <!-- NEU: Cookie-Einstellungen (DSGVO / TTDSG) -->
           <li>
             <button class="hover:text-white transition-colors text-left" onclick="openCookieSettings()" aria-label="Cookie-Einstellungen öffnen">
@@ -345,7 +719,7 @@
             </button>
           </li>
           <!-- NEU: EU-Streitschlichtung §36 VSBG Pflicht für B2C -->
-          <li><a class="hover:text-white transition-colors" href="/streitbeilegung">Streitbeilegung</a></li>
+          <li><a class="hover:text-white transition-colors" href="#streitbeilegung" onclick="navigate('streitbeilegung')">Streitbeilegung</a></li>
         </ul>
       </div>
     </div>
@@ -383,7 +757,7 @@
 </div>
 </div>
 </div>
-<div class="bg-surface-container p-8 rounded-3xl border border-white/5 group cursor-pointer hover:bg-surface-container-high transition-all opacity-60">
+<div class="bg-surface-container p-8 rounded-3xl border border-white/5 group cursor-pointer hover:bg-surface-container-high transition-all opacity-60" onclick="alert('Unternehmen-Bereich folgt in Kürze!')">
 <div class="flex items-center gap-6">
 <div class="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary">
 <span class="material-symbols-outlined text-3xl">business</span>
@@ -394,7 +768,7 @@
 </div>
 </div>
 </div>
-<div class="bg-surface-container p-8 rounded-3xl border border-white/5 group cursor-pointer hover:bg-surface-container-high transition-all opacity-60">
+<div class="bg-surface-container p-8 rounded-3xl border border-white/5 group cursor-pointer hover:bg-surface-container-high transition-all opacity-60" onclick="alert('Hochschul-Bereich folgt in Kürze!')">
 <div class="flex items-center gap-6">
 <div class="w-16 h-16 rounded-2xl bg-tertiary/10 flex items-center justify-center text-tertiary">
 <span class="material-symbols-outlined text-3xl">account_balance</span>
@@ -407,7 +781,7 @@
 </div>
 </div>
 <div class="mt-12 text-center">
-<p class="text-on-surface-variant text-sm">Du hast bereits ein Konto? <a class="text-primary font-bold hover:underline" href="login.html">Hier anmelden</a></p>
+<p class="text-on-surface-variant text-sm">Du hast bereits ein Konto? <a class="text-primary font-bold hover:underline cursor-pointer" onclick="navigate('verify')">Hier anmelden</a></p>
 </div>
 </div>
 </section>
@@ -422,7 +796,7 @@
 <p class="text-on-surface-variant mb-12 text-lg">Um die Vorteile für Studierende zu nutzen, müssen wir deinen Status bestätigen. Wähle eine Methode:</p>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 <!-- Option 1 -->
-<div class="bg-surface-container p-10 rounded-[2.5rem] border border-white/5 hover:border-primary transition-all cursor-pointer group" onclick="navigate('dashboard')">
+<div class="bg-surface-container p-10 rounded-[2.5rem] border border-white/5 hover:border-primary transition-all cursor-pointer group" onclick="navigate('ratingagency')">
 <div class="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-8">
 <span class="material-symbols-outlined text-4xl">mail</span>
 </div>
@@ -431,7 +805,7 @@
 <span class="text-primary font-bold flex items-center gap-2 group-hover:translate-x-2 transition-transform">Code anfordern <span class="material-symbols-outlined">arrow_forward</span></span>
 </div>
 <!-- Option 2 -->
-<div class="bg-surface-container p-10 rounded-[2.5rem] border border-white/5 hover:border-secondary transition-all cursor-pointer group" onclick="navigate('dashboard')">
+<div class="bg-surface-container p-10 rounded-[2.5rem] border border-white/5 hover:border-secondary transition-all cursor-pointer group" onclick="navigate('ratingagency')">
 <div class="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary mb-8">
 <span class="material-symbols-outlined text-4xl">badge</span>
 </div>
@@ -440,7 +814,7 @@
 <span class="text-secondary font-bold flex items-center gap-2 group-hover:translate-x-2 transition-transform">Datei wählen <span class="material-symbols-outlined">upload</span></span>
 </div>
 <!-- Option 3 -->
-<div class="md:col-span-2 glass-card p-10 rounded-[2.5rem] flex flex-col md:flex-row items-center justify-between gap-8 cursor-pointer hover:bg-white/5 transition-all group" onclick="navigate('dashboard')">
+<div class="md:col-span-2 glass-card p-10 rounded-[2.5rem] flex flex-col md:flex-row items-center justify-between gap-8 cursor-pointer hover:bg-white/5 transition-all group" onclick="navigate('ratingagency')">
 <div class="flex items-center gap-8">
 <div class="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-white">
 <span class="material-symbols-outlined text-4xl">link</span>
@@ -783,6 +1157,1441 @@
 <span class="material-symbols-outlined text-3xl font-black">add</span>
 </button>
 </section>
+<!-- ═══════════════════════════════════════════════════════════
+     VIEW: STUDIENBERATUNG — Ghost-Rating System (v4)
+═══════════════════════════════════════════════════════════ -->
+<section class="view-section" id="view-ratingagency" style="height:100vh;overflow:hidden;position:relative;">
+  <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(124,109,250,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(124,109,250,0.02) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;z-index:0"></div>
+<div class="shell">
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar">
+  <div class="logo"><div class="logo-mark">🎓</div>Project<span>XYZ</span></div>
+  <div class="nav-sec" style="overflow-y:auto;flex:1;padding-bottom:.5rem">
+    <div class="nav-label">Hauptmenü</div>
+    <div class="nav-item" onclick="window.location.href='dashboard.html'"><span class="nav-icon">⊞</span>Dashboard</div>
+    <div class="nav-item" onclick="window.location.href='nachrichten.html'"><span class="nav-icon">💬</span>Nachrichten</div>
+    <div class="nav-item" onclick="window.location.href='profil.html'"><span class="nav-icon">👥</span>Profil & Freunde</div>
+    <div class="nav-label" style="margin-top:.5rem">Lernen</div>
+    <div class="nav-item" onclick="window.location.href='kurse.html'"><span class="nav-icon">📖</span>Online-Kurse</div>
+    <div class="nav-item" onclick="navigate('landing')"><span class="nav-icon">🎓</span>Nachhilfe</div>
+    <div class="nav-item" onclick="navigate('landing')"><span class="nav-icon">📄</span>StudyDocs</div>
+    <div class="nav-label" style="margin-top:.5rem">Campus & Karriere</div>
+    <div class="nav-item active"><span class="nav-icon">🏫</span>RatingAgency</div>
+    <div class="nav-item" onclick="navigate('landing')"><span class="nav-icon">🗺️</span>Community-Karte</div>
+    <div class="nav-item" onclick="navigate('landing')"><span class="nav-icon">🚗</span>StudyRide</div>
+    <div class="nav-item" onclick="navigate('landing')"><span class="nav-icon">💼</span>Jobs & Praktika</div>
+    <div class="nav-item" onclick="navigate('landing')"><span class="nav-icon">👕</span>Merch-Shop</div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-row">
+      <div class="user-av">MM</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Max Müller</div>
+        <div style="font-size:10px;color:var(--muted)">WiPsy B.Sc. · Sem. 1</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-title">Rating<em>Agency</em></div>
+    <div class="topbar-right">
+      <button class="btn-ghost" onclick="sb_openModal('overlay-add')">+ Studiengang melden</button>
+      <button class="btn-primary" onclick="sb_showRubrik('bewerten')">⭐ Jetzt bewerten</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- RUBRIK BAR -->
+    <div class="rubrik-bar">
+      <div class="rubrik active" id="rb-rankings" onclick="sb_showRubrik('rankings')">🏆 Rankings</div>
+      <div class="rubrik" id="rb-hochschulen" onclick="sb_showRubrik('hochschulen')">🏛️ Hochschulen</div>
+      <div class="rubrik" id="rb-studiengaenge" onclick="sb_showRubrik('studiengaenge')">📚 Studiengänge</div>
+      <div class="rubrik rubrik-gold" id="rb-bewerten" onclick="sb_showRubrik('bewerten')">👻 Bewerten</div>
+      <div class="rubrik rubrik-gold" id="rb-nichtgefunden" onclick="sb_showRubrik('nichtgefunden')">➕ Nicht gefunden?</div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         1. RANKINGS
+    ══════════════════════════════════════ -->
+    <div class="page active" id="page-rankings">
+      <div class="stats-grid">
+        <div class="stat"><div class="stat-icon">🏆</div><div class="stat-val" style="color:var(--gold)">24</div><div class="stat-label">Award-Träger 2025</div></div>
+        <div class="stat"><div class="stat-icon">🏛️</div><div class="stat-val" style="color:var(--accent2)">1.842</div><div class="stat-label">Hochschulen gelistet</div></div>
+        <div class="stat"><div class="stat-icon">👻</div><div class="stat-val" style="color:var(--success)">48.290</div><div class="stat-label">Bewertungen gesamt</div></div>
+        <div class="stat"><div class="stat-icon">📚</div><div class="stat-val" style="color:var(--info)">12.440</div><div class="stat-label">Studiengänge</div></div>
+      </div>
+
+      <!-- Academify Award Banner -->
+      <div class="gold-section" style="margin-bottom:1.3rem">
+        <div class="gold-section-inner">
+          <div style="display:flex;align-items:center;gap:14px">
+            <div style="font-size:40px">🏆</div>
+            <div style="flex:1">
+              <div style="font-family:'DM Serif Display',serif;font-size:18px;font-weight:400;color:var(--gold);margin-bottom:3px">Academify Award 2025</div>
+              <div style="font-size:12px;color:var(--muted);line-height:1.5">Hochschulen mit einem Score ≥ 9,0 erhalten den renommierten Academify Award. Die Auszeichnung basiert auf über 48.000 verifizierten Studierendenbewertungen.</div>
+            </div>
+            <div style="text-align:center;flex-shrink:0">
+              <div style="font-family:'DM Serif Display',serif;font-size:32px;color:var(--gold)">9,0+</div>
+              <div style="font-size:10px;color:var(--muted)">Mindest-Score</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ranking Filter Dropdowns -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:9px;margin-bottom:1.2rem">
+        <div>
+          <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted2);margin-bottom:5px">Land</div>
+          <div class="select-wrap"><select onchange="sb_applyRankingFilter()" style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text);outline:none;appearance:none;width:100%">
+            <option value="">All Countries</option>
+            <option value="AL">🇦🇱 Albania</option>
+            <option value="AD">🇦🇩 Andorra</option>
+            <option value="AT">🇦🇹 Austria</option>
+            <option value="BY">🇧🇾 Belarus</option>
+            <option value="BE">🇧🇪 Belgium</option>
+            <option value="BA">🇧🇦 Bosnia and Herzegovina</option>
+            <option value="BG">🇧🇬 Bulgaria</option>
+            <option value="HR">🇭🇷 Croatia</option>
+            <option value="CY">🇨🇾 Cyprus</option>
+            <option value="CZ">🇨🇿 Czech Republic</option>
+            <option value="DK">🇩🇰 Denmark</option>
+            <option value="EE">🇪🇪 Estonia</option>
+            <option value="FI">🇫🇮 Finland</option>
+            <option value="FR">🇫🇷 France</option>
+            <option value="DE">🇩🇪 Germany</option>
+            <option value="GR">🇬🇷 Greece</option>
+            <option value="HU">🇭🇺 Hungary</option>
+            <option value="IS">🇮🇸 Iceland</option>
+            <option value="IE">🇮🇪 Ireland</option>
+            <option value="IT">🇮🇹 Italy</option>
+            <option value="XK">🇽🇰 Kosovo</option>
+            <option value="LV">🇱🇻 Latvia</option>
+            <option value="LI">🇱🇮 Liechtenstein</option>
+            <option value="LT">🇱🇹 Lithuania</option>
+            <option value="LU">🇱🇺 Luxembourg</option>
+            <option value="MT">🇲🇹 Malta</option>
+            <option value="MD">🇲🇩 Moldova</option>
+            <option value="MC">🇲🇨 Monaco</option>
+            <option value="ME">🇲🇪 Montenegro</option>
+            <option value="NL">🇳🇱 Netherlands</option>
+            <option value="MK">🇲🇰 North Macedonia</option>
+            <option value="NO">🇳🇴 Norway</option>
+            <option value="PL">🇵🇱 Poland</option>
+            <option value="PT">🇵🇹 Portugal</option>
+            <option value="RO">🇷🇴 Romania</option>
+            <option value="RU">🇷🇺 Russia</option>
+            <option value="SM">🇸🇲 San Marino</option>
+            <option value="RS">🇷🇸 Serbia</option>
+            <option value="SK">🇸🇰 Slovakia</option>
+            <option value="SI">🇸🇮 Slovenia</option>
+            <option value="ES">🇪🇸 Spain</option>
+            <option value="SE">🇸🇪 Sweden</option>
+            <option value="CH">🇨🇭 Switzerland</option>
+            <option value="UA">🇺🇦 Ukraine</option>
+            <option value="GB">🇬🇧 United Kingdom</option>
+            <option value="VA">🇻🇦 Vatican City</option>
+            </select></div>
+        </div>
+        <div>
+          <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted2);margin-bottom:5px">Universität</div>
+          <div class="select-wrap"><select onchange="sb_applyRankingFilter()" style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text);outline:none;appearance:none;width:100%">
+            <option value="">Alle Größen</option>
+            <option>unter 5.000 Studierende</option>
+            <option>5.000–15.000 Studierende</option>
+            <option>über 15.000 Studierende</option>
+            <option>🌟 Excellence</option>
+          </select></div>
+        </div>
+        <div>
+          <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted2);margin-bottom:5px">Hochschule</div>
+          <div class="select-wrap"><select onchange="sb_applyRankingFilter()" style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text);outline:none;appearance:none;width:100%">
+            <option value="">Alle Größen</option>
+            <option>unter 5.000 Studierende</option>
+            <option>5.000–15.000 Studierende</option>
+            <option>über 15.000 Studierende</option>
+          </select></div>
+        </div>
+        <div>
+          <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted2);margin-bottom:5px">Studierende</div>
+          <div class="select-wrap"><select onchange="sb_applyRankingFilter()" style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text);outline:none;appearance:none;width:100%">
+            <option value="">Alle Größen</option>
+            <option value="xs">unter 2.000 Studierende</option>
+            <option value="s">2.000 – 5.000 Studierende</option>
+            <option value="m">5.000 – 15.000 Studierende</option>
+            <option value="l">15.000 – 30.000 Studierende</option>
+            <option value="xl">über 30.000 Studierende</option>
+          </select></div>
+        </div>
+      </div>
+
+      <!-- Top Rankings -->
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">🏆 Top-Hochschulen nach Score</span>
+          <span class="card-action" onclick="sb_showRubrik('hochschulen')">Alle 1.842 →</span>
+        </div>
+
+        <div class="rank-card gold-rank" onclick="sb_openUniDetail('lmu')">
+          <div class="rank-num" style="color:var(--gold)">1</div>
+          <div class="rank-logo" style="background:rgba(245,158,11,0.1)">🦁</div>
+          <div class="rank-info">
+            <div class="rank-name">Ludwig-Maximilians-Universität München <span class="award-badge">🏆 Award</span> <span style="font-size:9px;padding:2px 7px;border-radius:100px;background:rgba(56,189,248,0.12);color:var(--info);border:1px solid rgba(56,189,248,0.2);margin-left:3px">🌟 Excellence</span></div>
+            <div class="rank-sub">Universität · München ·</div>
+          </div>
+          <div>
+            <div class="rank-score" style="color:var(--gold)">9,4</div>
+            <div style="font-size:9px;color:var(--muted);text-align:right">2.841 Bewertungen</div>
+          </div>
+        </div>
+
+        <div class="rank-card gold-rank" onclick="sb_openUniDetail('tum')">
+          <div class="rank-num" style="color:var(--gold)">2</div>
+          <div class="rank-logo" style="background:rgba(56,189,248,0.1)">⚙️</div>
+          <div class="rank-info">
+            <div class="rank-name">Technische Universität München <span class="award-badge">🏆 Award</span> <span style="font-size:9px;padding:2px 7px;border-radius:100px;background:rgba(56,189,248,0.12);color:var(--info);border:1px solid rgba(56,189,248,0.2);margin-left:3px">🌟 Excellence</span></div>
+            <div class="rank-sub">Technische Universität · München ·</div>
+          </div>
+          <div>
+            <div class="rank-score" style="color:var(--gold)">9,2</div>
+            <div style="font-size:9px;color:var(--muted);text-align:right">3.120 Bewertungen</div>
+          </div>
+        </div>
+
+        <div class="rank-card gold-rank" onclick="sb_openUniDetail('hd')">
+          <div class="rank-num" style="color:var(--gold)">3</div>
+          <div class="rank-logo" style="background:rgba(167,139,250,0.1)">🔬</div>
+          <div class="rank-info">
+            <div class="rank-name">Ruprecht-Karls-Universität Heidelberg <span class="award-badge">🏆 Award</span> <span style="font-size:9px;padding:2px 7px;border-radius:100px;background:rgba(56,189,248,0.12);color:var(--info);border:1px solid rgba(56,189,248,0.2);margin-left:3px">🌟 Excellence</span></div>
+            <div class="rank-sub">Universität · Heidelberg ·</div>
+          </div>
+          <div>
+            <div class="rank-score" style="color:var(--gold)">9,1</div>
+            <div style="font-size:9px;color:var(--muted);text-align:right">1.988 Bewertungen</div>
+          </div>
+        </div>
+
+        <div class="rank-card" onclick="sb_openUniDetail('koeln')">
+          <div class="rank-num" style="color:var(--muted)">4</div>
+          <div class="rank-logo" style="background:rgba(74,222,128,0.1)">🏛️</div>
+          <div class="rank-info">
+            <div class="rank-name">Universität zu Köln</div>
+            <div class="rank-sub">Universität · Köln ·</div>
+          </div>
+          <div>
+            <div class="rank-score" style="color:var(--accent2)">8,7</div>
+            <div style="font-size:9px;color:var(--muted);text-align:right">4.820 Bewertungen</div>
+          </div>
+        </div>
+
+        <div class="rank-card" onclick="sb_openUniDetail('hub')">
+          <div class="rank-num" style="color:var(--muted)">5</div>
+          <div class="rank-logo" style="background:rgba(248,113,113,0.1)">🐻</div>
+          <div class="rank-info">
+            <div class="rank-name">Humboldt-Universität zu Berlin <span style="font-size:9px;padding:2px 7px;border-radius:100px;background:rgba(56,189,248,0.12);color:var(--info);border:1px solid rgba(56,189,248,0.2);margin-left:3px">🌟 Excellence</span></div>
+            <div class="rank-sub">Universität · Berlin ·</div>
+          </div>
+          <div>
+            <div class="rank-score" style="color:var(--accent2)">8,5</div>
+            <div style="font-size:9px;color:var(--muted);text-align:right">2.340 Bewertungen</div>
+          </div>
+        </div>
+
+        <div class="rank-card" onclick="sb_openUniDetail('ffm')">
+          <div class="rank-num" style="color:var(--muted)">6</div>
+          <div class="rank-logo" style="background:rgba(56,189,248,0.1)">🌆</div>
+          <div class="rank-info">
+            <div class="rank-name">Goethe-Universität Frankfurt</div>
+            <div class="rank-sub">Universität · Frankfurt am Main ·</div>
+          </div>
+          <div>
+            <div class="rank-score" style="color:var(--accent2)">8,3</div>
+            <div style="font-size:9px;color:var(--muted);text-align:right">3.612 Bewertungen</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         2. HOCHSCHULEN
+    ══════════════════════════════════════ -->
+    <div class="page" id="page-hochschulen">
+      <!-- Suchleiste -->
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" placeholder="Hochschule, Stadt oder Postleitzahl suchen...">
+        <button class="btn-ghost" style="font-size:11px;padding:6px 12px" onclick="sb_showToast('Suche wird ausgeführt — Funktion wird implementiert','info')">Suchen</button>
+      </div>
+
+      <div style="display:grid;grid-template-columns:240px 1fr;gap:14px">
+        <!-- Filter Panel -->
+        <div>
+          <div class="card" style="padding:.9rem">
+            <div style="font-size:11px;font-weight:500;margin-bottom:.9rem;display:flex;align-items:center;gap:6px">🎯 Filter</div>
+
+            <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted2);margin-bottom:.5rem">Standort</div>
+            <div class="field" style="margin-bottom:.7rem"><div class="select-wrap"><select><option value="">Select country...</option>
+<option value="AL">🇦🇱 Albania</option>
+<option value="AD">🇦🇩 Andorra</option>
+<option value="AT">🇦🇹 Austria</option>
+<option value="BY">🇧🇾 Belarus</option>
+<option value="BE">🇧🇪 Belgium</option>
+<option value="BA">🇧🇦 Bosnia and Herzegovina</option>
+<option value="BG">🇧🇬 Bulgaria</option>
+<option value="HR">🇭🇷 Croatia</option>
+<option value="CY">🇨🇾 Cyprus</option>
+<option value="CZ">🇨🇿 Czech Republic</option>
+<option value="DK">🇩🇰 Denmark</option>
+<option value="EE">🇪🇪 Estonia</option>
+<option value="FI">🇫🇮 Finland</option>
+<option value="FR">🇫🇷 France</option>
+<option value="DE" selected>🇩🇪 Germany</option>
+<option value="GR">🇬🇷 Greece</option>
+<option value="HU">🇭🇺 Hungary</option>
+<option value="IS">🇮🇸 Iceland</option>
+<option value="IE">🇮🇪 Ireland</option>
+<option value="IT">🇮🇹 Italy</option>
+<option value="XK">🇽🇰 Kosovo</option>
+<option value="LV">🇱🇻 Latvia</option>
+<option value="LI">🇱🇮 Liechtenstein</option>
+<option value="LT">🇱🇹 Lithuania</option>
+<option value="LU">🇱🇺 Luxembourg</option>
+<option value="MT">🇲🇹 Malta</option>
+<option value="MD">🇲🇩 Moldova</option>
+<option value="MC">🇲🇨 Monaco</option>
+<option value="ME">🇲🇪 Montenegro</option>
+<option value="NL">🇳🇱 Netherlands</option>
+<option value="MK">🇲🇰 North Macedonia</option>
+<option value="NO">🇳🇴 Norway</option>
+<option value="PL">🇵🇱 Poland</option>
+<option value="PT">🇵🇹 Portugal</option>
+<option value="RO">🇷🇴 Romania</option>
+<option value="RU">🇷🇺 Russia</option>
+<option value="SM">🇸🇲 San Marino</option>
+<option value="RS">🇷🇸 Serbia</option>
+<option value="SK">🇸🇰 Slovakia</option>
+<option value="SI">🇸🇮 Slovenia</option>
+<option value="ES">🇪🇸 Spain</option>
+<option value="SE">🇸🇪 Sweden</option>
+<option value="CH">🇨🇭 Switzerland</option>
+<option value="UA">🇺🇦 Ukraine</option>
+<option value="GB">🇬🇧 United Kingdom</option>
+<option value="VA">🇻🇦 Vatican City</option></select></div></div>
+            <div class="field" style="margin-bottom:.7rem"><input placeholder="Ort oder Postleitzahl" style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:8px 11px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text);outline:none;width:100%"></div>
+            <div class="field" style="margin-bottom:1rem"><div class="select-wrap"><select><option>Radius wählen...</option><option>5 km</option><option>10 km</option><option selected>20 km</option><option>50 km</option><option>100 km</option><option>150 km</option><option>200 km</option></select></div></div>
+
+            <div class="divider" style="margin:.6rem 0">Studierende</div>
+            <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:1rem">
+              <label style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);cursor:pointer"><input type="checkbox" style="accent-color:var(--accent)"> unter 2.000</label>
+              <label style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);cursor:pointer"><input type="checkbox" style="accent-color:var(--accent)"> 2.000 – 5.000</label>
+              <label style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);cursor:pointer"><input type="checkbox" checked style="accent-color:var(--accent)"> 5.000 – 15.000</label>
+              <label style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);cursor:pointer"><input type="checkbox" checked style="accent-color:var(--accent)"> 15.000 – 30.000</label>
+              <label style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);cursor:pointer"><input type="checkbox" style="accent-color:var(--accent)"> über 30.000</label>
+            </div>
+
+            <div class="divider" style="margin:.6rem 0">Trägerschaft</div>
+            <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:1rem">
+              <label style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);cursor:pointer"><input type="checkbox" checked style="accent-color:var(--accent)"> Staatlich</label>
+              <label style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);cursor:pointer"><input type="checkbox" style="accent-color:var(--accent)"> Privat</label>
+              <label style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);cursor:pointer"><input type="checkbox" style="accent-color:var(--accent)"> Kirchlich</label>
+            </div>
+
+            <button class="btn-primary" style="width:100%;font-size:12px" onclick="sb_showToast('Filter werden angewendet...','info')">Filter anwenden</button>
+            <button class="btn-ghost" style="width:100%;font-size:11px;margin-top:6px" onclick="sb_showToast('Filter zurueckgesetzt','info')">Zurücksetzen</button>
+          </div>
+        </div>
+
+        <!-- Results -->
+        <div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:.9rem">1.842 Hochschulen gefunden</div>
+          <div class="grid-2">
+            <div class="uni-card" onclick="sb_openUniDetail('lmu')">
+              <div class="uni-cover" style="background:rgba(245,158,11,0.08)">🦁
+                <div style="position:absolute;top:8px;right:8px;display:flex;flex-direction:column;gap:4px;align-items:flex-end">
+                  <div style="font-size:9px;padding:2px 7px;border-radius:100px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0d0e14;font-weight:600">🏆 Award</div>
+                  <div style="font-size:9px;padding:2px 7px;border-radius:100px;background:rgba(56,189,248,0.15);color:var(--info);border:1px solid rgba(56,189,248,0.25)">🌟 Excellence</div>
+                </div>
+              </div>
+              <div class="uni-body">
+                <div class="uni-name">LMU München</div>
+                <div class="uni-meta">Universität · München · staatlich ·</div>
+                <div class="uni-tags"><span class="uni-tag">Universität</span><span class="uni-tag">Bayern</span></div>
+                <div class="uni-score"><span style="color:var(--gold)">★★★★★</span><span style="font-weight:500;color:var(--gold)">9,4</span><span style="color:var(--muted2)">(2.841)</span></div>
+              </div>
+            </div>
+            <div class="uni-card" onclick="sb_openUniDetail('tum')">
+              <div class="uni-cover" style="background:rgba(56,189,248,0.08)">⚙️
+                <div style="position:absolute;top:8px;right:8px;display:flex;flex-direction:column;gap:4px;align-items:flex-end">
+                  <div style="font-size:9px;padding:2px 7px;border-radius:100px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0d0e14;font-weight:600">🏆 Award</div>
+                  <div style="font-size:9px;padding:2px 7px;border-radius:100px;background:rgba(56,189,248,0.15);color:var(--info);border:1px solid rgba(56,189,248,0.25)">🌟 Excellence</div>
+                </div>
+              </div>
+              <div class="uni-body">
+                <div class="uni-name">TU München</div>
+                <div class="uni-meta">Technische Universität · München · staatlich ·</div>
+                <div class="uni-tags"><span class="uni-tag">Technik</span><span class="uni-tag">Bayern</span></div>
+                <div class="uni-score"><span style="color:var(--gold)">★★★★★</span><span style="font-weight:500;color:var(--gold)">9,2</span><span style="color:var(--muted2)">(3.120)</span></div>
+              </div>
+            </div>
+            <div class="uni-card" onclick="sb_openUniDetail('koeln')">
+              <div class="uni-cover" style="background:rgba(74,222,128,0.08)">🏛️
+                <div style="position:absolute;top:8px;right:8px;font-size:9px;padding:2px 7px;border-radius:100px;background:rgba(56,189,248,0.15);color:var(--info);border:1px solid rgba(56,189,248,0.25)">🌟 Excellence</div>
+              </div>
+              <div class="uni-body">
+                <div class="uni-name">Universität zu Köln</div>
+                <div class="uni-meta">Universität · Köln · staatlich ·</div>
+                <div class="uni-tags"><span class="uni-tag">Universität</span><span class="uni-tag">NRW</span></div>
+                <div class="uni-score"><span style="color:var(--warn)">★★★★☆</span><span style="font-weight:500;color:var(--accent2)">8,7</span><span style="color:var(--muted2)">(4.820)</span></div>
+              </div>
+            </div>
+            <div class="uni-card" onclick="sb_openUniDetail('rwth')">
+              <div class="uni-cover" style="background:rgba(167,139,250,0.08)">🔧
+                <div style="position:absolute;top:8px;right:8px;font-size:9px;padding:2px 7px;border-radius:100px;background:rgba(56,189,248,0.15);color:var(--info);border:1px solid rgba(56,189,248,0.25)">🌟 Excellence</div>
+              </div>
+              <div class="uni-body">
+                <div class="uni-name">RWTH Aachen</div>
+                <div class="uni-meta">Technische Universität · Aachen · staatlich ·</div>
+                <div class="uni-tags"><span class="uni-tag">Ingenieur</span><span class="uni-tag">NRW</span></div>
+                <div class="uni-score"><span style="color:var(--warn)">★★★★☆</span><span style="font-weight:500;color:var(--accent2)">8,9</span><span style="color:var(--muted2)">(2.540)</span></div>
+              </div>
+            </div>
+          </div>
+          <button class="btn-ghost" style="width:100%;font-size:12px" onclick="sb_showToast('Weitere Hochschulen werden geladen...','info')">Weitere 20 laden →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         3. STUDIENGÄNGE
+    ══════════════════════════════════════ -->
+    <div class="page" id="page-studiengaenge">
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" placeholder="Studiengang suchen, z.B. Wirtschaftspsychologie...">
+      </div>
+
+      <div class="filter-row">
+        <div class="fpill on" onclick="sb_sgFilter(this,'alle')">Alle Studiengänge</div>
+        <div class="fpill" onclick="sb_sgFilter(this,'bachelor')">🎓 Bachelor</div>
+        <div class="fpill" onclick="sb_sgFilter(this,'master')">🎓 Master</div>
+        <div class="fpill" onclick="sb_sgFilter(this,'staatsexamen')">⚖️ Staatsexamen</div>
+        <div class="fpill" onclick="sb_sgFilter(this,'dual')">🏢 Duales Studium</div>
+        <div class="fpill" onclick="sb_sgFilter(this,'fern')">💻 Fernstudium</div>
+      </div>
+
+      <div style="font-size:12px;font-weight:500;margin-bottom:.9rem">Alle Fachrichtungen</div>
+      <div class="sg-cat-grid" id="sgCatGrid">
+        <!-- rendered by JS -->
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         4. BEWERTEN
+    ══════════════════════════════════════ -->
+    <div class="page" id="page-bewerten">
+      <div class="gold-note"><span style="font-size:16px;flex-shrink:0">👻</span><div><strong style="color:var(--gold)">Deine Bewertung zählt!</strong> Helfe anderen Studierenden bei der Entscheidung für das richtige Studium. Deine Erfahrungen sind unbezahlbar.</div></div>
+
+      <!-- Step Wizard -->
+      <div class="card">
+        <div style="font-family:'DM Serif Display',serif;font-size:20px;font-weight:400;margin-bottom:.3rem">Studiengang <em style="font-style:italic;color:var(--accent2)">bewerten</em></div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:1.4rem">In wenigen Schritten deine Erfahrungen teilen</div>
+
+        <div class="steps" id="bewertSteps">
+          <div class="wstep active" id="bws1"><div class="wstep-circle">1</div><div class="wstep-label">Auswahl</div></div>
+          <div class="wstep" id="bws2"><div class="wstep-circle">2</div><div class="wstep-label">Bewertung</div></div>
+          <div class="wstep" id="bws3"><div class="wstep-circle">3</div><div class="wstep-label">Erfahrungen</div></div>
+          <div class="wstep" id="bws4"><div class="wstep-circle">4</div><div class="wstep-label">Deine Person</div></div>
+          <div class="wstep" id="bws5"><div class="wstep-circle">5</div><div class="wstep-label">Abschluss</div></div>
+        </div>
+
+        <!-- Step 1: Auswahl — Reihenfolge: Land → Region → Studienort → Hochschule → Kategorie → Studiengang -->
+        <div class="step-panel active" id="bwp1">
+          <div class="info-note" style="background:rgba(74,222,128,0.05);border-color:rgba(74,222,128,0.2)"><span style="font-size:14px;flex-shrink:0">🔒</span><div><strong style="color:var(--success)">Transparenz-Prinzip:</strong> Du kannst nur deinen eingeschriebenen Studiengang an deiner Hochschule bewerten. Alle Felder werden automatisch aus deinem Profil übernommen.</div></div>
+
+          <!-- 1. Land — locked -->
+          <div class="field">
+            <label>Land <span class="req">*</span></label>
+            <div style="background:var(--surface2);border:1.5px solid rgba(124,109,250,0.15);border-radius:9px;padding:11px 13px;display:flex;align-items:center;gap:9px">
+              <span style="font-size:16px;flex-shrink:0">🔒</span>
+              <div style="flex:1"><div style="font-size:13px;color:var(--muted)">🇩🇪 DE — Deutschland</div><div style="font-size:10px;color:var(--muted2)">Aus deinem Profil</div></div>
+            </div>
+          </div>
+
+          <!-- 2. Region / Bundesland — locked (aus Profil) -->
+          <div class="field">
+            <label>Region / Bundesland <span class="req">*</span></label>
+            <div style="background:var(--surface2);border:1.5px solid rgba(124,109,250,0.15);border-radius:9px;padding:11px 13px;display:flex;align-items:center;gap:9px">
+              <span style="font-size:16px;flex-shrink:0">🔒</span>
+              <div style="flex:1"><div style="font-size:13px;color:var(--muted)">Nordrhein-Westfalen (NRW)</div><div style="font-size:10px;color:var(--muted2)">Aus deinem Profil</div></div>
+            </div>
+          </div>
+
+          <!-- 3. Studienort — locked -->
+          <div class="field">
+            <label>Studienort <span class="req">*</span></label>
+            <div style="background:var(--surface2);border:1.5px solid rgba(124,109,250,0.15);border-radius:9px;padding:11px 13px;display:flex;align-items:center;gap:9px">
+              <span style="font-size:16px;flex-shrink:0">🔒</span>
+              <div style="flex:1"><div style="font-size:13px;color:var(--muted)">Köln</div><div style="font-size:10px;color:var(--muted2)">Aus deinem Profil</div></div>
+            </div>
+          </div>
+
+          <!-- 4. Hochschule — locked -->
+          <div class="field">
+            <label>Hochschule / Universität <span class="req">*</span></label>
+            <div style="background:var(--surface2);border:1.5px solid rgba(124,109,250,0.15);border-radius:9px;padding:11px 13px;display:flex;align-items:center;gap:9px">
+              <span style="font-size:16px;flex-shrink:0">🔒</span>
+              <div style="flex:1"><div style="font-size:13px;color:var(--muted)">Universität zu Köln</div><div style="font-size:10px;color:var(--muted2)">Aus deinem Profil</div></div>
+              <span style="font-size:9px;padding:2px 8px;border-radius:100px;background:rgba(74,222,128,0.1);color:var(--success);border:1px solid rgba(74,222,128,0.2)">✓ Verifiziert</span>
+            </div>
+          </div>
+
+          <!-- 5. Fachkategorie — locked (aus Studiengang) -->
+          <div class="field">
+            <label>Fachkategorie <span class="req">*</span></label>
+            <div style="background:var(--surface2);border:1.5px solid rgba(124,109,250,0.15);border-radius:9px;padding:11px 13px;display:flex;align-items:center;gap:9px">
+              <span style="font-size:16px;flex-shrink:0">🔒</span>
+              <div style="flex:1"><div style="font-size:13px;color:var(--muted)">🏥 Medizin & Gesundheitswesen</div><div style="font-size:10px;color:var(--muted2)">Automatisch aus deinem Studiengang ermittelt</div></div>
+            </div>
+          </div>
+
+          <!-- 6. Studiengang an der Hochschule — locked -->
+          <div class="field">
+            <label>Studiengang an der Hochschule <span class="req">*</span></label>
+            <div style="background:var(--surface2);border:1.5px solid rgba(124,109,250,0.25);border-radius:9px;padding:11px 13px;display:flex;align-items:center;gap:9px">
+              <span style="font-size:16px;flex-shrink:0">🔒</span>
+              <div style="flex:1">
+                <div style="font-size:13px;font-weight:500" id="bwSg">Wirtschaftspsychologie B.Sc. (PO 2022)</div>
+                <div style="font-size:10px;color:var(--muted)">Eingeschriebener Studiengang aus deinem Profil</div>
+              </div>
+              <span style="font-size:9px;padding:2px 8px;border-radius:100px;background:rgba(74,222,128,0.1);color:var(--success);border:1px solid rgba(74,222,128,0.2)">✓ Verifiziert</span>
+            </div>
+          </div>
+
+          <div style="background:rgba(56,189,248,0.04);border:1px solid rgba(56,189,248,0.12);border-radius:9px;padding:10px 13px;font-size:12px;color:var(--muted);margin-bottom:1rem;line-height:1.6">
+            ℹ️ Stimmen deine Daten nicht? <span style="color:var(--accent2);cursor:pointer" onclick="sb_showToast('Profil-Seite wird geoeffnet...','info')">Profil bearbeiten →</span>
+          </div>
+
+          <button class="btn-primary" onclick="sb_bwNext(2)">Weiter zur Bewertung →</button>
+        </div>
+
+        <!-- Step 2: Bewertung -->
+        <div class="step-panel" id="bwp2">
+          <div class="info-note"><span style="font-size:14px;flex-shrink:0">👻</span><div>Bewerte jeden Bereich mit 1–5 Geistern. 1 👻 = Mangelhaft · 5 👻👻👻👻👻 = Sehr gut</div></div>
+
+          <div id="criteriaList">
+            <!-- rendered by JS -->
+          </div>
+
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:13px;margin-top:.9rem">
+            <div style="font-size:12px;font-weight:500;margin-bottom:.4rem">Gesamtbewertung (automatisch)</div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="font-family:'DM Serif Display',serif;font-size:32px;color:var(--gold)" id="totalScore">—</div>
+              <div id="totalGhosts" style="font-size:24px">—</div>
+              <div style="font-size:11px;color:var(--muted)" id="totalLabel">Noch nicht bewertet</div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:8px;margin-top:1rem">
+            <button class="btn-ghost" onclick="sb_bwNext(1)">← Zurück</button>
+            <button class="btn-primary" onclick="sb_bwNext(3)">Weiter →</button>
+          </div>
+        </div>
+
+        <!-- Step 3: Erfahrungen -->
+        <div class="step-panel" id="bwp3">
+          <div class="field">
+            <label>Titel deiner Erfahrung <span class="req">*</span></label>
+            <input id="bwTitle" maxlength="50" placeholder="z.B. Praxisnahe Ausbildung mit top Professoren" oninput="document.getElementById('bwTitleC').textContent=this.value.length+'/50'">
+            <div class="char-count" id="bwTitleC">0/50</div>
+          </div>
+          <div class="field">
+            <label>Deine Erfahrungen <span class="req">*</span></label>
+            <textarea id="bwText" maxlength="300" rows="4" placeholder="Was hat dich überrascht? Was lief gut, was weniger gut?" oninput="document.getElementById('bwTextC').textContent=this.value.length+'/300'"></textarea>
+            <div class="char-count" id="bwTextC">0/300</div>
+          </div>
+
+          <div class="field">
+            <label>Würdest du dein Studium empfehlen? <span class="req">*</span></label>
+            <div class="recommend-row">
+              <div class="rec-btn" id="recYes" onclick="sb_selectRec('yes')">
+                🔥
+                <div class="rec-label">Ja, empfehle ich!</div>
+              </div>
+              <div class="rec-btn" id="recNo" onclick="sb_selectRec('no')">
+                💩
+                <div class="rec-label">Würde ich nicht empfehlen</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Pro & Kontra deines Studiengangs</label>
+            <div class="procon-grid">
+              <div class="pro-box">
+                <div class="pc-head" style="color:var(--success)">✓ Pro</div>
+                <div id="proList">
+                  <div class="pc-item"><span style="color:var(--success)">+</span>Gute Betreuung</div>
+                  <div class="pc-item"><span style="color:var(--success)">+</span>Praxisorientiert</div>
+                </div>
+                <div class="pc-add">
+                  <input class="pc-input" id="proInput" placeholder="Pro hinzufügen..." onkeydown="sb_addProCon(event,'pro')">
+                  <button onclick="sb_addProCon({key:'Enter'},'pro')" style="background:none;border:none;color:var(--success);cursor:pointer;font-size:14px">+</button>
+                </div>
+              </div>
+              <div class="con-box">
+                <div class="pc-head" style="color:var(--coral)">✗ Kontra</div>
+                <div id="conList">
+                  <div class="pc-item"><span style="color:var(--coral)">−</span>Hoher Workload</div>
+                </div>
+                <div class="pc-add">
+                  <input class="pc-input" id="conInput" placeholder="Kontra hinzufügen..." onkeydown="sb_addProCon(event,'con')">
+                  <button onclick="sb_addProCon({key:'Enter'},'con')" style="background:none;border:none;color:var(--coral);cursor:pointer;font-size:14px">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Wie gut ist die Hochschule digital aufgestellt?</label>
+            <textarea maxlength="300" rows="3" placeholder="E-Learning, Lernmanagementsysteme, digitale Angebote..." oninput="if(this.value.length>300)this.value=this.value.slice(0,300)"></textarea>
+          </div>
+
+          <div style="display:flex;gap:8px">
+            <button class="btn-ghost" onclick="sb_bwNext(2)">← Zurück</button>
+            <button class="btn-primary" onclick="sb_bwNext(4)">Weiter →</button>
+          </div>
+        </div>
+
+        <!-- Step 4: Deine Person -->
+        <div class="step-panel" id="bwp4">
+          <div class="info-note"><span style="font-size:14px;flex-shrink:0">🔒</span><div>Deine persönlichen Daten werden anonymisiert dargestellt. Nur Altersgruppe, Geschlecht und Studieninfos sind öffentlich sichtbar.</div></div>
+
+          <div class="field-row">
+            <div class="field">
+              <label>Geschlecht</label>
+              <div class="select-wrap"><select><option>Weiblich</option><option>Männlich</option><option>Divers</option><option>Keine Angabe</option></select></div>
+            </div>
+            <div class="field">
+              <label>Altersgruppe <span style="font-size:9px;color:var(--muted2);letter-spacing:0;text-transform:none">(aus Profil)</span></label>
+              <div style="background:var(--surface2);border:1px solid rgba(124,109,250,0.2);border-radius:9px;padding:10px 13px;display:flex;align-items:center;gap:7px">
+                <span style="font-size:13px;color:var(--muted2)">🔒</span>
+                <span style="font-size:13px;color:var(--muted)">21–23 <span style="font-size:11px;color:var(--muted2)">(aus Profil)</span></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label>Abschluss vorhanden?</label>
+              <div class="select-wrap"><select><option selected>Ja</option><option>Nein</option><option>Ich studiere noch!</option></select></div>
+            </div>
+            <div class="field">
+              <label>Studienbeginn <span style="font-size:9px;color:var(--muted2);text-transform:none;letter-spacing:0">(auch monatsgenau für private Hochschulen)</span></label>
+              <input type="month" id="ng_studienbeginn" value="2026-10"
+                style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px 13px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;width:100%;transition:border-color .2s;appearance:none;-webkit-appearance:none"
+                onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+              <div class="field-hint">Format: MM.JJJJ — z.B. Oktober 2026 = 10/2026</div>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label>Aktuelles Fachsemester</label>
+              <input value="1" type="number" min="1" max="20">
+            </div>
+            <div class="field">
+              <label>E-Mail-Adresse</label>
+              <input value="max.mueller@example.de" type="email" style="color:var(--muted)">
+              <div class="field-hint">Aus deinem Profil — wird nicht veröffentlicht</div>
+            </div>
+          </div>
+
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px 13px;font-size:12px;color:var(--muted);margin-bottom:1rem">
+            ✓ Geschrieben & veröffentlicht wird automatisch vermerkt.
+          </div>
+
+          <div style="display:flex;gap:8px">
+            <button class="btn-ghost" onclick="sb_bwNext(3)">← Zurück</button>
+            <button class="btn-primary" onclick="sb_bwNext(5)">Vorschau & Absenden →</button>
+          </div>
+        </div>
+
+        <!-- Step 5: Abschluss -->
+        <div class="step-panel" id="bwp5">
+          <div style="text-align:center;padding:1.5rem 1rem">
+            <div style="font-size:48px;margin-bottom:1rem">👻</div>
+            <div style="font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;margin-bottom:.4rem">Bewertung <em style="font-style:italic;color:var(--success)">abschicken?</em></div>
+            <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:1.5rem">Deine Bewertung hilft tausenden Studierenden bei ihrer Entscheidung.<br>Nach einer kurzen Prüfung wird sie veröffentlicht.</div>
+            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:1rem;text-align:left;margin-bottom:1.3rem">
+              <div style="font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted2);margin-bottom:.6rem">Zusammenfassung</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px">
+                <div><span style="color:var(--muted)">Studiengang:</span> <span id="bwSumSg">—</span></div>
+                <div><span style="color:var(--muted)">Hochschule:</span> <span>Uni Köln</span></div>
+                <div><span style="color:var(--muted)">Gesamtscore:</span> <span id="bwSumScore" style="color:var(--gold)">—</span></div>
+                <div><span style="color:var(--muted)">Empfehlung:</span> <span id="bwSumRec">—</span></div>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:center">
+              <button class="btn-ghost" onclick="sb_bwNext(4)">← Bearbeiten</button>
+              <button class="btn-gold" onclick="sb_submitBewertung()">👻 Bewertung veröffentlichen</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vorhandene Bewertungen -->
+      <div class="card">
+        <div class="card-head"><span class="card-title">👻 Aktuelle Bewertungen — Wirtschaftspsychologie · Uni Köln</span><span class="card-action">Alle ansehen →</span></div>
+
+        <div class="review-card">
+          <div class="review-head">
+            <div class="review-av" style="background:rgba(124,109,250,0.12);color:var(--accent2)">LM</div>
+            <div class="review-meta">
+              <div class="review-name">Lisa M.</div>
+              <div class="review-info">WiPsy B.Sc. · Uni Köln · Sem. 5 · weiblich · 21–23 · 2023</div>
+            </div>
+            <div class="review-score">👻👻👻👻👻</div>
+          </div>
+          <div style="font-size:13px;font-weight:500;margin-bottom:.4rem">"Praxisnah und wirklich empfehlenswert!"</div>
+          <div class="review-body">Ich bin sehr zufrieden mit dem Studium. Die Kombination aus Psychologie und BWL ist einzigartig. Besonders die Dozenten sind sehr engagiert und stets ansprechbar. Der Workload ist hoch, aber machbar. 🔥 Würde ich definitiv weiterempfehlen.</div>
+          <div style="display:flex;gap:8px;margin-bottom:.6rem;flex-wrap:wrap">
+            <span style="font-size:10px;padding:2px 8px;border-radius:100px;background:rgba(74,222,128,0.08);color:var(--success)">+ Gute Betreuung</span>
+            <span style="font-size:10px;padding:2px 8px;border-radius:100px;background:rgba(74,222,128,0.08);color:var(--success)">+ Praxisorientiert</span>
+            <span style="font-size:10px;padding:2px 8px;border-radius:100px;background:rgba(248,113,113,0.08);color:var(--coral)">− Hoher Workload</span>
+          </div>
+          <div class="review-actions">
+            <span class="review-act">👁 342 gesehen</span>
+            <span class="review-act" onclick="sb_showToast('👍 Hilfreich markiert!','success')">👍 Hilfreich (47)</span>
+            <span class="review-act" onclick="sb_showToast('Meldung wurde gesendet','info')">🚩 Melden</span>
+          </div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-head">
+            <div class="review-av" style="background:rgba(56,189,248,0.1);color:var(--info)">TW</div>
+            <div class="review-meta">
+              <div class="review-name">Tom W.</div>
+              <div class="review-info">WiPsy B.Sc. · Uni Köln · Sem. 3 · männlich · 21–23 · 2024</div>
+            </div>
+            <div class="review-score">👻👻👻👻</div>
+          </div>
+          <div style="font-size:13px;font-weight:500;margin-bottom:.4rem">"Gut, aber mit Luft nach oben"</div>
+          <div class="review-body">Der Studiengang macht Spaß, aber die Organisation ist manchmal chaotisch. Raumänderungen passieren kurzfristig und die digitale Infrastruktur ist ausbaufähig. Inhaltlich jedoch sehr interessant.</div>
+          <div style="display:flex;gap:8px;margin-bottom:.6rem;flex-wrap:wrap">
+            <span style="font-size:10px;padding:2px 8px;border-radius:100px;background:rgba(74,222,128,0.08);color:var(--success)">+ Interessante Inhalte</span>
+            <span style="font-size:10px;padding:2px 8px;border-radius:100px;background:rgba(248,113,113,0.08);color:var(--coral)">− Schlechte Organisation</span>
+            <span style="font-size:10px;padding:2px 8px;border-radius:100px;background:rgba(248,113,113,0.08);color:var(--coral)">− Digitalisierung schwach</span>
+          </div>
+          <div class="review-actions">
+            <span class="review-act">👁 187 gesehen</span>
+            <span class="review-act" onclick="sb_showToast('👍 Hilfreich markiert!','success')">👍 Hilfreich (23)</span>
+            <span class="review-act" onclick="sb_showToast('Meldung wurde gesendet','info')">🚩 Melden</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         5. NICHT GEFUNDEN
+    ══════════════════════════════════════ -->
+    <div class="page" id="page-nichtgefunden">
+      <div class="gold-section" style="margin-bottom:1.3rem">
+        <div class="gold-section-inner" style="text-align:center">
+          <div style="font-size:36px;margin-bottom:.7rem">🔍</div>
+          <div style="font-family:'DM Serif Display',serif;font-size:20px;color:var(--gold);margin-bottom:.4rem">Studiengang oder Hochschule nicht gefunden?</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.6">Hilf uns die Datenbank zu vervollständigen! Jeder eingetragene Studiengang hilft tausenden Studierenden.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="font-family:'DM Serif Display',serif;font-size:18px;font-weight:400;margin-bottom:.3rem">Studiengang <em style="font-style:italic;color:var(--accent2)">eintragen</em></div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:1.3rem">Bitte prüfe zuerst ob der Studiengang bereits existiert, bevor du ihn einträgst.</div>
+
+        <!-- Option 1 / 2 Auswahl -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.2rem">
+          <div class="radio-item selected" id="opt1btn" onclick="sb_selectOpt(1)">
+            <div class="radio-dot"><div></div></div>
+            <div>
+              <div style="font-size:12px;font-weight:500;margin-bottom:2px">Option 1 — Hochschule vorhanden</div>
+              <div style="font-size:10px;color:var(--muted)">Hochschule bereits in der Datenbank</div>
+            </div>
+          </div>
+          <div class="radio-item" id="opt2btn" onclick="sb_selectOpt(2)">
+            <div class="radio-dot"></div>
+            <div>
+              <div style="font-size:12px;font-weight:500;margin-bottom:2px">Option 2 — Neue Hochschule</div>
+              <div style="font-size:10px;color:var(--muted)">Hochschule noch nicht eingetragen</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Option 1 -->
+          <div id="optForm1">
+          <!-- Land | Region -->
+          <div class="field-row">
+            <div class="field">
+              <label>Land der Hochschule <span class="req">*</span></label>
+              <div class="select-wrap"><select id="ng1_land" onchange="sb_showToast('Land gewählt','info')">
+                <option value="">Please select...</option>
+<option value="AL">🇦🇱 Albania</option>
+<option value="AD">🇦🇩 Andorra</option>
+<option value="AT">🇦🇹 Austria</option>
+<option value="BY">🇧🇾 Belarus</option>
+<option value="BE">🇧🇪 Belgium</option>
+<option value="BA">🇧🇦 Bosnia and Herzegovina</option>
+<option value="BG">🇧🇬 Bulgaria</option>
+<option value="HR">🇭🇷 Croatia</option>
+<option value="CY">🇨🇾 Cyprus</option>
+<option value="CZ">🇨🇿 Czech Republic</option>
+<option value="DK">🇩🇰 Denmark</option>
+<option value="EE">🇪🇪 Estonia</option>
+<option value="FI">🇫🇮 Finland</option>
+<option value="FR">🇫🇷 France</option>
+<option value="DE">🇩🇪 Germany</option>
+<option value="GR">🇬🇷 Greece</option>
+<option value="HU">🇭🇺 Hungary</option>
+<option value="IS">🇮🇸 Iceland</option>
+<option value="IE">🇮🇪 Ireland</option>
+<option value="IT">🇮🇹 Italy</option>
+<option value="XK">🇽🇰 Kosovo</option>
+<option value="LV">🇱🇻 Latvia</option>
+<option value="LI">🇱🇮 Liechtenstein</option>
+<option value="LT">🇱🇹 Lithuania</option>
+<option value="LU">🇱🇺 Luxembourg</option>
+<option value="MT">🇲🇹 Malta</option>
+<option value="MD">🇲🇩 Moldova</option>
+<option value="MC">🇲🇨 Monaco</option>
+<option value="ME">🇲🇪 Montenegro</option>
+<option value="NL">🇳🇱 Netherlands</option>
+<option value="MK">🇲🇰 North Macedonia</option>
+<option value="NO">🇳🇴 Norway</option>
+<option value="PL">🇵🇱 Poland</option>
+<option value="PT">🇵🇹 Portugal</option>
+<option value="RO">🇷🇴 Romania</option>
+<option value="RU">🇷🇺 Russia</option>
+<option value="SM">🇸🇲 San Marino</option>
+<option value="RS">🇷🇸 Serbia</option>
+<option value="SK">🇸🇰 Slovakia</option>
+<option value="SI">🇸🇮 Slovenia</option>
+<option value="ES">🇪🇸 Spain</option>
+<option value="SE">🇸🇪 Sweden</option>
+<option value="CH">🇨🇭 Switzerland</option>
+<option value="UA">🇺🇦 Ukraine</option>
+<option value="GB">🇬🇧 United Kingdom</option>
+<option value="VA">🇻🇦 Vatican City</option>
+              </select></div>
+            </div>
+            <div class="field">
+              <label>Region / Bundesland <span class="req">*</span></label>
+              <div class="select-wrap"><select id="ng1_region">
+                <option value="">Region wählen...</option>
+                <optgroup label="── Deutschland ──">
+                <option value="BW">Baden-Württemberg</option>
+                <option value="BY">Bayern</option>
+                <option value="BE">Berlin</option>
+                <option value="BB">Brandenburg</option>
+                <option value="HB">Bremen</option>
+                <option value="HH">Hamburg</option>
+                <option value="HE">Hessen</option>
+                <option value="MV">Mecklenburg-Vorpommern</option>
+                <option value="NI">Niedersachsen</option>
+                <option value="NW">Nordrhein-Westfalen</option>
+                <option value="RP">Rheinland-Pfalz</option>
+                <option value="SL">Saarland</option>
+                <option value="SN">Sachsen</option>
+                <option value="ST">Sachsen-Anhalt</option>
+                <option value="SH">Schleswig-Holstein</option>
+                <option value="TH">Thüringen</option>
+                </optgroup>
+                <optgroup label="── Österreich ──">
+                <option value="AT-B">Burgenland</option>
+                <option value="AT-K">Kärnten</option>
+                <option value="AT-NO">Niederösterreich</option>
+                <option value="AT-OO">Oberösterreich</option>
+                <option value="AT-S">Salzburg</option>
+                <option value="AT-ST">Steiermark</option>
+                <option value="AT-T">Tirol</option>
+                <option value="AT-V">Vorarlberg</option>
+                <option value="AT-W">Wien</option>
+                </optgroup>
+                <optgroup label="── Schweiz ──">
+                <option value="CH-ZH">Zürich</option>
+                <option value="CH-BE">Bern</option>
+                <option value="CH-GE">Genf</option>
+                <option value="CH-BS">Basel</option>
+                <option value="CH-AG">Aargau</option>
+                </optgroup>
+                <optgroup label="── Sonstige ──">
+                <option value="OTHER">Andere Region</option>
+                </optgroup>
+              </select></div>
+            </div>
+          </div>
+          <!-- Hochschule | Kategorie -->
+          <div class="field-row">
+            <div class="field">
+              <label>Hochschule auswählen <span class="req">*</span></label>
+              <div class="select-wrap"><select id="ng1_hs">
+                <option>Hochschule suchen...</option>
+                <option>Universität zu Köln</option><option>LMU München</option>
+                <option>TU München</option><option>HU Berlin</option>
+                <option>Goethe-Universität Frankfurt</option><option>RWTH Aachen</option>
+              </select></div>
+            </div>
+            <div class="field">
+              <label>Kategorie des Studiengangs <span class="req">*</span></label>
+              <div class="select-wrap"><select id="ng1_kat">
+                <option value="">Kategorie wählen...</option>
+                <option value="wiwi">💼 Wirtschaft &amp; Recht</option>
+                <option value="medizin">🏥 Medizin &amp; Gesundheitswesen</option>
+                <option value="informatik">💻 Informatik &amp; Mathematik</option>
+                <option value="nawi">🔬 Naturwissenschaften</option>
+                <option value="technik">⚙️ Technik &amp; Ingenieurwesen</option>
+                <option value="geist">📖 Sprach- &amp; Kulturwissenschaften</option>
+                <option value="gesell">🌍 Gesellschaftswissenschaften</option>
+                <option value="medien">📺 Medien &amp; Kommunikation</option>
+                <option value="kunst">🎨 Kunst, Gestaltung &amp; Musik</option>
+                <option value="agrar">🌾 Agrar &amp; Forstwissenschaften</option>
+              </select></div>
+            </div>
+          </div>
+          <!-- Studiengang (full width) -->
+          <div class="field">
+            <label>Titel des Studiengangs <span class="req">*</span></label>
+            <input id="ng1_sg" placeholder="z.B. Verhaltensökonomie B.Sc.">
+          </div>
+          <div class="field">
+            <label>Link zur Studienbeschreibung <span class="req">*</span></label>
+            <input type="url" id="ng1_url" placeholder="https://www.uni-beispiel.de/studiengang/...">
+            <div class="field-hint">Direkter Link zur offiziellen Studiengangsbeschreibung der Hochschule</div>
+          </div>
+        </div>
+
+
+        <!-- Option 2 -->
+        <div id="optForm2" style="display:none">
+          <!-- Land | Region -->
+          <div class="field-row">
+            <div class="field">
+              <label>Land der Hochschule <span class="req">*</span></label>
+              <div class="select-wrap"><select id="ng2_land">
+                <option value="">Please select...</option>
+<option value="AL">🇦🇱 Albania</option>
+<option value="AD">🇦🇩 Andorra</option>
+<option value="AT">🇦🇹 Austria</option>
+<option value="BY">🇧🇾 Belarus</option>
+<option value="BE">🇧🇪 Belgium</option>
+<option value="BA">🇧🇦 Bosnia and Herzegovina</option>
+<option value="BG">🇧🇬 Bulgaria</option>
+<option value="HR">🇭🇷 Croatia</option>
+<option value="CY">🇨🇾 Cyprus</option>
+<option value="CZ">🇨🇿 Czech Republic</option>
+<option value="DK">🇩🇰 Denmark</option>
+<option value="EE">🇪🇪 Estonia</option>
+<option value="FI">🇫🇮 Finland</option>
+<option value="FR">🇫🇷 France</option>
+<option value="DE">🇩🇪 Germany</option>
+<option value="GR">🇬🇷 Greece</option>
+<option value="HU">🇭🇺 Hungary</option>
+<option value="IS">🇮🇸 Iceland</option>
+<option value="IE">🇮🇪 Ireland</option>
+<option value="IT">🇮🇹 Italy</option>
+<option value="XK">🇽🇰 Kosovo</option>
+<option value="LV">🇱🇻 Latvia</option>
+<option value="LI">🇱🇮 Liechtenstein</option>
+<option value="LT">🇱🇹 Lithuania</option>
+<option value="LU">🇱🇺 Luxembourg</option>
+<option value="MT">🇲🇹 Malta</option>
+<option value="MD">🇲🇩 Moldova</option>
+<option value="MC">🇲🇨 Monaco</option>
+<option value="ME">🇲🇪 Montenegro</option>
+<option value="NL">🇳🇱 Netherlands</option>
+<option value="MK">🇲🇰 North Macedonia</option>
+<option value="NO">🇳🇴 Norway</option>
+<option value="PL">🇵🇱 Poland</option>
+<option value="PT">🇵🇹 Portugal</option>
+<option value="RO">🇷🇴 Romania</option>
+<option value="RU">🇷🇺 Russia</option>
+<option value="SM">🇸🇲 San Marino</option>
+<option value="RS">🇷🇸 Serbia</option>
+<option value="SK">🇸🇰 Slovakia</option>
+<option value="SI">🇸🇮 Slovenia</option>
+<option value="ES">🇪🇸 Spain</option>
+<option value="SE">🇸🇪 Sweden</option>
+<option value="CH">🇨🇭 Switzerland</option>
+<option value="UA">🇺🇦 Ukraine</option>
+<option value="GB">🇬🇧 United Kingdom</option>
+<option value="VA">🇻🇦 Vatican City</option>
+              </select></div>
+            </div>
+            <div class="field">
+              <label>Region / Bundesland <span class="req">*</span></label>
+              <div class="select-wrap"><select id="ng2_region">
+                <option value="">Region wählen...</option>
+                <optgroup label="── Deutschland ──">
+                <option value="BW">Baden-Württemberg</option>
+                <option value="BY">Bayern</option>
+                <option value="BE">Berlin</option>
+                <option value="BB">Brandenburg</option>
+                <option value="HB">Bremen</option>
+                <option value="HH">Hamburg</option>
+                <option value="HE">Hessen</option>
+                <option value="MV">Mecklenburg-Vorpommern</option>
+                <option value="NI">Niedersachsen</option>
+                <option value="NW">Nordrhein-Westfalen</option>
+                <option value="RP">Rheinland-Pfalz</option>
+                <option value="SL">Saarland</option>
+                <option value="SN">Sachsen</option>
+                <option value="ST">Sachsen-Anhalt</option>
+                <option value="SH">Schleswig-Holstein</option>
+                <option value="TH">Thüringen</option>
+                </optgroup>
+                <optgroup label="── Österreich ──">
+                <option value="AT-B">Burgenland</option>
+                <option value="AT-K">Kärnten</option>
+                <option value="AT-NO">Niederösterreich</option>
+                <option value="AT-OO">Oberösterreich</option>
+                <option value="AT-S">Salzburg</option>
+                <option value="AT-ST">Steiermark</option>
+                <option value="AT-T">Tirol</option>
+                <option value="AT-V">Vorarlberg</option>
+                <option value="AT-W">Wien</option>
+                </optgroup>
+                <optgroup label="── Schweiz ──">
+                <option value="CH-ZH">Zürich</option>
+                <option value="CH-BE">Bern</option>
+                <option value="CH-GE">Genf</option>
+                <option value="CH-BS">Basel</option>
+                <option value="CH-AG">Aargau</option>
+                </optgroup>
+                <optgroup label="── Sonstige ──">
+                <option value="OTHER">Andere Region</option>
+                </optgroup>
+              </select></div>
+            </div>
+          </div>
+          <!-- Hochschule | Kategorie -->
+          <div class="field-row">
+            <div class="field">
+              <label>Name der Hochschule <span class="req">*</span></label>
+              <input id="ng2_hs" placeholder="z.B. Hochschule für angewandte Wissenschaften Hamburg">
+            </div>
+            <div class="field">
+              <label>Kategorie des Studiengangs <span class="req">*</span></label>
+              <div class="select-wrap"><select id="ng2_kat">
+                <option value="">Kategorie wählen...</option>
+                <option value="wiwi">💼 Wirtschaft &amp; Recht</option>
+                <option value="medizin">🏥 Medizin &amp; Gesundheitswesen</option>
+                <option value="informatik">💻 Informatik &amp; Mathematik</option>
+                <option value="nawi">🔬 Naturwissenschaften</option>
+                <option value="technik">⚙️ Technik &amp; Ingenieurwesen</option>
+                <option value="geist">📖 Sprach- &amp; Kulturwissenschaften</option>
+                <option value="gesell">🌍 Gesellschaftswissenschaften</option>
+                <option value="medien">📺 Medien &amp; Kommunikation</option>
+                <option value="kunst">🎨 Kunst, Gestaltung &amp; Musik</option>
+                <option value="agrar">🌾 Agrar &amp; Forstwissenschaften</option>
+              </select></div>
+            </div>
+          </div>
+          <!-- Studiengang (full width) -->
+          <div class="field">
+            <label>Titel des Studiengangs <span class="req">*</span></label>
+            <input id="ng2_sg" placeholder="z.B. Sustainable Business Management M.A.">
+          </div>
+          <div class="field">
+            <label>URL des Studiengangs <span class="req">*</span></label>
+            <input type="url" id="ng2_url" placeholder="https://www.hochschule.de/studiengang/...">
+          </div>
+        </div>
+
+        <div class="divider">Daten zum Studiengang</div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Regelstudiendauer <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;color:var(--muted2)">(Semester)</span></label>
+            <div class="select-wrap"><select>
+              <option value="">Bitte wählen...</option>
+              <option>2</option><option>3</option><option>4</option>
+              <option>5</option><option>6</option><option>7</option>
+              <option>8</option><option>9</option><option>10</option>
+              <option>11</option><option>12</option>
+            </select></div>
+          </div>
+          <div class="field">
+            <label>Abschluss <span class="req">*</span></label>
+            <div class="select-wrap"><select>
+              <option>Bitte wählen...</option>
+              <optgroup label="Bachelor">
+                <option>Bachelor</option><option>Bachelor of Arts</option>
+                <option>Bachelor of Education</option><option>Bachelor of Engineering</option>
+                <option>Bachelor of Fine Arts</option><option>Bachelor of Laws</option>
+                <option>Bachelor of Music</option><option>Bachelor of Science</option>
+                <option>Bachelor of Medicine</option><option>Bakkalaureus</option>
+              </optgroup>
+              <optgroup label="Master">
+                <option>Master</option><option>Master of Arts</option>
+                <option>Master of Business Administration</option><option>Master of Education</option>
+                <option>Master of Engineering</option><option>Master of Fine Arts</option>
+                <option>Master of Laws</option><option>Master of Music</option>
+                <option>Master of Science</option><option>Master of Medicine</option>
+                <option>Master of Public Administration</option>
+              </optgroup>
+              <optgroup label="Sonstige">
+                <option>Diplom</option><option>Magister</option><option>Staatsexamen</option>
+                <option>Theologische Prüfung</option><option>Kirchlicher Abschluss</option>
+                <option>Konzertexamen</option><option>Lizentiat</option>
+                <option>Akademiebrief</option><option>Abschlussprüfung</option>
+                <option>Artist Diploma</option><option>Keine Abschlussprüfung</option>
+                <option>Hochschulzertifikat</option><option>Zertifikat</option>
+                <option>Sonstiger Abschluss</option>
+              </optgroup>
+            </select></div>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>ECTS Gesamtpunktzahl</label>
+            <div class="select-wrap"><select>
+              <option value="">Bitte wählen...</option>
+              <option>60</option><option>90</option><option>120</option>
+              <option selected>180</option><option>210</option><option>240</option>
+              <option>270</option><option>300</option>
+            </select></div>
+          </div>
+          <div class="field">
+            <label>Gesamtpreis € (nur private Hochschulen)</label>
+            <input type="number" placeholder="z.B. 24000" min="0">
+            <div class="field-hint">Nur für private Träger relevant</div>
+          </div>
+        </div>
+
+        <div class="field">
+            <label>Studienbeginn <span style="font-size:9px;color:var(--muted2);text-transform:none;letter-spacing:0">(auch monatsgenau möglich)</span></label>
+            <input type="month" value="2024-10"
+              style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px 13px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;width:100%;transition:border-color .2s"
+              onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+          </div>
+
+        <div class="divider">Wer bist du?</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem">
+          <div class="radio-item selected" id="werbinStu" onclick="sb_selectWerBin('student')">
+            <div class="radio-dot"><div></div></div>
+            <div>
+              <div style="font-size:12px;font-weight:500">Ich bin ein Student</div>
+              <div style="font-size:10px;color:var(--muted)">Studierender oder Absolvent</div>
+            </div>
+          </div>
+          <div class="radio-item" id="werbinHS" onclick="sb_selectWerBin('hochschule')">
+            <div class="radio-dot"></div>
+            <div>
+              <div style="font-size:12px;font-weight:500">Ich bin Hochschulvertreter</div>
+              <div style="font-size:10px;color:var(--muted)">Mitarbeiter der Hochschule</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Name</label>
+            <input value="Max Müller" style="color:var(--muted)">
+          </div>
+          <div class="field">
+            <label>E-Mail</label>
+            <input value="max.mueller@example.de" style="color:var(--muted)">
+          </div>
+        </div>
+        <div class="field" id="funktionField" style="display:none">
+          <label>Funktion (optional)</label>
+          <input placeholder="z.B. Studiengangskoordinator, Dekan...">
+        </div>
+
+        <div style="display:flex;gap:8px">
+          <button class="btn-gold" onclick="sb_submitStudiengang()">Studiengang einreichen →</button>
+          <button class="btn-ghost" onclick="sb_showToast('Formular wurde zurueckgesetzt','info');sb_resetForm()">Zurücksetzen</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+<!-- ══════════════════════════════════════════════════════════════════
+     RECHTLICHE SEITEN — navigate('impressum' | 'datenschutz' | 'agb'
+     | 'widerruf' | 'kontakt')
+     Alle Seiten als view-section, navigierbar über Footer-Links
+     ══════════════════════════════════════════════════════════════════ -->
+
+<!-- ── IMPRESSUM ── -->
+<section class="view-section pt-20" id="view-impressum">
+  <div class="max-w-3xl mx-auto px-8 py-16 fade-in">
+    <button class="flex items-center gap-2 text-on-surface-variant hover:text-white mb-10 transition-colors" onclick="navigate('landing')">
+      <span class="material-symbols-outlined text-sm">arrow_back</span>
+      <span class="text-sm font-bold">Zurück zur Startseite</span>
+    </button>
+    <h1 class="text-4xl font-black mb-2">Impressum</h1>
+    <p class="text-on-surface-variant text-sm mb-10">Angaben gemäß § 5 DDG (ehem. TMG)</p>
+    <div class="space-y-8 text-on-surface-variant leading-relaxed">
+      <div class="bg-surface-container rounded-2xl p-6 border border-white/5">
+        <h2 class="text-white font-bold text-lg mb-4">Angaben zum Unternehmen</h2>
+        <p class="text-sm"><strong class="text-white">Academify GmbH</strong><br>
+        Musterstraße 1<br>12345 Musterstadt<br>Deutschland</p>
+      </div>
+      <div class="bg-surface-container rounded-2xl p-6 border border-white/5">
+        <h2 class="text-white font-bold text-lg mb-4">Kontakt</h2>
+        <p class="text-sm">E-Mail: <a href="/cdn-cgi/l/email-protection#c4aca5a8a8ab84b4b6abaea1a7b0bcbdbeeaa0a1" class="text-primary hover:underline"><span class="__cf_email__" data-cfemail="9ef6fff2f2f1deeeecf1f4fbfdeae6e7e4b0fafb">[email&#160;protected]</span></a><br>
+        Website: <span class="text-white">www.projectxyz.de</span></p>
+      </div>
+      <div class="bg-surface-container rounded-2xl p-6 border border-white/5">
+        <h2 class="text-white font-bold text-lg mb-4">Vertretungsberechtigte Person</h2>
+        <p class="text-sm">Geschäftsführung: <span class="text-white">[Name einfügen]</span></p>
+      </div>
+      <div class="bg-surface-container rounded-2xl p-6 border border-white/5">
+        <h2 class="text-white font-bold text-lg mb-4">Registereintrag</h2>
+        <p class="text-sm">Eingetragen im Handelsregister.<br>
+        Registergericht: Amtsgericht Musterstadt<br>
+        Registernummer: HRB 00000</p>
+      </div>
+      <div class="bg-surface-container rounded-2xl p-6 border border-white/5">
+        <h2 class="text-white font-bold text-lg mb-4">Umsatzsteuer-ID</h2>
+        <p class="text-sm">Umsatzsteuer-Identifikationsnummer gemäß § 27a UStG:<br>
+        <span class="text-white">DE000000000</span></p>
+      </div>
+      <div class="bg-surface-container rounded-2xl p-6 border border-white/5">
+        <h2 class="text-white font-bold text-lg mb-4">EU-Streitschlichtung</h2>
+        <p class="text-sm">Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:<br>
+        <a href="https://ec.europa.eu/consumers/odr/" class="text-primary hover:underline" target="_blank" rel="noopener">https://ec.europa.eu/consumers/odr/</a><br>
+        Unsere E-Mail-Adresse finden Sie oben im Impressum. Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── DATENSCHUTZ ── -->
+<section class="view-section pt-20" id="view-datenschutz">
+  <div class="max-w-3xl mx-auto px-8 py-16 fade-in">
+    <button class="flex items-center gap-2 text-on-surface-variant hover:text-white mb-10 transition-colors" onclick="navigate('landing')">
+      <span class="material-symbols-outlined text-sm">arrow_back</span>
+      <span class="text-sm font-bold">Zurück zur Startseite</span>
+    </button>
+    <h1 class="text-4xl font-black mb-2">Datenschutzerklärung</h1>
+    <p class="text-on-surface-variant text-sm mb-10">Gemäß DSGVO Art. 13/14 — Stand: 2025</p>
+    <div class="space-y-6 text-on-surface-variant leading-relaxed text-sm">
+      <div class="bg-surface-container rounded-2xl p-6 border border-white/5">
+        <h2 class="text-white font-bold text-lg mb-3">1. Verantwortlicher</h2>
+        <p>Verantwortlicher für die Datenverarbeitung ist die Academify GmbH, Musterstraße 1, 12345 Musterstadt. Kontakt: <a href="/cdn-cgi/l/email-protection#31555045545f42525944454b7141435e5b54524549484b1f5554" class="text-primary hover:underline"><span class="__cf_email__" data-cfemail="52363326373c21313a2726281222203d383731262a2b287c3637">[email&#160;protected]</span></a></p>
+      </div>
+      <div class="bg-surface-container rounded-2xl p-6 border border-white/5">
+        <h2 class="text-white font-bold text-lg mb-3">2. Erhobene Daten & Zweck</h2>
+        <p>Wir verarbeiten folgende personenbezogene Daten: Name, E-Mail-Adresse, Hochschulinformationen, Bewertungsinhalte sowie technische Verbindungsdaten. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung) sowie lit. a DSGVO (Einwilligung).</p>
+      </div>
+      <div class="bg-surface-container rounded-2xl p-6 border border-white/5">
+        <h2 class="text-white font-bold text-lg mb-3">3. Cookies & Tracking</h2>
+        <p>Wir verwenden technisch notwendige Cookies sowie — nach Ihrer Einwilligung — Analyse-Cookies. Ihre Einwilligung können Sie jederzeit über den Cookie-Einstellungs-Button im Footer widerrufen.</p>
+      </div>
+      <div class="bg-surface-container rounded-2xl p-6 border border-white/5">
+        <h2 class="text-white font-bold text-lg mb-3">4. Hosting & externe Dienste</h2>
+        <p>Unsere Server stehen in Deutschland (DSGVO-konform). Google Fonts werden — nach Ihrer Einwilligung — von Google LLC (USA) geladen. Alternativ empfehlen wir, Fonts lokal zu hosten.</p>
+      </div>
+      <div class="bg-surface-container rounded-2xl p-6 border border-white/5">
+        <h2 class="text-white font-bold text-lg mb-3">5. Ihre Rechte</h2>
+        <p>Sie haben das Recht auf Auskunft (Art. 15 DSGVO), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung (Art. 18), Datenübertragbarkeit (Art. 20) und Widerspruch (Art. 21). Kontakt: <a href="/cdn-cgi/l/email-protection#b6d2d7c2d3d8c5d5dec3c2ccf6c6c4d9dcd3d5c2cecfcc98d2d3" class="text-primary hover:underline"><span class="__cf_email__" data-cfemail="97f3f6e3f2f9e4f4ffe2e3edd7e7e5f8fdf2f4e3efeeedb9f3f2">[email&#160;protected]</span></a></p>
+      </div>
+      <div class="bg-surface-container rounded-2xl p-6 border border-white/5">
+        <h2 class="text-white font-bold text-lg mb-3">6. Beschwerderecht</h2>
+        <p>Sie haben das Recht, sich bei einer Datenschutz-Aufsichtsbehörde zu beschweren. Zuständig ist der Landesbeauftragte für den Datenschutz Ihres Bundeslandes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── AGB ── -->
+<section class="view-section pt-20" id="view-agb">
+  <div class="max-w-3xl mx-auto px-8 py-16 fade-in">
+    <button class="flex items-center gap-2 text-on-surface-variant hover:text-white mb-10 transition-colors" onclick="navigate('landing')">
+      <span class="material-symbols-outlined text-sm">arrow_back</span>
+      <span class="text-sm font-bold">Zurück zur Startseite</span>
+    </button>
+    <h1 class="text-4xl font-black mb-2">Allgemeine Geschäftsbedingungen</h1>
+    <p class="text-on-surface-variant text-sm mb-10">Stand: 2025</p>
+    <div class="space-y-6 text-on-surface-variant leading-relaxed text-sm">
+      <div class="bg-surface-container rounded-2xl p-6 border border-white/5">
+        <h2 class="text-white font-bold text-lg mb-3">§ 1 Geltungsbereich</h2>
+        <p>Diese AGB gelten für alle Nutzer der Plattform Academify (projectxyz.de), betrieben von der Academify GmbH.</p>
+      </div>
+      <div class="bg-surface-container rounded-2xl p-6 border border-white/5">
+        <h2 class="text-white font-bold text-lg mb-3">§ 2 Leistungen</h2>
+        <p>Academify stellt eine Plattform zur Bewertung von Hochschulen und Studiengängen zur Verfügung. Die Basisnutzung ist kostenlos. Premiumfunktionen sind kostenpflichtig (Pro-Plan).</p>
+      </div>
+      <div class="bg-surface-container rounded-2xl p-6 border border-white/5">
+        <h2 class="text-white font-bold text-lg mb-3">§ 3 Nutzerpflichten</h2>
+        <p>Nutzer verpflichten sich, keine falschen Bewertungen einzureichen, keine Rechte Dritter zu verletzen und keine automatisierten Anfragen zu stellen.</p>
+      </div>
+      <div class="bg-surface-container rounded-2xl p-6 border border-white/5">
+        <h2 class="text-white font-bold text-lg mb-3">§ 4 Haftung</h2>
+        <p>Academify haftet nicht für die Richtigkeit von nutzergenerierten Bewertungen. Bewertungsinhalte spiegeln die Meinung der Studierenden wider.</p>
+      </div>
+      <div class="bg-surface-container rounded-2xl p-6 border border-white/5">
+        <h2 class="text-white font-bold text-lg mb-3">§ 5 Anwendbares Recht</h2>
+        <p>Es gilt deutsches Recht. Gerichtsstand ist Musterstadt.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── WIDERRUF ── -->
+<section class="view-section pt-20" id="view-widerruf">
+  <div class="max-w-3xl mx-auto px-8 py-16 fade-in">
+    <button class="flex items-center gap-2 text-on-surface-variant hover:text-white mb-10 transition-colors" onclick="navigate('landing')">
+      <span class="material-symbols-outlined text-sm">arrow_back</span>
+      <span class="text-sm font-bold">Zurück zur Startseite</span>
+    </button>
+    <h1 class="text-4xl font-black mb-2">Widerrufsbelehrung</h1>
+    <p class="text-on-surface-variant text-sm mb-10">Gemäß § 312g BGB — für kostenpflichtige digitale Dienste (Pro-Plan)</p>
+    <div class="space-y-6 text-on-surface-variant leading-relaxed text-sm">
+      <div class="bg-surface-container rounded-2xl p-6 border border-white/5">
+        <h2 class="text-white font-bold text-lg mb-3">Widerrufsrecht</h2>
+        <p>Sie haben das Recht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen. Die Widerrufsfrist beträgt vierzehn Tage ab dem Tag des Vertragsabschlusses.</p>
+      </div>
+      <div class="bg-surface-container rounded-2xl p-6 border border-white/5">
+        <h2 class="text-white font-bold text-lg mb-3">Ausübung des Widerrufsrechts</h2>
+        <p>Um Ihr Widerrufsrecht auszuüben, müssen Sie uns (Academify GmbH, <a href="/cdn-cgi/l/email-protection#d1a6b8b5b4a3a3a4b791a1a3bebbb4b2a5a9a8abffb5b4" class="text-primary hover:underline"><span class="__cf_email__" data-cfemail="5027393435222225361020223f3a35332428292a7e3435">[email&#160;protected]</span></a>) mittels einer eindeutigen Erklärung informieren.</p>
+      </div>
+      <div class="bg-surface-container rounded-2xl p-6 border border-white/5">
+        <h2 class="text-white font-bold text-lg mb-3">Folgen des Widerrufs</h2>
+        <p>Wenn Sie diesen Vertrag widerrufen, erstatten wir alle Zahlungen, die wir von Ihnen erhalten haben, unverzüglich und spätestens binnen vierzehn Tagen.</p>
+      </div>
+      <div class="bg-surface-container rounded-2xl p-6 border border-white/5">
+        <h2 class="text-white font-bold text-lg mb-3">Erlöschen des Widerrufsrechts</h2>
+        <p>Das Widerrufsrecht erlischt bei digitalen Inhalten, wenn die Ausführung des Vertrags begonnen hat und Sie ausdrücklich zugestimmt haben, dass wir mit der Ausführung beginnen.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── KONTAKT ── -->
+<section class="view-section pt-20" id="view-kontakt">
+  <div class="max-w-3xl mx-auto px-8 py-16 fade-in">
+    <button class="flex items-center gap-2 text-on-surface-variant hover:text-white mb-10 transition-colors" onclick="navigate('landing')">
+      <span class="material-symbols-outlined text-sm">arrow_back</span>
+      <span class="text-sm font-bold">Zurück zur Startseite</span>
+    </button>
+    <h1 class="text-4xl font-black mb-2">Kontakt & <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Support</span></h1>
+    <p class="text-on-surface-variant text-sm mb-10">Wir helfen dir gerne weiter.</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+      <div class="bg-surface-container rounded-2xl p-6 border border-white/5 hover:border-primary/30 transition-colors">
+        <div class="text-3xl mb-4">📧</div>
+        <h3 class="text-white font-bold mb-2">E-Mail Support</h3>
+        <p class="text-on-surface-variant text-sm mb-4">Für allgemeine Anfragen und technischen Support.</p>
+        <a href="/cdn-cgi/l/email-protection#9af2fbf6f6f5daeae8f5f0fff9eee2e3e0b4feff" class="text-primary hover:underline text-sm font-bold"><span class="__cf_email__" data-cfemail="5d353c3131321d2d2f3237383e29252427733938">[email&#160;protected]</span> →</a>
+      </div>
+      <div class="bg-surface-container rounded-2xl p-6 border border-white/5 hover:border-primary/30 transition-colors">
+        <div class="text-3xl mb-4">🐛</div>
+        <h3 class="text-white font-bold mb-2">Bug melden</h3>
+        <p class="text-on-surface-variant text-sm mb-4">Hast du einen Fehler gefunden? Bitte melde ihn.</p>
+        <a href="/cdn-cgi/l/email-protection#94f6e1f3e7d4e4e6fbfef1f7e0ecedeebaf0f1" class="text-primary hover:underline text-sm font-bold"><span class="__cf_email__" data-cfemail="bcdec9dbcffcccced3d6d9dfc8c4c5c692d8d9">[email&#160;protected]</span> →</a>
+      </div>
+      <div class="bg-surface-container rounded-2xl p-6 border border-white/5 hover:border-primary/30 transition-colors">
+        <div class="text-3xl mb-4">🏛️</div>
+        <h3 class="text-white font-bold mb-2">Hochschulen & Universitäten</h3>
+        <p class="text-on-surface-variant text-sm mb-4">Für Hochschulvertreter und Kooperationsanfragen.</p>
+        <a href="/cdn-cgi/l/email-protection#3747564543595245774745585d5254434f4e4d195352" class="text-primary hover:underline text-sm font-bold"><span class="__cf_email__" data-cfemail="44342536302a21360434362b2e2127303c3d3e6a2021">[email&#160;protected]</span> →</a>
+      </div>
+      <div class="bg-surface-container rounded-2xl p-6 border border-white/5 hover:border-primary/30 transition-colors">
+        <div class="text-3xl mb-4">⚖️</div>
+        <h3 class="text-white font-bold mb-2">Rechtliches & Datenschutz</h3>
+        <p class="text-on-surface-variant text-sm mb-4">Datenschutzanfragen und DSGVO-Anfragen.</p>
+        <a href="/cdn-cgi/l/email-protection#e7838693828994848f92939da79795888d8284939f9e9dc98382" class="text-primary hover:underline text-sm font-bold"><span class="__cf_email__" data-cfemail="f99d988d9c978a9a918c8d83b9898b96939c9a8d818083d79d9c">[email&#160;protected]</span> →</a>
+      </div>
+    </div>
+    <div class="bg-surface-container rounded-2xl p-6 border border-white/5">
+      <h3 class="text-white font-bold mb-4">Schnellnachricht senden</h3>
+      <div class="space-y-4">
+        <div><label class="text-xs text-on-surface-variant uppercase tracking-wider block mb-2">Name</label>
+          <input type="text" placeholder="Dein Name" class="w-full bg-surface-container-high border border-white/10 rounded-xl px-4 py-3 text-sm text-on-surface focus:border-primary focus:outline-none transition-colors" /></div>
+        <div><label class="text-xs text-on-surface-variant uppercase tracking-wider block mb-2">E-Mail</label>
+          <input type="email" placeholder="deine@email.de" class="w-full bg-surface-container-high border border-white/10 rounded-xl px-4 py-3 text-sm text-on-surface focus:border-primary focus:outline-none transition-colors" /></div>
+        <div><label class="text-xs text-on-surface-variant uppercase tracking-wider block mb-2">Nachricht</label>
+          <textarea rows="4" placeholder="Wie können wir dir helfen?" class="w-full bg-surface-container-high border border-white/10 rounded-xl px-4 py-3 text-sm text-on-surface focus:border-primary focus:outline-none transition-colors resize-none"></textarea></div>
+        <button onclick="alert('Nachricht gesendet! Wir melden uns innerhalb von 24h.')" class="bg-primary text-white px-6 py-3 rounded-xl font-bold hover:scale-105 transition-transform">Nachricht senden →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── STREITBEILEGUNG ── -->
+<section class="view-section pt-20" id="view-streitbeilegung">
+  <div class="max-w-3xl mx-auto px-8 py-16 fade-in">
+    <button class="flex items-center gap-2 text-on-surface-variant hover:text-white mb-10 transition-colors" onclick="navigate('landing')">
+      <span class="material-symbols-outlined text-sm">arrow_back</span>
+      <span class="text-sm font-bold">Zurück zur Startseite</span>
+    </button>
+    <h1 class="text-4xl font-black mb-2">Streitbeilegung</h1>
+    <p class="text-on-surface-variant text-sm mb-10">Gemäß § 36 VSBG und EU-Verordnung Nr. 524/2013</p>
+    <div class="space-y-6 text-on-surface-variant leading-relaxed text-sm">
+      <div class="bg-surface-container rounded-2xl p-6 border border-white/5">
+        <h2 class="text-white font-bold text-lg mb-3">EU-Online-Streitbeilegung</h2>
+        <p>Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit, die Sie unter folgendem Link finden:</p>
+        <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener" class="text-primary hover:underline mt-2 block">https://ec.europa.eu/consumers/odr/ →</a>
+      </div>
+      <div class="bg-surface-container rounded-2xl p-6 border border-white/5">
+        <h2 class="text-white font-bold text-lg mb-3">Hinweis gemäß § 36 VSBG</h2>
+        <p>Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+</div><!-- /shell -->
+
+<!-- ══ UNI DETAIL MODAL ══ -->
+<div class="overlay" id="overlay-uni">
+  <div class="modal" style="max-width:700px">
+    <div class="modal-head">
+      <div class="modal-title" id="uniModalTitle">Universität</div>
+      <div class="modal-close" onclick="sb_closeModal('overlay-uni')">✕</div>
+    </div>
+    <div class="modal-body" id="uniModalBody"></div>
+  </div>
+</div>
+
+<!-- ══ STUDIENGANG DETAIL MODAL ══ -->
+<div class="overlay" id="overlay-sg">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="sgModalTitle">Studiengang</div>
+      <div class="modal-close" onclick="sb_closeModal('overlay-sg')">✕</div>
+    </div>
+    <div class="modal-body" id="sgModalBody"></div>
+  </div>
+</div>
+
+<!-- ══ ADD MODAL (Quick) ══ -->
+<div class="overlay" id="overlay-add">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-head">
+      <div class="modal-title">Studiengang <em>melden</em></div>
+      <div class="modal-close" onclick="sb_closeModal('overlay-add')">✕</div>
+    </div>
+    <div class="modal-body">
+      <div class="gold-note"><span style="font-size:14px;flex-shrink:0">💡</span><div>Du kannst einen fehlenden Studiengang direkt melden. Für das vollständige Formular geh zur Rubrik "Nicht gefunden?".</div></div>
+      <div class="field"><label>Hochschule</label><input placeholder="z.B. Universität Hamburg"></div>
+      <div class="field"><label>Studiengang</label><input placeholder="z.B. Digital Business Management B.Sc."></div>
+      <div class="field"><label>URL des Studiengangs</label><input type="url" placeholder="https://..."></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-gold" onclick="sb_closeModal('overlay-add');sb_showToast('Studiengang wurde gemeldet ✓','success')">Einreichen →</button>
+        <button class="btn-ghost" onclick="sb_closeModal('overlay-add')">Abbrechen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div id="toastContainer" style="position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px"></div>
+</section>
+
 </main>
 <!-- =============================================
      COOKIE-BANNER (DSGVO / TTDSG-konform) – v2
@@ -807,7 +2616,7 @@
       </h2>
       <p id="cookie-banner-desc" class="text-sm text-on-surface-variant leading-relaxed">
         Wir verwenden Cookies und externe Dienste (z.&nbsp;B. Google Fonts, Analytics), um dir das beste Erlebnis zu bieten.
-        Mehr dazu in unserer <a href="/datenschutz" class="text-primary hover:underline">Datenschutzerklärung</a>.
+        Mehr dazu in unserer <a href="#datenschutz" onclick="navigate('datenschutz')" class="text-primary hover:underline">Datenschutzerklärung</a>.
       </p>
       <div id="cookie-details" class="hidden mt-4 space-y-3 text-sm">
         <label class="flex items-center gap-3 cursor-default text-on-surface-variant">
@@ -875,11 +2684,19 @@
             const mainContent = document.getElementById('content-canvas');
 
             if (viewId === 'dashboard') {
-                // Dashboard layout: sidebar, no global header, no padding-top on main
                 globalHeader.classList.add('hidden');
                 dashboardSidebar.classList.remove('hidden');
+            } else if (viewId === 'ratingagency') {
+                globalHeader.classList.add('hidden');
+                dashboardSidebar.classList.add('hidden');
+                // Lazy init — sb_initApp() nur beim ersten Aufruf ausführen
+                if (!window._sbInited) {
+                    window._sbInited = true;
+                    setTimeout(function() {
+                        if (typeof sb_initApp === 'function') sb_initApp();
+                    }, 80);
+                }
             } else {
-                // Other layouts: global header, no sidebar
                 globalHeader.classList.remove('hidden');
                 dashboardSidebar.classList.add('hidden');
             }
@@ -914,6 +2731,676 @@
 
         // Run on load
         window.addEventListener('load', initApp);
+
+        /* ═══════════════════════════════════════════════════════════
+           STUDIENBERATUNG JS — Namespace sb_ (kein Konflikt)
+           Lazy-init via initRatingAgency() → navigate()
+           Ghost-Rating: Math.floor, kein 0,5-Runden (v4)
+           ═══════════════════════════════════════════════════════════ */
+        var _sbInitDone = false;
+
+        function initRatingAgency() {
+            if (_sbInitDone) return;
+            _sbInitDone = true;
+            if (typeof sb_initApp === 'function') sb_initApp();
+        }
+
+
+// ── DATA ──────────────────────────────────────────────────────────────────
+var SG_CATS = [
+  {icon:'🌾', name:'Agrar & Forstwissenschaften', subs:[
+    {icon:'🌱',name:'Agrarwissenschaften',courses:['Agrarwissenschaften B.Sc.','Landwirtschaft M.Sc.','Agribusiness B.Sc.']},
+    {icon:'🌲',name:'Forstwissenschaften',courses:['Forstwissenschaften B.Sc.','Forstwirtschaft M.Sc.']},
+    {icon:'🌸',name:'Gartenbau',courses:['Gartenbau B.Sc.','Gartenbaumanagement B.Eng.']},
+    {icon:'🪵',name:'Holzwirtschaft & Holztechnik',courses:['Holzwirtschaft B.Sc.','Holztechnik B.Eng.']},
+    {icon:'🏞️',name:'Landschaftsarchitektur',courses:['Landschaftsarchitektur B.Sc.','Landschaftsplanung M.Sc.']},
+    {icon:'💧',name:'Wasserwissenschaften',courses:['Wasserwirtschaft B.Sc.','Hydrologie M.Sc.']},
+  ]},
+  {icon:'🌍', name:'Gesellschaftswissenschaften', subs:[
+    {icon:'📚',name:'Erziehung & Pädagogik',courses:['Erziehungswissenschaften B.A.','Pädagogik M.A.','Frühkindliche Bildung B.A.']},
+    {icon:'🏛️',name:'Politikwissenschaft & Politologie',courses:['Politikwissenschaft B.A.','Politikmanagement M.A.']},
+    {icon:'🗺️',name:'Regionalwissenschaften',courses:['Regionalwissenschaften B.A.','European Studies M.A.']},
+    {icon:'🤝',name:'Sozialarbeit & Sozialwesen',courses:['Soziale Arbeit B.A.','Sozialmanagement M.A.']},
+    {icon:'👥',name:'Sozialwissenschaften',courses:['Sozialwissenschaften B.A.','Soziologie M.A.']},
+  ]},
+  {icon:'💻', name:'Informatik & Mathematik', subs:[
+    {icon:'🖥️',name:'Informatik',courses:['Informatik B.Sc.','Angewandte Informatik B.Sc.','Informatik M.Sc.','Cybersecurity M.Sc.']},
+    {icon:'🔢',name:'Mathematik',courses:['Mathematik B.Sc.','Wirtschaftsmathematik B.Sc.','Mathematik M.Sc.']},
+    {icon:'📱',name:'Medieninformatik',courses:['Medieninformatik B.Sc.','Human-Computer Interaction M.Sc.']},
+  ]},
+  {icon:'🎨', name:'Kunst, Gestaltung & Musik', subs:[
+    {icon:'🎭',name:'Bühne & Tanz',courses:['Theaterpädagogik B.A.','Tanz & Performance M.A.']},
+    {icon:'✏️',name:'Gestaltung & Design',courses:['Kommunikationsdesign B.A.','Industrial Design B.A.','UX Design M.A.']},
+    {icon:'🖼️',name:'Kunst',courses:['Bildende Kunst B.F.A.','Kunstpädagogik B.A.','Kunstgeschichte B.A.']},
+    {icon:'🎵',name:'Musik',courses:['Musikwissenschaften B.A.','Musikpädagogik B.A.','Komposition M.Mus.']},
+    {icon:'🎬',name:'Theaterwissenschaften',courses:['Theaterwissenschaften B.A.','Dramaturgie M.A.']},
+  ]},
+  {icon:'📺', name:'Medien & Kommunikation', subs:[
+    {icon:'🎥',name:'Film, Fernsehen, Hörfunk',courses:['Film- und Fernsehproduktion B.A.','Regie M.A.','Medienproduktin B.Sc.']},
+    {icon:'📰',name:'Journalismus & Journalistik',courses:['Journalistik B.A.','Online-Journalismus M.A.']},
+    {icon:'📡',name:'Kommunikationswissenschaften',courses:['Kommunikationswissenschaften B.A.','Medien & Kommunikation M.A.']},
+    {icon:'🖌️',name:'Mediendesign',courses:['Mediendesign B.A.','Digital Media M.A.']},
+    {icon:'📊',name:'Medienmanagement',courses:['Medienmanagement B.A.','Medienwirtschaft M.A.']},
+    {icon:'🎙️',name:'Medienproduktion',courses:['Medienproduktion B.Sc.','Audio Engineering B.Sc.']},
+    {icon:'🔧',name:'Medientechnik',courses:['Medientechnik B.Eng.','Rundfunktechnik B.Sc.']},
+    {icon:'🔍',name:'Medienwissenschaften',courses:['Medienwissenschaften B.A.','Medienkultur M.A.']},
+    {icon:'📣',name:'PR & Kommunikation',courses:['Public Relations B.A.','Corporate Communications M.A.']},
+  ]},
+  {icon:'🏥', name:'Medizin & Gesundheitswesen', subs:[
+    {icon:'🥗',name:'Ernährungswissenschaften',courses:['Ernährungswissenschaften B.Sc.','Diätassistenz B.Sc.']},
+    {icon:'💊',name:'Gesundheitswissenschaften',courses:['Gesundheitswissenschaften B.Sc.','Public Health M.Sc.']},
+    {icon:'🩺',name:'Medizin',courses:['Humanmedizin Staatsexamen','Medizin M.D.']},
+    {icon:'🤱',name:'Pflege',courses:['Pflegewissenschaften B.Sc.','Pflegemanagement B.A.']},
+    {icon:'💉',name:'Pharmazie & Pharmatechnik',courses:['Pharmazie Staatsexamen','Pharmatechnik B.Sc.']},
+    {icon:'🧠',name:'Psychologie',courses:['Psychologie B.Sc.','Wirtschaftspsychologie B.Sc.','Klinische Psychologie M.Sc.']},
+    {icon:'⚽',name:'Sport',courses:['Sportwissenschaft B.Sc.','Sportmanagement B.A.','Sportpsychologie M.Sc.']},
+    {icon:'🐾',name:'Tiermedizin',courses:['Veterinärmedizin Staatsexamen']},
+    {icon:'🦷',name:'Zahnmedizin',courses:['Zahnmedizin Staatsexamen']},
+  ]},
+  {icon:'🔬', name:'Naturwissenschaften', subs:[
+    {icon:'🧬',name:'Biologie',courses:['Biologie B.Sc.','Biotechnologie B.Sc.','Bioinformatik M.Sc.']},
+    {icon:'⚗️',name:'Chemie',courses:['Chemie B.Sc.','Biochemie B.Sc.','Chemie M.Sc.']},
+    {icon:'🌋',name:'Geowissenschaften',courses:['Geowissenschaften B.Sc.','Geologie M.Sc.','Meteorologie B.Sc.']},
+    {icon:'⚛️',name:'Physik',courses:['Physik B.Sc.','Astrophysik M.Sc.','Technische Physik B.Sc.']},
+  ]},
+  {icon:'📖', name:'Sprach- & Kulturwissenschaften', subs:[
+    {icon:'✍️',name:'Germanistik',courses:['Germanistik B.A.','Deutsche Literatur M.A.']},
+    {icon:'🏺',name:'Geschichte & Archäologie',courses:['Geschichte B.A.','Archäologie B.A.','Mittelalterliche Geschichte M.A.']},
+    {icon:'🎭',name:'Kulturwissenschaften',courses:['Kulturwissenschaften B.A.','Europäische Kulturgeschichte M.A.']},
+    {icon:'🤔',name:'Philosophie',courses:['Philosophie B.A.','Ethik M.A.']},
+    {icon:'📝',name:'Sprache & Literatur',courses:['Komparatistik B.A.','Literaturwissenschaft M.A.']},
+    {icon:'🗣️',name:'Sprachen',courses:['Anglistik B.A.','Romanistik B.A.','Slawistik B.A.','Sinologie B.A.']},
+    {icon:'✝️',name:'Theologie & Religionen',courses:['Theologie Kirchl. Abschluss','Religionswissenschaften B.A.']},
+    {icon:'🌐',name:'Übersetzen & Dolmetschen',courses:['Übersetzen B.A.','Dolmetschen M.A.','Fachübersetzen B.A.']},
+  ]},
+  {icon:'⚙️', name:'Technik & Ingenieurwesen', subs:[
+    {icon:'🏗️',name:'Architektur',courses:['Architektur B.Sc.','Stadtplanung M.Sc.','Innenarchitektur B.A.']},
+    {icon:'🌉',name:'Bauingenieurwesen',courses:['Bauingenieurwesen B.Sc.','Konstruktiver Ingenieurbau M.Sc.']},
+    {icon:'🧪',name:'Bio- & Chemieingenieurwesen',courses:['Bioingenieurwesen B.Sc.','Chemieingenieurwesen M.Sc.']},
+    {icon:'🖨️',name:'Druck- & Medientechnik',courses:['Druck- und Medientechnik B.Eng.']},
+    {icon:'⚡',name:'Elektro- & Informationstechnik',courses:['Elektrotechnik B.Sc.','Informationstechnik M.Sc.']},
+    {icon:'☀️',name:'Energie & Umwelt',courses:['Energietechnik B.Sc.','Umweltingenieurwesen M.Sc.']},
+    {icon:'🚗',name:'Fahrzeug- & Verkehrstechnik',courses:['Fahrzeugtechnik B.Sc.','Verkehrsingenieurwesen M.Sc.']},
+    {icon:'🍔',name:'Lebensmitteltechnologie',courses:['Lebensmitteltechnologie B.Sc.','Food Science M.Sc.']},
+    {icon:'🚀',name:'Luft- & Raumfahrttechnik',courses:['Luft- und Raumfahrttechnik B.Sc.','Raumfahrtsystemtechnik M.Sc.']},
+    {icon:'🔩',name:'Maschinenbau',courses:['Maschinenbau B.Sc.','Produktionstechnik M.Sc.','Mechatronik B.Eng.']},
+    {icon:'🔮',name:'Materialwissenschaften',courses:['Materialwissenschaften B.Sc.','Werkstofftechnik M.Sc.']},
+    {icon:'🤖',name:'Mechatronik',courses:['Mechatronik B.Sc.','Robotik M.Sc.']},
+    {icon:'🔬',name:'Mikro- & Nanotechnik',courses:['Mikrosystemtechnik B.Sc.','Nanotechnologie M.Sc.']},
+    {icon:'💡',name:'Optische Technologien',courses:['Photonik B.Sc.','Optische Technologien M.Sc.']},
+    {icon:'🏭',name:'Produktionstechnik',courses:['Produktionstechnik B.Sc.','Fertigungstechnik M.Sc.']},
+    {icon:'🌆',name:'Raum- & Regionalplanung',courses:['Raumplanung B.Sc.','Stadtplanung M.Sc.']},
+    {icon:'⚓',name:'Schiffs- & Meerestechnik',courses:['Schiffstechnik B.Sc.','Maritime Technik M.Sc.']},
+    {icon:'🛡️',name:'Sicherheitstechnik',courses:['Sicherheitstechnik B.Sc.','Safety Engineering M.Sc.']},
+    {icon:'🔧',name:'Technik',courses:['Allgemeine Ingenieurwissenschaften B.Sc.','Technologiemanagement M.Sc.']},
+    {icon:'👔',name:'Textil- & Bekleidungstechnik',courses:['Textiltechnik B.Sc.','Fashion Technology M.Sc.']},
+    {icon:'📐',name:'Vermessungswesen',courses:['Geodäsie B.Sc.','Geoinformatik M.Sc.']},
+    {icon:'📈',name:'Wirtschaftsingenieurwesen',courses:['Wirtschaftsingenieurwesen B.Sc.','Wirtschaftsingenieurwesen M.Sc.']},
+  ]},
+  {icon:'💼', name:'Wirtschaft & Recht', subs:[
+    {icon:'🏢',name:'Betriebswirtschaft',courses:['BWL B.Sc.','International Business B.A.','BWL M.Sc.']},
+    {icon:'💰',name:'Finanzen & Steuern',courses:['Finance B.Sc.','Steuerrecht M.Sc.','Bankwesen B.A.']},
+    {icon:'🍽️',name:'Gastronomie & Tourismus',courses:['Tourismusmanagement B.A.','Hospitality Management M.A.']},
+    {icon:'🏠',name:'Immobilien',courses:['Immobilienwirtschaft B.Sc.','Real Estate Management M.Sc.']},
+    {icon:'👔',name:'Management',courses:['Management B.Sc.','MBA','General Management M.Sc.']},
+    {icon:'📢',name:'Marketing & Vertrieb',courses:['Marketing B.Sc.','Digital Marketing M.A.','Sales Management M.Sc.']},
+    {icon:'👥',name:'Personalwesen',courses:['Human Resources Management B.Sc.','Personalmanagement M.A.']},
+    {icon:'⚖️',name:'Rechtswissenschaften',courses:['Rechtswissenschaften Staatsexamen','Jura M.Jur.','Wirtschaftsrecht B.A.']},
+    {icon:'🚚',name:'Transportwesen & Logistik',courses:['Logistik B.Sc.','Supply Chain Management M.Sc.']},
+    {icon:'📊',name:'Wirtschaftswissenschaften',courses:['VWL B.Sc.','Wirtschaftswissenschaften B.A.','Economics M.Sc.']},
+  ]},
+];
+
+var CRITERIA = [
+  'Studieninhalte','Dozenten & Professoren','Lehrveranstaltungen',
+  'Ausstattung','Organisation','Literaturzugang',
+  'Betreuung & Support','Flexibilität','Karriere- & Praxisbezug',
+  'Persönliche Passung & Studienalltag'
+];
+
+var ghostScores = {};
+var activeCat = null;
+var recChoice = null;
+var bwCurrentStep = 1;
+var selectedOption = 1;
+var werbinRole = 'student';
+
+
+// ── REGION & KATEGORIE DATA ────────────────────────────────────────────────
+var REGIONS_DE = [
+  {val:'BW',name:'Baden-Württemberg'},{val:'BY',name:'Bayern'},
+  {val:'BE',name:'Berlin'},{val:'BB',name:'Brandenburg'},
+  {val:'HB',name:'Bremen'},{val:'HH',name:'Hamburg'},
+  {val:'HE',name:'Hessen'},{val:'MV',name:'Mecklenburg-Vorpommern'},
+  {val:'NI',name:'Niedersachsen'},{val:'NW',name:'Nordrhein-Westfalen'},
+  {val:'RP',name:'Rheinland-Pfalz'},{val:'SL',name:'Saarland'},
+  {val:'SN',name:'Sachsen'},{val:'ST',name:'Sachsen-Anhalt'},
+  {val:'SH',name:'Schleswig-Holstein'},{val:'TH',name:'Thüringen'}
+];
+var SG_KATEGORIEN = [
+  {val:'wiwi',label:'💼 Wirtschaft & Recht'},
+  {val:'medizin',label:'🏥 Medizin & Gesundheitswesen'},
+  {val:'informatik',label:'💻 Informatik & Mathematik'},
+  {val:'nawi',label:'🔬 Naturwissenschaften'},
+  {val:'technik',label:'⚙️ Technik & Ingenieurwesen'},
+  {val:'geist',label:'📖 Sprach- & Kulturwissenschaften'},
+  {val:'gesell',label:'🌍 Gesellschaftswissenschaften'},
+  {val:'medien',label:'📺 Medien & Kommunikation'},
+  {val:'kunst',label:'🎨 Kunst, Gestaltung & Musik'},
+  {val:'agrar',label:'🌾 Agrar & Forstwissenschaften'}
+];
+var STUD_GROESSEN = [
+  {val:'xs',label:'unter 2.000'},{val:'s',label:'2.000 – 5.000'},
+  {val:'m',label:'5.000 – 15.000'},{val:'l',label:'15.000 – 30.000'},
+  {val:'xl',label:'über 30.000'}
+];
+
+// ── RUBRIK SWITCH ──────────────────────────────────────────────────────────
+function sb_showRubrik(name) {
+  var sbRoot = document.getElementById('view-ratingagency');
+  sbRoot.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.getElementById('page-'+name).classList.add('active');
+  sbRoot.querySelectorAll('.rubrik').forEach(function(r){r.classList.remove('active');});
+  var rb = document.getElementById('rb-'+name);
+  if(rb) rb.classList.add('active');
+  if(name === 'studiengaenge') sb_renderSgCats();
+  if(name === 'bewerten') sb_renderCriteria();
+}
+
+// ── STUDIENGÄNGE (Accordion) ───────────────────────────────────────────────
+function sb_renderSgCats() {
+  var grid = document.getElementById('sgCatGrid');
+  if(grid.children.length > 0) return;
+  // Use full-width column layout for accordion
+  grid.style.gridTemplateColumns = '1fr';
+  grid.innerHTML = SG_CATS.map(function(cat,i){
+    return '<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color .2s" id="sgcat-'+i+'">' +
+      '<div style="display:flex;align-items:center;gap:10px;padding:.9rem 1.1rem;cursor:pointer;user-select:none;transition:background .18s" onclick="sb_toggleSgCat('+i+')" onmouseover="this.style.background=\'var(--surface2)\'" onmouseout="this.style.background=\'\'">' +
+        '<div style="font-size:22px;flex-shrink:0">'+cat.icon+'</div>' +
+        '<div style="flex:1">' +
+          '<div style="font-size:13px;font-weight:500">'+cat.name+'</div>' +
+          '<div style="font-size:10px;color:var(--muted)">'+cat.subs.length+' Fachrichtungen</div>' +
+        '</div>' +
+        '<div id="sgchev-'+i+'" style="font-size:12px;color:var(--muted);transition:transform .2s">▼</div>' +
+      '</div>' +
+      '<div id="sgsubs-'+i+'" style="display:none;border-top:1px solid var(--border);padding:.6rem .9rem .8rem">' +
+        cat.subs.map(function(sub,si){
+          return '<div style="border:1px solid var(--border);border-radius:9px;margin-bottom:6px;overflow:hidden">' +
+            '<div style="display:flex;align-items:center;gap:9px;padding:9px 12px;cursor:pointer;transition:background .18s;user-select:none" onclick="sb_toggleSgFach('+i+','+si+')" onmouseover="this.style.background=\'var(--surface2)\'" onmouseout="this.style.background=\'\'">' +
+              '<span style="font-size:16px">'+sub.icon+'</span>' +
+              '<span style="font-size:12px;font-weight:500;flex:1">'+sub.name+'</span>' +
+              '<span id="sgfchev-'+i+'-'+si+'" style="font-size:11px;color:var(--muted);transition:transform .2s">▼</span>' +
+            '</div>' +
+            '<div id="sgfach-'+i+'-'+si+'" style="display:none;padding:0 12px 10px 37px">' +
+              sub.courses.map(function(course){
+                return '<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px;color:var(--muted)" onmouseover="this.style.color=\'var(--text)\'" onmouseout="this.style.color=\'var(--muted)\'" style="cursor:pointer">' +
+                  '<span>'+course+'</span>' +
+                  '<button onclick="sb_showToast(\''+course+' — Details werden geladen...\',\'info\')" style="font-size:10px;padding:2px 9px;border-radius:6px;background:rgba(124,109,250,0.1);border:1px solid rgba(124,109,250,0.2);color:var(--accent2);cursor:pointer">Details</button>' +
+                '</div>';
+              }).join('') +
+            '</div>' +
+          '</div>';
+        }).join('') +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function sb_toggleSgCat(i) {
+  var subs = document.getElementById('sgsubs-'+i);
+  var chev = document.getElementById('sgchev-'+i);
+  var card = document.getElementById('sgcat-'+i);
+  var open = subs.style.display !== 'none' && subs.style.display !== '';
+  // close all
+  SG_CATS.forEach(function(_,j){
+    var s = document.getElementById('sgsubs-'+j);
+    var c = document.getElementById('sgchev-'+j);
+    var k = document.getElementById('sgcat-'+j);
+    if(s) s.style.display = 'none';
+    if(c) c.style.transform = '';
+    if(k) k.style.borderColor = 'var(--border)';
+  });
+  if(!open) {
+    subs.style.display = 'block';
+    chev.style.transform = 'rotate(180deg)';
+    card.style.borderColor = 'rgba(124,109,250,0.3)';
+  }
+}
+
+function sb_toggleSgFach(i, si) {
+  var fach = document.getElementById('sgfach-'+i+'-'+si);
+  var chev = document.getElementById('sgfchev-'+i+'-'+si);
+  var open = fach.style.display === 'block';
+  fach.style.display = open ? 'none' : 'block';
+  chev.style.transform = open ? '' : 'rotate(180deg)';
+}
+
+function sb_openSgCat(idx, el) { sb_toggleSgCat(idx); } // keep compat
+
+function sb_sgFilter(el, cat) {
+  document.querySelectorAll('#page-studiengaenge .fpill').forEach(function(p){p.classList.remove('on');});
+  el.classList.add('on');
+  sb_showToast('Filter: '+cat,'info');
+}
+
+// ── FILTER PILLS ──────────────────────────────────────────────────────────
+function sb_toggleFilter(el) {
+  el.classList.toggle('on');
+  sb_showToast('Filter angepasst','info');
+}
+
+// ── BEWERTUNGS-WIZARD ──────────────────────────────────────────────────────
+function sb_renderCriteria() {
+  var list = document.getElementById('criteriaList');
+  if(list.children.length > 0) return;
+  list.innerHTML = CRITERIA.map(function(crit,i){
+    return '<div class="criterion-row">' +
+      '<div class="criterion-name">'+crit+'</div>' +
+      '<div class="ghost-row" id="gr-'+i+'">' +
+      [1,2,3,4,5].map(function(g){
+        return '<span class="ghost" onclick="sb_setGhost('+i+','+g+')" data-g="'+g+'" title="'+g+' — '+sb_ghostLabel(g)+'">👻</span>';
+      }).join('') +
+      '</div>' +
+      '<div class="ghost-label" id="gl-'+i+'">Noch nicht bewertet</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ── GHOST HELPER ──────────────────────────────────────────────────────────
+// Kein 0,5-Auf-/Abrunden: Math.floor sorgt für max. Datengenauigkeit.
+// Akzeptiert "4,7" (dt. Komma) oder 4.7 (Punkt).
+function sb_scoreToGhosts(scoreInput) {
+  var num = parseFloat(String(scoreInput).replace(',', '.'));
+  if(isNaN(num)) return '';
+  var count = Math.floor(num);
+  return '👻'.repeat(Math.max(0, Math.min(count, 5)));
+}
+
+function sb_ghostLabel(n) {
+  return ['','Mangelhaft','Ausreichend','Befriedigend','Gut','Sehr gut'][n];
+}
+
+function sb_setGhost(criterionIdx, val) {
+  ghostScores[criterionIdx] = val;
+  var row = document.getElementById('gr-'+criterionIdx);
+  row.querySelectorAll('.ghost').forEach(function(g,i){
+    g.classList.toggle('active', i < val);
+  });
+  document.getElementById('gl-'+criterionIdx).textContent = sb_ghostLabel(val) + ' ('+val+'/5)';
+  sb_updateTotalScore();
+}
+
+function sb_updateTotalScore() {
+  var vals = Object.values(ghostScores);
+  if(vals.length === 0) return;
+  var avg = vals.reduce(function(a,b){return a+b;},0) / CRITERIA.length;
+  // Kein 0,5-Auf- oder Abrunden: stets Math.floor für maximale Datengenauigkeit
+  var floored = Math.floor(avg);
+  document.getElementById('totalScore').textContent = avg.toFixed(2) + ' / 5,0';
+  document.getElementById('totalGhosts').textContent = '👻'.repeat(floored);
+  document.getElementById('totalLabel').textContent = sb_ghostLabel(floored) + ' (Ø aus '+vals.length+'/'+CRITERIA.length+' Kriterien)';
+}
+
+function sb_bwNext(step) {
+  // Update summary on step 5
+  if(step === 5) {
+    var sgEl = document.getElementById('bwSg');
+    var sg = sgEl ? (sgEl.textContent || sgEl.value || 'Wirtschaftspsychologie B.Sc.') : 'Wirtschaftspsychologie B.Sc.';
+    var vals = Object.values(ghostScores);
+    var avg = vals.length ? (vals.reduce(function(a,b){return a+b;},0)/CRITERIA.length).toFixed(2) : '—';
+    document.getElementById('bwSumSg').textContent = sg;
+    document.getElementById('bwSumScore').textContent = avg !== '—' ? avg+'/5 · '+'👻'.repeat(Math.floor(parseFloat(avg))) : '—';
+    document.getElementById('bwSumRec').textContent = recChoice === 'yes' ? '🔥 Ja!' : recChoice === 'no' ? '💩 Nein' : '—';
+  }
+  for(var i=1;i<=5;i++){
+    document.getElementById('bwp'+i).classList.toggle('active',i===step);
+    var ws = document.getElementById('bws'+i);
+    ws.className='wstep';
+    if(i<step) ws.classList.add('done');
+    else if(i===step) ws.classList.add('active');
+  }
+  // Fix done circles
+  for(var j=1;j<step;j++){
+    document.getElementById('bws'+j).querySelector('.wstep-circle').textContent='✓';
+  }
+  for(var k=step;k<=5;k++){
+    document.getElementById('bws'+k).querySelector('.wstep-circle').textContent=k;
+  }
+  bwCurrentStep = step;
+}
+
+function sb_selectRec(choice) {
+  recChoice = choice;
+  document.getElementById('recYes').className = 'rec-btn'+(choice==='yes'?' selected-yes':'');
+  document.getElementById('recNo').className  = 'rec-btn'+(choice==='no'?' selected-no':'');
+}
+
+function sb_addProCon(e, type) {
+  if(e.key !== 'Enter') return;
+  var input = document.getElementById(type+'Input');
+  var val = input.value.trim();
+  if(!val) return;
+  var list = document.getElementById(type+'List');
+  var div = document.createElement('div');
+  div.className = 'pc-item';
+  div.innerHTML = '<span style="color:'+(type==='pro'?'var(--success)':'var(--coral)')+';">'+(type==='pro'?'+':'−')+'</span>'+val;
+  list.appendChild(div);
+  input.value = '';
+}
+
+function sb_updateBwFields() {
+  // Fields are now locked from profile — nothing to update dynamically
+}
+
+function sb_submitBewertung() {
+  sb_closeModal('overlay-uni');
+  sb_showToast('👻 Bewertung eingereicht! Wird nach Prüfung veröffentlicht.','success');
+  sb_bwNext(1);
+  ghostScores = {};
+  recChoice = null;
+  document.querySelectorAll('#view-ratingagency .ghost').forEach(function(g){g.classList.remove('active');});
+  document.getElementById('totalScore').textContent='—';
+  document.getElementById('totalGhosts').textContent='—';
+  document.getElementById('totalLabel').textContent='Noch nicht bewertet';
+}
+
+// ── UNI DETAIL ──────────────────────────────────────────────────────────────
+function sb_openUniDetail(id) {
+  // Map safe IDs to display names (avoids umlaut issues in onclick attrs)
+  var nameMap = {
+    'lmu':'LMU München','tum':'TU München','hd':'Uni Heidelberg',
+    'koeln':'Uni Köln','hub':'HU Berlin','ffm':'Uni Frankfurt','rwth':'RWTH Aachen'
+  };
+  var name = nameMap[id] || id;
+  var scores = {
+    'LMU München':9.4,'TU München':9.2,'Uni Heidelberg':9.1,
+    'Uni Köln':8.7,'HU Berlin':8.5,'Uni Frankfurt':8.3,'RWTH Aachen':8.9
+  };
+  var studCounts = {'LMU München':'52.400','TU München':'47.800','Uni Heidelberg':'28.900','Uni Köln':'54.300','HU Berlin':'36.200','Uni Frankfurt':'46.500','RWTH Aachen':'45.600'};
+  var bewCount   = {'LMU München':'2.841','TU München':'3.120','Uni Heidelberg':'1.988','Uni Köln':'4.820','HU Berlin':'2.340','Uni Frankfurt':'3.612','RWTH Aachen':'2.540'};
+  var sgCount    = {'LMU München':'320','TU München':'290','Uni Heidelberg':'180','Uni Köln':'260','HU Berlin':'220','Uni Frankfurt':'280','RWTH Aachen':'185'};
+  var cityMap    = {'LMU München':'München, Bayern','TU München':'München, Bayern','Uni Heidelberg':'Heidelberg, Baden-Württemberg','Uni Köln':'Köln, NRW','HU Berlin':'Berlin','Uni Frankfurt':'Frankfurt, Hessen','RWTH Aachen':'Aachen, NRW'};
+
+  var currentUniId = id;
+  var sc      = scores[name]     || 8.5;
+  var stud    = studCounts[name] || '40.000+';
+  var bew     = bewCount[name]   || '1.200';
+  var sgs     = sgCount[name]    || '150';
+  var city    = cityMap[name]    || 'Deutschland';
+  var isAward = sc >= 9.0;
+  var isExc   = ['LMU München','TU München','Uni Heidelberg','HU Berlin','RWTH Aachen'].indexOf(name) >= 0;
+
+  // Scores per uni per criterion (index matches Object.keys(scores))
+  var uniIdx = Object.keys(scores).indexOf(name);
+  var criteriaData = [
+    {name:'Studieninhalte',              vals:[88,90,85,78,82,80,86]},
+    {name:'Dozenten & Professoren',      vals:[92,94,90,82,88,79,90]},
+    {name:'Lehrveranstaltungen',         vals:[85,88,83,75,80,77,84]},
+    {name:'Ausstattung',                 vals:[78,82,80,72,76,70,80]},
+    {name:'Organisation',                vals:[71,74,72,65,69,68,72]},
+    {name:'Literaturzugang',             vals:[90,88,93,85,87,82,86]},
+    {name:'Betreuung & Support',         vals:[80,83,79,74,76,72,81]},
+    {name:'Flexibilität',                vals:[72,70,74,68,71,70,73]},
+    {name:'Karriere- & Praxisbezug',     vals:[85,89,83,77,82,78,87]},
+    {name:'Pers. Passung & Studienalltag',vals:[82,84,80,76,79,74,82]},
+  ].map(function(c){ return {name:c.name, pct:c.vals[uniIdx>=0?uniIdx:0]}; });
+
+  var titleBadges = name +
+    (isAward ? ' <span style="font-size:9px;padding:2px 8px;border-radius:100px;background:linear-gradient(135deg,#f59e0b,#fcd34d);color:#0d0e14;font-weight:600">🏆 Award</span>' : '') +
+    (isExc   ? ' <span style="font-size:9px;padding:2px 8px;border-radius:100px;background:rgba(56,189,248,0.12);color:var(--info);border:1px solid rgba(56,189,248,0.2)">🌟 Excellence</span>' : '');
+
+  var subLine = 'Universität · staatlich · ' + city + (isExc ? ' · 🌟 Excellence' : '');
+
+  document.getElementById('uniModalTitle').innerHTML = (isAward ? '🏆 ' : '') + '<em>' + name + '</em>';
+  document.getElementById('uniModalBody').innerHTML =
+
+    // ── Header ──
+    '<div style="display:flex;gap:13px;align-items:center;margin-bottom:1.1rem">' +
+      '<div style="width:56px;height:56px;border-radius:12px;background:' + (isAward ? 'rgba(245,158,11,0.1)' : 'rgba(124,109,250,0.1)') + ';display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0">🏛️</div>' +
+      '<div style="flex:1">' +
+        '<div style="font-size:14px;font-weight:500;margin-bottom:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">' + titleBadges + '</div>' +
+        '<div style="font-size:11px;color:var(--muted)">' + subLine + '</div>' +
+      '</div>' +
+      '<div style="text-align:center;flex-shrink:0">' +
+        '<div style="font-family:DM Serif Display,serif;font-size:36px;color:' + (isAward ? 'var(--gold)' : 'var(--accent2)') + '">' + sc + '</div>' +
+        '<div style="font-size:10px;color:var(--muted)">von 10,0</div>' +
+      '</div>' +
+    '</div>' +
+
+    // ── 3 Stats — Bewertungen + Studiengänge klickbar ──
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:1.2rem">' +
+      '<div style="background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:.85rem;text-align:center">' +
+        '<div style="font-family:DM Serif Display,serif;font-size:20px;color:var(--accent2)">' + stud + '</div>' +
+        '<div style="font-size:10px;color:var(--muted);margin-top:2px">Studierende</div>' +
+      '</div>' +
+      '<div onclick="sb_showAllBewertungen(\'' + id + '\')" style="background:var(--surface2);border:1.5px solid rgba(124,109,250,0.25);border-radius:11px;padding:.85rem;text-align:center;cursor:pointer;transition:all .2s" onmouseover="this.style.background=\'rgba(124,109,250,0.08)\';this.style.transform=\'translateY(-1px)\'" onmouseout="this.style.background=\'var(--surface2)\';this.style.transform=\'\'">' +
+        '<div style="font-family:DM Serif Display,serif;font-size:20px;color:var(--success)">' + bew + '</div>' +
+        '<div style="font-size:10px;color:var(--accent2);margin-top:2px">👻 Bewertungen →</div>' +
+      '</div>' +
+      '<div onclick="sb_showAllStudiengaenge(\'' + id + '\')" style="background:var(--surface2);border:1.5px solid rgba(251,191,36,0.25);border-radius:11px;padding:.85rem;text-align:center;cursor:pointer;transition:all .2s" onmouseover="this.style.background=\'rgba(251,191,36,0.06)\';this.style.transform=\'translateY(-1px)\'" onmouseout="this.style.background=\'var(--surface2)\';this.style.transform=\'\'">' +
+        '<div style="font-family:DM Serif Display,serif;font-size:20px;color:var(--warn)">' + sgs + '</div>' +
+        '<div style="font-size:10px;color:var(--warn);margin-top:2px">📚 Studiengänge →</div>' +
+      '</div>' +
+    '</div>' +
+
+    // ── Alle 10 Kriterien ──
+    '<div style="font-size:11px;font-weight:500;margin-bottom:.8rem;letter-spacing:.03em">📊 Bewertung nach allen 10 Kriterien</div>' +
+    criteriaData.map(function(c) {
+      var score  = (c.pct / 20).toFixed(2);
+      var ghosts = '👻'.repeat(Math.floor(parseFloat(score)));
+      var color  = c.pct >= 85 ? 'var(--success)' : c.pct >= 70 ? 'var(--accent)' : 'var(--warn)';
+      return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">' +
+        '<span style="font-size:11px;color:var(--muted);width:185px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + c.name + '</span>' +
+        '<div style="flex:1;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden">' +
+          '<div style="width:' + c.pct + '%;height:100%;border-radius:3px;background:' + color + '"></div>' +
+        '</div>' +
+        '<span style="font-size:10px;color:var(--muted);width:26px;text-align:right;flex-shrink:0">' + score + '</span>' +
+        '<span style="font-size:11px;flex-shrink:0;width:56px">' + ghosts + '</span>' +
+      '</div>';
+    }).join('') +
+
+    // ── Footer Buttons ──
+    '<div style="display:flex;gap:8px;margin-top:1.3rem">' +
+      '<button class="btn-primary" style="flex:1" onclick="sb_closeModal(\'overlay-uni\');sb_showRubrik(\'bewerten\')">👻 Jetzt bewerten</button>' +
+      '<button class="btn-ghost" onclick="sb_showAllBewertungen(\'' + id + '\')">Alle Bewertungen</button>' +
+      '<button class="btn-ghost" onclick="sb_showAllStudiengaenge(\'' + id + '\')">Studiengänge</button>' +
+      '<button class="btn-ghost" onclick="sb_showToast(\'Link kopiert! ✓\',\'success\')">🔗</button>' +
+    '</div>';
+
+  sb_openModal('overlay-uni');
+}
+
+// ── BEWERTUNGEN IN MODALVIEW ──────────────────────────────────────────────
+function sb_showAllBewertungen(id) {
+  var nameMap = {'lmu':'LMU München','tum':'TU München','hd':'Uni Heidelberg','koeln':'Uni Köln','hub':'HU Berlin','ffm':'Uni Frankfurt','rwth':'RWTH Aachen'};
+  var uniName = nameMap[id] || id;
+  document.getElementById('uniModalTitle').innerHTML = '👻 Bewertungen — <em>' + uniName + '</em>';
+  var reviews = [
+    {init:'LM',bg:'rgba(124,109,250,0.12)',c:'var(--accent2)',name:'Lisa M.',info:'WiPsy B.Sc. · Sem. 5 · weiblich · 21–23 · 2023',avg:'5,0',title:'Praxisnah und wirklich empfehlenswert!',text:'Sehr zufrieden! Die Kombination aus Psychologie und BWL ist einzigartig. Dozenten sind engagiert und immer ansprechbar. Workload ist hoch aber machbar.',rec:'🔥',views:342,likes:47},
+    {init:'TW',bg:'rgba(56,189,248,0.1)',c:'var(--info)',name:'Tom W.',info:'WiPsy B.Sc. · Sem. 3 · männlich · 21–23 · 2024',avg:'4,0',title:'Gut, aber mit Luft nach oben',text:'Der Studiengang macht Spaß, aber die Organisation ist manchmal chaotisch. Raumänderungen kurzfristig. Inhaltlich sehr interessant.',rec:'🔥',views:187,likes:23},
+    {init:'SA',bg:'rgba(74,222,128,0.1)',c:'var(--success)',name:'Sara A.',info:'BWL B.Sc. · Sem. 6 · weiblich · 24–26 · 2022',avg:'4,0',title:'Solides Fundament für die Karriere',text:'BWL hier hat mir ein sehr solides Fundament für den Berufseinstieg gegeben. Besonders die Praxisprojekte waren wertvoll. Starke Alumni-Vernetzung.',rec:'🔥',views:521,likes:84},
+    {init:'MH',bg:'rgba(248,113,113,0.1)',c:'var(--coral)',name:'Max H.',info:'Psychologie B.Sc. · Sem. 4 · männlich · 21–23 · 2023',avg:'3,0',title:'Stark theorielastig',text:'Sehr theorielastig, praktische Anwendungen kommen zu kurz. Dozenten kompetent, aber wenig Zeit für individuelle Betreuung.',rec:'💩',views:214,likes:31},
+    {init:'NK',bg:'rgba(251,191,36,0.1)',c:'var(--warn)',name:'Nina K.',info:'Informatik B.Sc. · Sem. 2 · weiblich · 18–20 · 2025',avg:'4,0',title:'Guter Einstieg ins Studium',text:'Die ersten Semester sind intensiv aber sehr lehrreich. Gute Ausstattung in den Labors. Online-Ressourcen könnten besser sein.',rec:'🔥',views:98,likes:12},
+  ];
+
+  document.getElementById('uniModalBody').innerHTML =
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">' +
+      '<div style="font-size:12px;color:var(--muted)">Alle Bewertungen für <strong style="color:var(--text)">' + uniName + '</strong></div>' +
+      '<button class="btn-ghost" style="font-size:11px;padding:5px 11px" onclick="sb_openUniDetail(\'' + uniName + '\')">← Zurück</button>' +
+    '</div>' +
+
+    // Filter
+    '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:1rem">' +
+    ['Alle Studiengänge','WiPsy B.Sc.','BWL B.Sc.','Psychologie B.Sc.','Informatik B.Sc.'].map(function(f,i){
+      return '<div style="padding:4px 11px;border-radius:100px;font-size:11px;cursor:pointer;user-select:none;transition:all .18s;background:' + (i===0?'rgba(124,109,250,0.1)':'var(--surface2)') + ';color:' + (i===0?'var(--accent2)':'var(--muted)') + ';border:1px solid ' + (i===0?'rgba(124,109,250,0.3)':'var(--border)') + '" onclick="var p=this.parentNode;p.querySelectorAll(\'div\').forEach(function(d){d.style.background=\'var(--surface2)\';d.style.color=\'var(--muted)\';d.style.borderColor=\'var(--border)\'});this.style.background=\'rgba(124,109,250,0.1)\';this.style.color=\'var(--accent2)\';this.style.borderColor=\'rgba(124,109,250,0.3)\'">' + f + '</div>';
+    }).join('') +
+    '</div>' +
+
+    // Reviews
+    reviews.map(function(r){
+      return '<div style="background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:.95rem 1rem;margin-bottom:9px">' +
+        '<div style="display:flex;align-items:center;gap:9px;margin-bottom:.6rem">' +
+          '<div style="width:32px;height:32px;border-radius:50%;background:' + r.bg + ';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:' + r.c + ';flex-shrink:0">' + r.init + '</div>' +
+          '<div style="flex:1"><div style="font-size:12px;font-weight:500">' + r.name + '</div><div style="font-size:10px;color:var(--muted)">' + r.info + '</div></div>' +
+          '<div style="text-align:right;flex-shrink:0"><div style="font-size:14px">' + sb_scoreToGhosts(r.avg) + '</div><div style="font-size:10px;color:var(--muted)">Ø ' + r.avg + ' / 5</div></div>' +
+        '</div>' +
+        '<div style="font-size:12px;font-weight:500;margin-bottom:4px">' + r.rec + ' &quot;' + r.title + '&quot;</div>' +
+        '<div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:.7rem">' + r.text + '</div>' +
+        '<div style="display:flex;gap:14px;font-size:11px;color:var(--muted2)">' +
+          '<span style="cursor:pointer" onclick="sb_showToast(\'👁 ' + r.views + ' mal gesehen\',\'info\')">👁 ' + r.views + '</span>' +
+          '<span style="cursor:pointer" onclick="sb_showToast(\'👍 Als hilfreich markiert!\',\'success\')">👍 Hilfreich (' + r.likes + ')</span>' +
+          '<span style="cursor:pointer" onclick="sb_showToast(\'Meldung wurde gesendet\',\'info\')">🚩 Melden</span>' +
+        '</div>' +
+      '</div>';
+    }).join('') +
+
+    '<div style="display:flex;gap:8px;margin-top:.8rem">' +
+      '<button class="btn-primary" style="flex:1" onclick="sb_showToast(\'Weitere Bewertungen laden...\',\'info\')">Weitere laden →</button>' +
+      '<button class="btn-ghost" onclick="sb_closeModal(\'overlay-uni\');sb_showRubrik(\'bewerten\')">👻 Selbst bewerten</button>' +
+    '</div>';
+
+  sb_openModal('overlay-uni');
+}
+
+// ── STUDIENGÄNGE IN MODALVIEW ──────────────────────────────────────────────
+function sb_showAllStudiengaenge(id) {
+  var nameMap = {'lmu':'LMU München','tum':'TU München','hd':'Uni Heidelberg','koeln':'Uni Köln','hub':'HU Berlin','ffm':'Uni Frankfurt','rwth':'RWTH Aachen'};
+  var uniName = nameMap[id] || id;
+  document.getElementById('uniModalTitle').innerHTML = '📚 Studiengänge — <em>' + uniName + '</em>';
+  var groups = [
+    {fach:'💼 Wirtschaft & Recht', courses:[
+      {name:'Betriebswirtschaft (BWL)',abschluss:'B.Sc.',sem:6,ects:180,score:'4,7'},
+      {name:'Wirtschaftswissenschaften',abschluss:'B.Sc.',sem:6,ects:180,score:'4,5'},
+      {name:'Marketing Management',abschluss:'M.Sc.',sem:4,ects:120,score:'4,8'},
+      {name:'Rechtswissenschaften',abschluss:'Staatsexamen',sem:10,ects:300,score:'4,2'},
+    ]},
+    {fach:'🏥 Medizin & Gesundheitswesen', courses:[
+      {name:'Psychologie',abschluss:'B.Sc.',sem:6,ects:180,score:'4,6'},
+      {name:'Wirtschaftspsychologie',abschluss:'B.Sc.',sem:6,ects:180,score:'4,8'},
+      {name:'Humanmedizin',abschluss:'Staatsexamen',sem:12,ects:360,score:'4,4'},
+    ]},
+    {fach:'💻 Informatik & Mathematik', courses:[
+      {name:'Informatik',abschluss:'B.Sc.',sem:6,ects:180,score:'4,3'},
+      {name:'Wirtschaftsinformatik',abschluss:'B.Sc.',sem:6,ects:180,score:'4,5'},
+      {name:'Data Science',abschluss:'M.Sc.',sem:4,ects:120,score:'4,7'},
+    ]},
+    {fach:'🔬 Naturwissenschaften', courses:[
+      {name:'Biologie',abschluss:'B.Sc.',sem:6,ects:180,score:'4,4'},
+      {name:'Chemie',abschluss:'B.Sc.',sem:6,ects:180,score:'4,2'},
+    ]},
+  ];
+
+  document.getElementById('uniModalBody').innerHTML =
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">' +
+      '<div style="font-size:12px;color:var(--muted)">Studiengänge an der <strong style="color:var(--text)">' + uniName + '</strong></div>' +
+      '<button class="btn-ghost" style="font-size:11px;padding:5px 11px" onclick="sb_openUniDetail(\'' + uniName + '\')">← Zurück</button>' +
+    '</div>' +
+
+    // Filter
+    '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:1rem">' +
+    ['Alle','Bachelor','Master','Staatsexamen','Dual'].map(function(f,i){
+      return '<div style="padding:4px 11px;border-radius:100px;font-size:11px;cursor:pointer;user-select:none;transition:all .18s;background:' + (i===0?'rgba(124,109,250,0.1)':'var(--surface2)') + ';color:' + (i===0?'var(--accent2)':'var(--muted)') + ';border:1px solid ' + (i===0?'rgba(124,109,250,0.3)':'var(--border)') + '" onclick="var p=this.parentNode;p.querySelectorAll(\'div\').forEach(function(d){d.style.background=\'var(--surface2)\';d.style.color=\'var(--muted)\';d.style.borderColor=\'var(--border)\'});this.style.background=\'rgba(124,109,250,0.1)\';this.style.color=\'var(--accent2)\';this.style.borderColor=\'rgba(124,109,250,0.3)\'">' + f + '</div>';
+    }).join('') +
+    '</div>' +
+
+    // Grouped courses
+    groups.map(function(grp){
+      return '<div style="margin-bottom:1rem">' +
+        '<div style="font-size:10px;font-weight:500;color:var(--muted2);margin-bottom:.5rem;letter-spacing:.05em;text-transform:uppercase">' + grp.fach + '</div>' +
+        grp.courses.map(function(co){
+          return '<div style="display:flex;align-items:center;gap:11px;padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;margin-bottom:5px;cursor:pointer;transition:border-color .18s" onmouseover="this.style.borderColor=\'var(--border-hover)\'" onmouseout="this.style.borderColor=\'var(--border)\'" onclick="sb_showToast(\'' + co.name + ' — Details werden geladen...\',\'info\')">' +
+            '<div style="flex:1">' +
+              '<div style="font-size:12px;font-weight:500;margin-bottom:1px">' + co.name + '</div>' +
+              '<div style="font-size:10px;color:var(--muted)">' + co.abschluss + ' · ' + co.sem + ' Semester · ' + co.ects + ' ECTS</div>' +
+            '</div>' +
+            '<div style="text-align:right;flex-shrink:0">' +
+              '<div style="font-size:13px">' + sb_scoreToGhosts(co.score) + '</div>' +
+              '<div style="font-size:10px;color:var(--muted)">' + co.score + ' / 5</div>' +
+            '</div>' +
+          '</div>';
+        }).join('') +
+      '</div>';
+    }).join('') +
+
+    '<button class="btn-ghost" style="width:100%;font-size:12px" onclick="sb_showToast(\'Alle Studiengaenge werden geladen...\',\'info\')">Alle Studiengänge anzeigen →</button>';
+
+  sb_openModal('overlay-uni');
+}
+
+// ── RANKING FILTER ────────────────────────────────────────────────────────
+function sb_applyRankingFilter() {
+  sb_showToast('Filter wird angewendet...','info');
+}
+
+
+// ── NICHT GEFUNDEN ──────────────────────────────────────────────────────────
+function sb_selectOpt(n) {
+  selectedOption = n;
+  document.getElementById('opt1btn').className = 'radio-item'+(n===1?' selected':'');
+  document.getElementById('opt2btn').className = 'radio-item'+(n===2?' selected':'');
+  var dot1 = document.querySelector('#opt1btn .radio-dot');
+  var dot2 = document.querySelector('#opt2btn .radio-dot');
+  dot1.innerHTML = n===1 ? '<div></div>' : '';
+  dot2.innerHTML = n===2 ? '<div></div>' : '';
+  document.getElementById('optForm1').style.display = n===1 ? 'block' : 'none';
+  document.getElementById('optForm2').style.display = n===2 ? 'block' : 'none';
+}
+
+function sb_selectWerBin(role) {
+  werbinRole = role;
+  document.getElementById('werbinStu').className = 'radio-item'+(role==='student'?' selected':'');
+  document.getElementById('werbinHS').className  = 'radio-item'+(role==='hochschule'?' selected':'');
+  document.querySelector('#werbinStu .radio-dot').innerHTML = role==='student'?'<div></div>':'';
+  document.querySelector('#werbinHS .radio-dot').innerHTML  = role==='hochschule'?'<div></div>':'';
+  document.getElementById('funktionField').style.display = role==='hochschule'?'block':'none';
+}
+
+function sb_submitStudiengang() {
+  sb_showToast('✓ Studiengang wurde eingereicht! Wir prüfen ihn innerhalb von 48h.','success');
+}
+
+function sb_resetForm() {
+  document.querySelectorAll('#page-nichtgefunden input, #page-nichtgefunden select').forEach(function(el){
+    if(el.tagName === 'SELECT') el.selectedIndex = 0;
+    else el.value = '';
+  });
+}
+
+// ── MODALS ──────────────────────────────────────────────────────────────────
+function sb_openModal(id){document.getElementById(id).classList.add('open');}
+function sb_closeModal(id){document.getElementById(id).classList.remove('open');}
+
+// ── TOAST ────────────────────────────────────────────────────────────────────
+function sb_showToast(msg, type) {
+  var c = document.getElementById('toastContainer');
+  if(!c) return;
+  var t = document.createElement('div');
+  t.className = 'toast';
+  var icons = {success:'✅',error:'❌',warn:'⚠️',info:'ℹ️'};
+  t.style.borderColor = type==='success'?'rgba(74,222,128,0.3)':type==='error'?'rgba(248,113,113,0.3)':type==='warn'?'rgba(245,158,11,0.3)':'var(--border)';
+  t.innerHTML = '<span>'+(icons[type]||'ℹ️')+'</span><span>'+msg+'</span>';
+  c.appendChild(t);
+  setTimeout(function(){t.style.opacity='0';t.style.transform='translateY(8px)';t.style.transition='all .3s';setTimeout(function(){t.remove();},300);},3000);
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+function sb_initApp() {
+  // Overlay backdrop click to close — scoped to SB section
+  var sbRoot = document.getElementById('view-ratingagency');
+  sbRoot.querySelectorAll('.overlay').forEach(function(o){
+    o.addEventListener('click',function(e){if(e.target===o)o.classList.remove('open');});
+  });
+  // Pre-render tabs
+  sb_renderSgCats();
+  sb_renderCriteria();
+  sb_showToast('RatingAgency geladen 🎓','success');
+}
+
+// Run after DOM is ready — works in both DOMContentLoaded and already-loaded states
+// sb_initApp() is triggered lazily by navigate('ratingagency')
+
+            // sb_initApp() called lazily on first navigate to ratingagency
+        
 
         /* ─── Cookie Consent Logic (DSGVO/TTDSG) ─── */
 
@@ -992,5 +3479,115 @@
         /* Cookie-Banner mit leichter Verzögerung starten */
         setTimeout(initCookieBanner, 900);
     </script>
+
+<!-- ══════════════════════════════════════════════════════════
+     IN HONOR OVERLAY — Danksagung an die Gründungsunterstützer
+     Offen für 3–4 Monate nach Firmengründung
+     ══════════════════════════════════════════════════════════ -->
+<div id="in-honor-overlay" role="dialog" aria-modal="true" aria-labelledby="in-honor-title"
+     onclick="if(event.target===this)this.classList.remove('open')">
+  <div id="in-honor-modal">
+
+    <!-- Header -->
+    <div style="padding:1.8rem 1.8rem 0; position:relative;">
+      <button onclick="document.getElementById('in-honor-overlay').classList.remove('open')"
+              style="position:absolute;top:1.2rem;right:1.2rem;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#6b6880;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s;"
+              onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#f0edf1'"
+              onmouseout="this.style.background='rgba(255,255,255,0.06)';this.style.color='#6b6880'"
+              aria-label="Schließen">✕</button>
+
+      <!-- Gold glow decoration -->
+      <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:300px;height:200px;background:radial-gradient(ellipse,rgba(245,158,11,0.08) 0%,transparent 70%);pointer-events:none;"></div>
+
+      <div style="text-align:center;padding-bottom:1.4rem;position:relative;">
+        <div style="font-size:36px;margin-bottom:.6rem;">🏅</div>
+        <h2 id="in-honor-title" style="font-family:'Manrope',sans-serif;font-size:22px;font-weight:800;color:#f0edf1;margin-bottom:.4rem;">
+          In <span style="color:#f59e0b;">Honor</span>
+        </h2>
+        <p style="font-size:13px;color:#6b6880;line-height:1.7;max-width:460px;margin:0 auto;">
+          Eine Danksagung an das Kollektiv, das die Chance erkannte und den Gründer in der härtesten Phase unterstützte — ohne monetäre Gegenleistung, aus echtem Glauben.
+        </p>
+        <div style="margin-top:1rem;">
+          <span class="honor-countdown" id="honor-countdown-badge">
+            <span style="width:6px;height:6px;border-radius:50%;background:#f59e0b;animation:honorPulse 1.8s ease-in-out infinite;"></span>
+            <span id="honor-days-left">Offen — Gründungsphase aktiv</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(245,158,11,0.3),transparent);margin-bottom:1.6rem;"></div>
+    </div>
+
+    <!-- Members Grid -->
+    <div style="padding:0 1.8rem 1.8rem;">
+      <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#4a4860;margin-bottom:1rem;">
+        Gründungsmitglieder — Klasse 2025
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px;" id="honor-members-list">
+
+        <!-- Member 1 — Placeholder -->
+        <div class="honor-member-card">
+          <div class="honor-avatar">JD</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:13px;font-weight:600;color:#f0edf1;margin-bottom:2px;">Jane Doe</div>
+            <div style="font-size:11px;color:#6b6880;">Early Believer · Member since Day 1</div>
+          </div>
+          <div style="display:flex;gap:7px;flex-shrink:0;">
+            <a href="https://linkedin.com" target="_blank" rel="noopener" class="honor-social-link linkedin" aria-label="LinkedIn" title="LinkedIn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            </a>
+            <a href="https://instagram.com" target="_blank" rel="noopener" class="honor-social-link instagram" aria-label="Instagram" title="Instagram">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.337 3.608 1.312.975.975 1.25 2.242 1.312 3.608.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.062 1.366-.337 2.633-1.312 3.608-.975.975-2.242 1.25-3.608 1.312-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.062-2.633-.337-3.608-1.312-.975-.975-1.25-2.242-1.312-3.608C2.175 15.584 2.163 15.204 2.163 12s.012-3.584.07-4.85c.062-1.366.337-2.633 1.312-3.608.975-.975 2.242-1.25 3.608-1.312C8.416 2.175 8.796 2.163 12 2.163zm0-2.163c-3.259 0-3.667.014-4.947.072C5.637.174 4.118.546 2.95 1.713 1.783 2.881 1.41 4.399 1.352 5.82.014 7.1 0 7.508 0 12s.014 4.9.072 6.18c.058 1.421.43 2.94 1.598 4.107 1.168 1.167 2.686 1.54 4.107 1.598C7.1 23.986 7.508 24 12 24s4.9-.014 6.18-.072c1.421-.058 2.94-.43 4.107-1.598 1.167-1.168 1.54-2.686 1.598-4.107C23.986 16.9 24 16.492 24 12s-.014-4.9-.072-6.18c-.058-1.421-.43-2.94-1.598-4.107C21.162.546 19.644.174 18.223.116 16.943.014 16.535 0 12 0z"/><path d="M12 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+            </a>
+            <a href="https://tiktok.com" target="_blank" rel="noopener" class="honor-social-link tiktok" aria-label="TikTok" title="TikTok">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+            </a>
+            <a href="https://x.com" target="_blank" rel="noopener" class="honor-social-link twitter" aria-label="X (Twitter)" title="X (Twitter)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Member 2 — Placeholder -->
+        <div class="honor-member-card">
+          <div class="honor-avatar" style="background:linear-gradient(135deg,rgba(157,123,255,0.3),rgba(192,143,251,0.1));border-color:rgba(157,123,255,0.4);color:#9D7BFF;">MM</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:13px;font-weight:600;color:#f0edf1;margin-bottom:2px;">Max Mustermann</div>
+            <div style="font-size:11px;color:#6b6880;">Early Believer · Member since Day 1</div>
+          </div>
+          <div style="display:flex;gap:7px;flex-shrink:0;">
+            <a href="#" class="honor-social-link linkedin" aria-label="LinkedIn" title="LinkedIn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            </a>
+            <a href="#" class="honor-social-link instagram" aria-label="Instagram" title="Instagram">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.337 3.608 1.312.975.975 1.25 2.242 1.312 3.608.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.062 1.366-.337 2.633-1.312 3.608-.975.975-2.242 1.25-3.608 1.312-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.062-2.633-.337-3.608-1.312-.975-.975-1.25-2.242-1.312-3.608C2.175 15.584 2.163 15.204 2.163 12s.012-3.584.07-4.85c.062-1.366.337-2.633 1.312-3.608.975-.975 2.242-1.25 3.608-1.312C8.416 2.175 8.796 2.163 12 2.163zm0-2.163c-3.259 0-3.667.014-4.947.072C5.637.174 4.118.546 2.95 1.713 1.783 2.881 1.41 4.399 1.352 5.82.014 7.1 0 7.508 0 12s.014 4.9.072 6.18c.058 1.421.43 2.94 1.598 4.107 1.168 1.167 2.686 1.54 4.107 1.598C7.1 23.986 7.508 24 12 24s4.9-.014 6.18-.072c1.421-.058 2.94-.43 4.107-1.598 1.167-1.168 1.54-2.686 1.598-4.107C23.986 16.9 24 16.492 24 12s-.014-4.9-.072-6.18c-.058-1.421-.43-2.94-1.598-4.107C21.162.546 19.644.174 18.223.116 16.943.014 16.535 0 12 0z"/><path d="M12 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+            </a>
+            <a href="#" class="honor-social-link tiktok" aria-label="TikTok" title="TikTok">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+            </a>
+            <a href="#" class="honor-social-link twitter" aria-label="X (Twitter)" title="X (Twitter)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Footer note -->
+      <div style="margin-top:1.4rem;padding-top:1.2rem;border-top:1px solid rgba(255,255,255,0.05);text-align:center;">
+        <p style="font-size:11px;color:#4a4860;line-height:1.7;">
+          Dieser Bereich ist für <strong style="color:#6b6880;">3–4 Monate</strong> nach Firmengründung geöffnet.<br>
+          Eine Danksagung an alle, die in der härtesten Phase dabei waren.
+        </p>
+        <div style="margin-top:.8rem;font-size:11px;color:#4a4860;">
+          💛 Aus echter Überzeugung — nicht aus Pflicht
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
 <script src="js/lang.js"></script>
 </body></html>
