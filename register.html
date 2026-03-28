@@ -307,6 +307,8 @@ input[type=file]{display:none}
         <input class="otp-input" maxlength="1" type="text" inputmode="numeric" id="o4">
         <input class="otp-input" maxlength="1" type="text" inputmode="numeric" id="o5">
         <input class="otp-input" maxlength="1" type="text" inputmode="numeric" id="o6">
+        <input class="otp-input" maxlength="1" type="text" inputmode="numeric" id="o7">
+        <input class="otp-input" maxlength="1" type="text" inputmode="numeric" id="o8">
       </div>
       <div class="error-msg" id="err-otp" style="text-align:center;margin-bottom:1rem">Falscher Code — bitte erneut versuchen</div>
       <div class="resend-link">Keinen Code erhalten? <button onclick="resend()">Erneut senden</button></div>
@@ -583,17 +585,17 @@ function sendCode(){
 }
 
 function setupOTP(){
-  const ids=['o1','o2','o3','o4','o5','o6'];
+  const ids=['o1','o2','o3','o4','o5','o6','o7','o8'];
   const inputs=ids.map(id=>document.getElementById(id));
-  inputs.forEach((inp,i)=>{inp.value='';inp.oninput=()=>{if(inp.value&&i<5)inputs[i+1].focus()};inp.onkeydown=e=>{if(e.key==='Backspace'&&!inp.value&&i>0)inputs[i-1].focus()}});
+  inputs.forEach((inp,i)=>{inp.value='';inp.oninput=()=>{if(inp.value&&i<7)inputs[i+1].focus()};inp.onkeydown=e=>{if(e.key==='Backspace'&&!inp.value&&i>0)inputs[i-1].focus()}});
   setTimeout(()=>inputs[0].focus(),200);
 }
 
 function verifyOTP(){
-  const code=['o1','o2','o3','o4','o5','o6'].map(id=>document.getElementById(id).value).join('');
-  if(code.length!==6){
+  const code=['o1','o2','o3','o4','o5','o6','o7','o8'].map(id=>document.getElementById(id).value).join('');
+  if(code.length!==8){
     document.getElementById('err-otp').style.display='block';
-    ['o1','o2','o3','o4','o5','o6'].forEach(id=>{const el=document.getElementById(id);el.style.borderColor='#f87171';setTimeout(()=>el.style.borderColor='',1500)});
+    ['o1','o2','o3','o4','o5','o6','o7','o8'].forEach(id=>{const el=document.getElementById(id);el.style.borderColor='#f87171';setTimeout(()=>el.style.borderColor='',1500)});
     return;
   }
 
@@ -608,7 +610,7 @@ function verifyOTP(){
       document.getElementById('err-otp').textContent='❌ '+result.error.message;
       btn.textContent='Bestätigen ✓';
       btn.disabled=false;
-      ['o1','o2','o3','o4','o5','o6'].forEach(id=>{const el=document.getElementById(id);el.style.borderColor='#f87171';setTimeout(()=>el.style.borderColor='',1500)});
+      ['o1','o2','o3','o4','o5','o6','o7','o8'].forEach(id=>{const el=document.getElementById(id);el.style.borderColor='#f87171';setTimeout(()=>el.style.borderColor='',1500)});
     }else{
       // Erfolgreich verifiziert → ins Dashboard
       window.location.href='dashboard.html';
