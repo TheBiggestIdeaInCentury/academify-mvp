@@ -6,7 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
 
     if ($email === 'admin@academify.xyz' && $password === 'CreateTheFutureAct-2026') {
-        header('Location: landing.html');
+        header('Location: landing.html?gate=passed');
         exit;
     } else {
         $error = true;

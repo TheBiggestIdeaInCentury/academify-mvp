@@ -1,1 +1,13 @@
 DirectoryIndex index.php index.html
+
+# Start PHP session for all HTML files
+AddType application/x-httpd-php .html
+
+# Block direct access - redirect to gate
+RewriteEngine On
+RewriteCond %{HTTP_REFERER} !academify\.xyz [NC]
+RewriteCond %{REQUEST_URI} !^/index\.php$
+RewriteCond %{REQUEST_URI} !^/$
+RewriteCond %{REQUEST_URI} \.(html|php)$
+RewriteCond %{QUERY_STRING} !gate=passed
+RewriteRule ^(.*)$ /index.php [R=302,L]
