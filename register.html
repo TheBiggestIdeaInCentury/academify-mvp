@@ -266,126 +266,29 @@ input[type=file]{display:none}
       </div>
     </div>
 
-    <!-- SCHRITT 1: Verifizierung (für Individuen mit akademischem Potenzial) -->
+    <!-- SCHRITT 1: Studenten-Registrierung (für Individuen mit akademischem Potenzial) -->
     <div class="form-section" id="sec-verify">
       <button class="btn-back" onclick="show('sec-role',1)">← Zurück</button>
       <div class="card-header">
-        <h1>Identität <em>bestätigen</em></h1>
-        <p>Wähle wie du dich als Student verifizierst.</p>
+        <h1>Konto <em>erstellen</em></h1>
+        <p>Melde dich mit deiner studentischen E-Mail an.</p>
       </div>
 
-      <div class="method-tabs">
-        <div class="method-tab active" id="tab-email" onclick="switchMethod('email')">
-          <div class="tab-icon">✉️</div>
-          <div class="tab-label">Uni-E-Mail</div>
-          <div class="tab-badge badge-auto">Automatisch</div>
-        </div>
-        <div class="method-tab" id="tab-linkedin" onclick="switchMethod('linkedin')">
-          <div class="tab-icon">💼</div>
-          <div class="tab-label">LinkedIn</div>
-          <div class="tab-badge badge-semi">Halbautom.</div>
-        </div>
-        <div class="method-tab" id="tab-manual" onclick="switchMethod('manual')">
-          <div class="tab-icon">📄</div>
-          <div class="tab-label">Dokument</div>
-          <div class="tab-badge badge-manual">Manuell</div>
-        </div>
+      <div class="domain-hint">
+        💡 Nutze deine offizielle Uni-Adresse:<br>
+        <strong>vorname.name@stud.uni-beispiel.de</strong>
       </div>
-
-      <!-- Panel: Uni-E-Mail -->
-      <div class="method-panel active" id="panel-email">
-        <div class="domain-hint">
-          💡 Nutze deine offizielle Uni-Adresse:<br>
-          <strong>vorname.name@stud.uni-beispiel.de</strong>
-        </div>
-        <div class="field">
-          <label>Studentische E-Mail</label>
-          <input type="email" id="uniEmail" placeholder="max.mueller@stud.uni-koeln.de">
-          <div class="error-msg" id="err-uniEmail">Keine gültige Uni-E-Mail erkannt</div>
-        </div>
-        <div class="field">
-          <label>Hochschule</label>
-          <div class="select-wrap">
-            <select id="uniSelect">
-              <option value="">Hochschule auswählen</option>
-              <option>Universität zu Köln</option>
-              <option>TU Berlin</option>
-              <option>LMU München</option>
-              <option>Universität Hamburg</option>
-              <option>Goethe-Universität Frankfurt</option>
-              <option>RWTH Aachen</option>
-              <option>KIT Karlsruhe</option>
-              <option>Humboldt-Universität Berlin</option>
-              <option>FU Berlin</option>
-              <option>Andere Hochschule</option>
-            </select>
-          </div>
-          <div class="error-msg" id="err-uniSelect">Bitte Hochschule wählen</div>
-        </div>
-        <button class="btn-primary" onclick="sendCode()">Verifizierungscode senden →</button>
+      <div class="field">
+        <label>Studenten-E-Mail</label>
+        <input type="email" id="uniEmail" placeholder="max.mueller@stud.uni-koeln.de">
+        <div class="error-msg" id="err-uniEmail">Keine gültige Studenten-E-Mail erkannt</div>
       </div>
-
-      <!-- Panel: LinkedIn -->
-      <div class="method-panel" id="panel-linkedin">
-        <div class="info-box">
-          <div class="box-icon">ℹ️</div>
-          <div>Wir prüfen ob dein LinkedIn-Profil einen <strong style="color:var(--text)">Hochschuleintrag</strong> enthält. Kein Dokument nötig — Zugang sofort nach Bestätigung.</div>
-        </div>
-        <button class="btn-li" onclick="linkedInLogin()">
-          <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-          Mit LinkedIn fortfahren
-        </button>
-        <div class="divider">oder URL manuell eingeben</div>
-        <div class="field">
-          <label>LinkedIn-Profil-URL</label>
-          <input type="url" id="linkedinUrl" placeholder="linkedin.com/in/dein-profil">
-          <div class="error-msg" id="err-linkedin">Bitte gültige LinkedIn-URL eingeben</div>
-        </div>
-        <div class="field">
-          <label>Hochschule laut LinkedIn</label>
-          <input type="text" id="linkedinUni" placeholder="z.B. Universität zu Köln">
-        </div>
-        <button class="btn-primary" onclick="submitLinkedIn()">LinkedIn verifizieren →</button>
+      <div class="field">
+        <label>Passwort</label>
+        <input type="password" id="studentPw" placeholder="Mindestens 8 Zeichen">
+        <div class="error-msg" id="err-studentPw">Mindestens 8 Zeichen</div>
       </div>
-
-      <!-- Panel: Dokument -->
-      <div class="method-panel" id="panel-manual">
-        <div class="warn-box">
-          <div class="box-icon">⏳</div>
-          <div>Manuelle Prüfung dauert <strong style="color:var(--text)">24–48 Stunden</strong>. Dokument wird nach Prüfung sofort gelöscht — DSGVO-konform.</div>
-        </div>
-        <div class="field">
-          <label>Art des Nachweises</label>
-          <div class="select-wrap">
-            <select id="docType">
-              <option value="">Nachweisart wählen</option>
-              <option value="immatri">Immatrikulationsbescheinigung</option>
-              <option value="ausweis">Studentenausweis (Foto)</option>
-              <option value="zeugnis">Letztes Prüfungszeugnis</option>
-              <option value="bescheid">Zulassungsbescheid</option>
-            </select>
-          </div>
-          <div class="error-msg" id="err-docType">Bitte Nachweisart wählen</div>
-        </div>
-        <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
-          <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFile(this)">
-          <div class="u-icon">📎</div>
-          <div class="u-title" id="uploadTitle">Datei hochladen</div>
-          <div class="u-sub" id="uploadSub">Hier klicken oder Datei reinziehen</div>
-          <div class="u-fmt">PDF, JPG oder PNG · max. 5 MB</div>
-        </div>
-        <div class="error-msg" id="err-file">Bitte Dokument hochladen</div>
-        <div class="field">
-          <label>E-Mail für Benachrichtigung</label>
-          <input type="email" id="manualEmail" placeholder="deine@email.de">
-          <div class="error-msg" id="err-manualEmail">Gültige E-Mail eingeben</div>
-        </div>
-        <div class="field">
-          <label>Hochschule</label>
-          <input type="text" id="manualUni" placeholder="z.B. FH Dortmund">
-        </div>
-        <button class="btn-primary" onclick="submitManual()">Zur Prüfung einreichen →</button>
-      </div>
+      <button class="btn-primary" onclick="sendCode()">Verifizierungscode senden →</button>
 
       <div class="login-link" data-i18n="register-login">Bereits Mitglied? <a href="login.html">Einloggen</a></div>
     </div>
@@ -558,9 +461,8 @@ function handleSignUp(){
     return;
   }
 
-  // Individuen mit akademischem Potenzial → Verifizierung
+  // Individuen mit akademischem Potenzial → direkt Verifizierung (E-Mail + PW im sec-verify)
   if(selectedRole==='student'){
-    document.getElementById('uniEmail').value=email;
     show('sec-verify',2);
     return;
   }
@@ -600,10 +502,10 @@ function isUniEmail(e){return ['stud.','students.','student.','.uni-','uni-','fh
 
 function sendCode(){
   const email=document.getElementById('uniEmail').value.trim();
-  const uni=document.getElementById('uniSelect').value;
+  const pw=document.getElementById('studentPw').value;
   let ok=true;
-  if(!email||!isUniEmail(email)){document.getElementById('err-uniEmail').classList.add('show');ok=false}else document.getElementById('err-uniEmail').classList.remove('show');
-  if(!uni){document.getElementById('err-uniSelect').classList.add('show');ok=false}else document.getElementById('err-uniSelect').classList.remove('show');
+  if(!email||!email.includes('@')){document.getElementById('err-uniEmail').classList.add('show');ok=false}else document.getElementById('err-uniEmail').classList.remove('show');
+  if(pw.length<8){document.getElementById('err-studentPw').classList.add('show');ok=false}else document.getElementById('err-studentPw').classList.remove('show');
   if(!ok)return;
   verifiedEmail=email;
   document.getElementById('sentTo').textContent=email;
