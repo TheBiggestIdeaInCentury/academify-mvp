@@ -111,14 +111,15 @@
 
 <div class="toast" id="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  // MVP Demo-Datenbank (wird später durch echte Datenbank ersetzt)
-  const users = [
-    { email: 'demo@academify.xyz', pw: 'Demo1234', redirect: 'dashboard.html' },
-    { email: 'student@academify.xyz', pw: 'Student1234', redirect: 'dashboard.html' },
-    { email: 'admin@academify.xyz', pw: 'Admin1234', redirect: 'admin.html' },
-    { email: 'master@academify.xyz', pw: 'Master1234', redirect: 'master.html' }
-  ];
+  const sb = window.supabase.createClient('https://izbokhexirglwthffkis.supabase.co','sb_publishable_5ojCJQblvrXTf4lk1rNQ0A_fzmkvz4q');
+
+  // Spezial-Routen für bestimmte E-Mails
+  const specialRoutes = {
+    'admin@academify.xyz': 'admin.html',
+    'master@academify.xyz': 'master.html'
+  };
 
   function handleLogin() {
     const email = document.getElementById('email').value.trim().toLowerCase();
@@ -139,19 +140,21 @@
     btn.textContent = 'Wird überprüft...';
     btn.style.opacity = '0.7';
 
-    setTimeout(() => {
-      // Prüfe ob E-Mail + Passwort in der Datenbank existiert
-      const user = users.find(u => u.email === email && u.pw === pw);
-
-      if (user) {
-        showToast('✓ Erfolgreich angemeldet!');
-        setTimeout(() => { window.location.href = user.redirect || 'dashboard.html'; }, 700);
-      } else {
+    sb.auth.signInWithPassword({ email: email, password: pw }).then(function(result) {
+      if (result.error) {
         btn.textContent = 'Anmelden →';
         btn.style.opacity = '1';
         document.getElementById('err-login').style.display = 'block';
+      } else {
+        showToast('✓ Erfolgreich angemeldet!');
+        const redirect = specialRoutes[email] || 'dashboard.html';
+        setTimeout(function() { window.location.href = redirect; }, 700);
       }
-    }, 800);
+    }).catch(function() {
+      btn.textContent = 'Anmelden →';
+      btn.style.opacity = '1';
+      document.getElementById('err-login').style.display = 'block';
+    });
   }
 
   function showToast(msg) {
