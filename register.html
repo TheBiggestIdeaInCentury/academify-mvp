@@ -591,17 +591,39 @@ function setupOTP(){
 
 function verifyOTP(){
   const code=['o1','o2','o3','o4','o5','o6'].map(id=>document.getElementById(id).value).join('');
-  if(code.length===6){
-    document.getElementById('err-otp').style.display='none';
-    document.getElementById('verifiedBadge').innerHTML='<div class="v-dot"></div> Uni-E-Mail verifiziert ✓';
-    show('sec-account',2);
-  }else{
+  if(code.length!==6){
     document.getElementById('err-otp').style.display='block';
     ['o1','o2','o3','o4','o5','o6'].forEach(id=>{const el=document.getElementById(id);el.style.borderColor='#f87171';setTimeout(()=>el.style.borderColor='',1500)});
+    return;
   }
+
+  const btn=document.querySelector('#sec-otp .btn-primary');
+  btn.textContent='Wird geprüft...';
+  btn.disabled=true;
+
+  const sb=window.supabase.createClient('https://izbokhexirglwthffkis.supabase.co','sb_publishable_5ojCJQblvrXTf4lk1rNQ0A_fzmkvz4q');
+  sb.auth.verifyOtp({email:verifiedEmail,token:code,type:'signup'}).then(function(result){
+    if(result.error){
+      document.getElementById('err-otp').style.display='block';
+      document.getElementById('err-otp').textContent='❌ '+result.error.message;
+      btn.textContent='Bestätigen ✓';
+      btn.disabled=false;
+      ['o1','o2','o3','o4','o5','o6'].forEach(id=>{const el=document.getElementById(id);el.style.borderColor='#f87171';setTimeout(()=>el.style.borderColor='',1500)});
+    }else{
+      // Erfolgreich verifiziert → ins Dashboard
+      window.location.href='dashboard.html';
+    }
+  });
 }
 
-function resend(){setupOTP();const b=document.querySelector('.resend-link button');b.textContent='Gesendet! ✓';b.style.color='var(--success)';setTimeout(()=>{b.textContent='Erneut senden';b.style.color=''},2000)}
+function resend(){
+  const sb=window.supabase.createClient('https://izbokhexirglwthffkis.supabase.co','sb_publishable_5ojCJQblvrXTf4lk1rNQ0A_fzmkvz4q');
+  sb.auth.resend({type:'signup',email:verifiedEmail}).then(function(){
+    const b=document.querySelector('.resend-link button');
+    b.textContent='Gesendet! ✓';b.style.color='var(--success)';
+    setTimeout(()=>{b.textContent='Erneut senden';b.style.color=''},2000);
+  });
+}
 
 function linkedInLogin(){
   const btn=document.querySelector('.btn-li');
