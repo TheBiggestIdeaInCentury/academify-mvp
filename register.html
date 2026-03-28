@@ -485,13 +485,29 @@ function switchMethod(m){
   });
 }
 
-function isUniEmail(e){return ['stud.','students.','student.','.uni-','uni-','fh-','.fh-','th-','hs-','rwth','lmu.','kit.edu','tu-','.edu'].some(m=>e.toLowerCase().includes(m))}
+// Whitelist: Zugelassene Uni-Domains
+const whitelistedDomains = [
+  'stud.inu.de'
+];
+
+function isWhitelistedDomain(email) {
+  const domain = email.toLowerCase().split('@')[1];
+  return whitelistedDomains.includes(domain);
+}
+
+function isUniEmail(e){return isWhitelistedDomain(e) || ['stud.','students.','student.','.uni-','uni-','fh-','.fh-','th-','hs-','rwth','lmu.','kit.edu','tu-','.edu'].some(m=>e.toLowerCase().includes(m))}
 
 function sendCode(){
   const email=document.getElementById('uniEmail').value.trim();
   const pw=document.getElementById('studentPw').value;
   let ok=true;
-  if(!email||!email.includes('@')){document.getElementById('err-uniEmail').classList.add('show');ok=false}else document.getElementById('err-uniEmail').classList.remove('show');
+  if(!email||!email.includes('@')||!isUniEmail(email)){
+    document.getElementById('err-uniEmail').classList.add('show');
+    document.getElementById('err-uniEmail').textContent='Keine zugelassene Studenten-E-Mail. Deine Hochschule muss auf der Whitelist stehen.';
+    ok=false;
+  }else{
+    document.getElementById('err-uniEmail').classList.remove('show');
+  }
   if(pw.length<8){document.getElementById('err-studentPw').classList.add('show');ok=false}else document.getElementById('err-studentPw').classList.remove('show');
   if(!ok)return;
   verifiedEmail=email;
