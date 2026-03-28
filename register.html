@@ -183,11 +183,6 @@ input[type=file]{display:none}
 
       <span style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:block">Ich bin...</span>
       <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:1.4rem">
-        <div style="display:grid;grid-template-columns:1fr;gap:8px">
-          <div class="sg-card selected" id="role-ich" onclick="selectRole('ich')" style="padding:12px 8px">
-            <div class="sg-icon">🧠</div><div class="sg-name">ICH & DU!</div>
-          </div>
-        </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
           <div class="sg-card" id="role-student" onclick="selectRole('student')" style="padding:12px 8px">
             <div class="sg-icon">🎓</div><div class="sg-name">Individuen mit akademischem Potenzial</div>
@@ -560,12 +555,6 @@ function handleSignUp(){
   // 🧙‍♂️ MasterOfTheUniverse → Super-Admin Dashboard
   if(selectedRole==='master'){
     window.location.href='master.html';
-    return;
-  }
-
-  // ICH & DU! → direkt ins Dashboard
-  if(selectedRole==='ich'){
-    window.location.href='dashboard.html';
     return;
   }
 
