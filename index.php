@@ -6,17 +6,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
 
     if ($email === 'admin@academify.xyz' && $password === 'CreateTheFutureAct-2026') {
-        setcookie('academify_session', 'granted', 0, '/', '', true, true);
         header('Location: landing.html');
         exit;
     } else {
         $error = true;
     }
-}
-
-if (isset($_COOKIE['academify_session']) && $_COOKIE['academify_session'] === 'granted') {
-    header('Location: landing.html');
-    exit;
 }
 ?>
 <!DOCTYPE html>

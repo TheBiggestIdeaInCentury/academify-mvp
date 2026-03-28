@@ -1,8 +1,1 @@
-RewriteEngine On
-
-# Allow access to index.php itself
-RewriteRule ^index\.php$ - [L]
-
-# If no auth cookie, redirect to index.php
-RewriteCond %{HTTP_COOKIE} !academify_session=granted
-RewriteRule ^(.*)$ /index.php [R=302,L]
+DirectoryIndex index.php index.html
