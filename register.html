@@ -184,15 +184,15 @@ input[type=file]{display:none}
       <span style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:block">Ich bin...</span>
       <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:1.4rem">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <div class="sg-card" id="role-student" onclick="selectRole('student')" style="padding:12px 8px">
+          <div class="sg-card" id="role-student" onclick="show('sec-verify',2)" style="padding:12px 8px;cursor:pointer">
             <div class="sg-icon">🎓</div><div class="sg-name">Individuen mit akademischem Potenzial</div>
           </div>
-          <div class="sg-card" id="role-eduind" onclick="selectRole('eduind')" style="padding:12px 8px">
+          <div class="sg-card" id="role-eduind" onclick="show('sec-whitelist',2)" style="padding:12px 8px;cursor:pointer">
             <div class="sg-icon">🏛️</div><div class="sg-name">EduIndividuen</div>
           </div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <div class="sg-card" id="role-edu" onclick="selectRole('edu')" style="padding:12px 8px">
+          <div class="sg-card" id="role-edu" onclick="show('sec-whitelist',2)" style="padding:12px 8px;cursor:pointer">
             <div class="sg-icon">🏫</div><div class="sg-name">Edu</div>
           </div>
           <div class="sg-card" id="role-company" style="padding:12px 8px;opacity:0.3;cursor:not-allowed;pointer-events:none;position:relative">
@@ -215,19 +215,6 @@ input[type=file]{display:none}
           </div>
         </div>
       </div>
-
-      <div class="field">
-        <label>E-Mail</label>
-        <input type="email" id="regEmail" placeholder="max.mueller@email.de">
-        <div class="error-msg" id="err-regEmail">Bitte eine gültige E-Mail eingeben</div>
-      </div>
-      <div class="field">
-        <label>Passwort</label>
-        <input type="password" id="regPw" placeholder="Mindestens 8 Zeichen">
-        <div class="error-msg" id="err-regPw">Mindestens 8 Zeichen</div>
-      </div>
-
-      <button class="btn-primary" onclick="handleSignUp()">Registrieren →</button>
 
       <div class="login-link">Bereits Mitglied? <a href="login.html">Einloggen</a></div>
     </div>
