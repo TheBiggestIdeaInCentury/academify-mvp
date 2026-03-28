@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Academify — Registrierung</title>
@@ -271,9 +272,21 @@ input[type=file]{display:none}
         <div class="error-msg" id="err-uniEmail">Keine gültige Studenten-E-Mail erkannt</div>
       </div>
       <div class="field">
-        <label>Passwort</label>
-        <input type="password" id="studentPw" placeholder="Mindestens 8 Zeichen">
-        <div class="error-msg" id="err-studentPw">Mindestens 8 Zeichen</div>
+        <label>Passwort erstellen</label>
+        <input type="password" id="studentPw" placeholder="z.B. Academify#2026" oninput="checkPwStrength()">
+        <div class="error-msg" id="err-studentPw">Passwort erfüllt nicht alle Kriterien</div>
+        <div id="pw-rules" style="margin-top:8px;font-size:11px;line-height:1.8">
+          <div id="pw-len" style="color:var(--muted)">❌ Mindestens 8 Zeichen</div>
+          <div id="pw-upper" style="color:var(--muted)">❌ Mindestens 1 Großbuchstabe (A-Z)</div>
+          <div id="pw-lower" style="color:var(--muted)">❌ Mindestens 1 Kleinbuchstabe (a-z)</div>
+          <div id="pw-num" style="color:var(--muted)">❌ Mindestens 1 Zahl (0-9)</div>
+          <div id="pw-special" style="color:var(--muted)">❌ Mindestens 1 Sonderzeichen (!@#$%&*)</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Passwort bestätigen</label>
+        <input type="password" id="studentPwConfirm" placeholder="Passwort wiederholen">
+        <div class="error-msg" id="err-studentPwConfirm">Passwörter stimmen nicht überein</div>
       </div>
       <button class="btn-primary" onclick="sendCode()">Verifizierungscode senden →</button>
 
@@ -497,23 +510,76 @@ function isWhitelistedDomain(email) {
 
 function isUniEmail(e){return isWhitelistedDomain(e) || ['stud.','students.','student.','.uni-','uni-','fh-','.fh-','th-','hs-','rwth','lmu.','kit.edu','tu-','.edu'].some(m=>e.toLowerCase().includes(m))}
 
+function checkPwStrength(){
+  const pw=document.getElementById('studentPw').value;
+  const rules=[
+    {id:'pw-len',ok:pw.length>=8},
+    {id:'pw-upper',ok:/[A-Z]/.test(pw)},
+    {id:'pw-lower',ok:/[a-z]/.test(pw)},
+    {id:'pw-num',ok:/[0-9]/.test(pw)},
+    {id:'pw-special',ok:/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pw)}
+  ];
+  rules.forEach(r=>{
+    const el=document.getElementById(r.id);
+    if(r.ok){el.style.color='#22c55e';el.textContent='✅'+el.textContent.substring(1)}
+    else{el.style.color='var(--muted)';el.textContent='❌'+el.textContent.substring(1)}
+  });
+  return rules.every(r=>r.ok);
+}
+
 function sendCode(){
   const email=document.getElementById('uniEmail').value.trim();
   const pw=document.getElementById('studentPw').value;
+  const pwConfirm=document.getElementById('studentPwConfirm').value;
   let ok=true;
-  if(!email||!email.includes('@')||!isUniEmail(email)){
+
+  // E-Mail Whitelist prüfen
+  if(!email||!email.includes('@')||!isWhitelistedDomain(email)){
     document.getElementById('err-uniEmail').classList.add('show');
     document.getElementById('err-uniEmail').textContent='Keine zugelassene Studenten-E-Mail. Deine Hochschule muss auf der Whitelist stehen.';
     ok=false;
   }else{
     document.getElementById('err-uniEmail').classList.remove('show');
   }
-  if(pw.length<8){document.getElementById('err-studentPw').classList.add('show');ok=false}else document.getElementById('err-studentPw').classList.remove('show');
+
+  // Passwort-Regeln prüfen
+  if(!checkPwStrength()){
+    document.getElementById('err-studentPw').classList.add('show');
+    ok=false;
+  }else{
+    document.getElementById('err-studentPw').classList.remove('show');
+  }
+
+  // Passwort-Bestätigung prüfen
+  if(pw!==pwConfirm){
+    document.getElementById('err-studentPwConfirm').classList.add('show');
+    ok=false;
+  }else{
+    document.getElementById('err-studentPwConfirm').classList.remove('show');
+  }
+
   if(!ok)return;
-  verifiedEmail=email;
-  document.getElementById('sentTo').textContent=email;
-  setupOTP();
-  show('sec-otp',1);
+
+  // Supabase: User registrieren (sendet automatisch Verifizierungs-E-Mail)
+  const btn=document.querySelector('#sec-verify .btn-primary');
+  btn.textContent='Wird gesendet...';
+  btn.disabled=true;
+
+  const sb=window.supabase.createClient('https://izbokhexirglwthffkis.supabase.co','sb_publishable_5ojCJQblvrXTf4lk1rNQ0A_fzmkvz4q');
+  sb.auth.signUp({email:email,password:pw}).then(function(result){
+    if(result.error){
+      document.getElementById('err-uniEmail').textContent=result.error.message;
+      document.getElementById('err-uniEmail').classList.add('show');
+      btn.textContent='Verifizierungscode senden →';
+      btn.disabled=false;
+    }else{
+      verifiedEmail=email;
+      document.getElementById('sentTo').textContent=email;
+      show('sec-otp',1);
+      btn.textContent='Verifizierungscode senden →';
+      btn.disabled=false;
+    }
+  });
 }
 
 function setupOTP(){
