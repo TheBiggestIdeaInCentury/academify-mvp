@@ -268,7 +268,7 @@ input[type=file]{display:none}
       </div>
       <div class="field">
         <label>Hochschul-E-Mail</label>
-        <input type="email" id="uniEmail" placeholder="max.mueller@stud.uni-koeln.de">
+        <input type="email" id="uniEmail" placeholder="lena.schmidt@stud.uni-alpha.de">
         <div class="error-msg" id="err-uniEmail">Keine gültige Hochschul-E-Mail erkannt</div>
       </div>
       <div class="field">
@@ -437,10 +437,10 @@ function selectRole(role){
   document.querySelectorAll('[id^="role-"]').forEach(c=>c.classList.remove('selected'));
   document.getElementById('role-'+role).classList.add('selected');
   const placeholders={
-    ich:'max.mueller@email.de',
-    student:'max.mueller@stud.uni-koeln.de',
-    eduind:'prof.schmidt@uni-koeln.de',
-    edu:'admin@uni-koeln.de',
+    ich:'lena.schmidt@email.de',
+    student:'lena.schmidt@stud.uni-alpha.de',
+    eduind:'prof.schmidt@uni-alpha.de',
+    edu:'admin@uni-alpha.de',
     stiftung:'kontakt@studienstiftung.de',
     company:'recruiting@unternehmen.de',
     gov:'kontakt@ministerium.de'

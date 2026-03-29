@@ -280,7 +280,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     <div class="user-row">
       <div class="user-av">MM</div>
       <div style="flex:1;min-width:0">
-        <div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Max Müller</div>
+        <div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Lena Schmidt</div>
         <div style="font-size:10px;color:var(--muted)">WiPsy B.Sc. · Sem. 1</div>
       </div>
     </div>
@@ -813,7 +813,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
               <label>E-Mail-Adresse <span style="font-size:9px;color:var(--accent2);letter-spacing:0;text-transform:none">🔒 Gesperrt</span></label>
               <div style="background:var(--surface2);border:1px solid rgba(124,109,250,0.2);border-radius:9px;padding:10px 13px;display:flex;align-items:center;gap:7px;cursor:not-allowed">
                 <span style="font-size:13px;color:var(--muted2)">🔒</span>
-                <span style="font-size:13px;color:var(--muted)">m•••••@stud.uni-koeln.de</span>
+                <span style="font-size:13px;color:var(--muted)">l•••••@stud.uni-alpha.de</span>
               </div>
               <div style="font-size:10px;color:var(--muted);margin-top:4px">Wird nicht veröffentlicht · Kann nicht geändert werden</div>
             </div>
@@ -839,7 +839,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
               <div style="font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted2);margin-bottom:.6rem">Zusammenfassung</div>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px">
                 <div><span style="color:var(--muted)">Studiengang:</span> <span id="bwSumSg">—</span></div>
-                <div><span style="color:var(--muted)">Hochschule:</span> <span>Uni Köln</span></div>
+                <div><span style="color:var(--muted)">Hochschule:</span> <span>Universität Alpha</span></div>
                 <div><span style="color:var(--muted)">Gesamtscore:</span> <span id="bwSumScore" style="color:var(--gold)">—</span></div>
                 <div><span style="color:var(--muted)">Empfehlung:</span> <span id="bwSumRec">—</span></div>
               </div>
@@ -854,14 +854,14 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
       <!-- Vorhandene Bewertungen -->
       <div class="card">
-        <div class="card-head"><span class="card-title">👻 Aktuelle Bewertungen — Wirtschaftspsychologie · Uni Köln</span><span class="card-action">Alle ansehen →</span></div>
+        <div class="card-head"><span class="card-title">👻 Aktuelle Bewertungen — Wirtschaftspsychologie · Universität Alpha</span><span class="card-action">Alle ansehen →</span></div>
 
         <div class="review-card">
           <div class="review-head">
             <div class="review-av" style="background:rgba(124,109,250,0.12);color:var(--accent2)">LM</div>
             <div class="review-meta">
               <div class="review-name">Lisa M.</div>
-              <div class="review-info">WiPsy B.Sc. · Uni Köln · Sem. 5 · weiblich · 21–23 · 2023</div>
+              <div class="review-info">WiPsy B.Sc. · Universität Alpha · Sem. 5 · weiblich · 21–23 · 2023</div>
             </div>
             <div class="review-score">👻👻👻👻👻</div>
           </div>
@@ -884,7 +884,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
             <div class="review-av" style="background:rgba(56,189,248,0.1);color:var(--info)">TW</div>
             <div class="review-meta">
               <div class="review-name">Tom W.</div>
-              <div class="review-info">WiPsy B.Sc. · Uni Köln · Sem. 3 · männlich · 21–23 · 2024</div>
+              <div class="review-info">WiPsy B.Sc. · Universität Alpha · Sem. 3 · männlich · 21–23 · 2024</div>
             </div>
             <div class="review-score">👻👻👻👻</div>
           </div>
@@ -1090,11 +1090,11 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
         <div class="field-row">
           <div class="field">
             <label>Name</label>
-            <input value="Max Müller" style="color:var(--muted)">
+            <input value="Lena Schmidt" style="color:var(--muted)">
           </div>
           <div class="field">
             <label>E-Mail</label>
-            <input value="max.mueller@example.de" style="color:var(--muted)">
+            <input value="lena.schmidt@example.de" style="color:var(--muted)">
           </div>
         </div>
         <div class="field" id="funktionField" style="display:none">
@@ -1480,17 +1480,17 @@ function openUniDetail(id) {
   // Map safe IDs to display names (avoids umlaut issues in onclick attrs)
   var nameMap = {
     'lmu':'LMU München','tum':'TU München','hd':'Uni Heidelberg',
-    'koeln':'Uni Köln','hub':'HU Berlin','ffm':'Uni Frankfurt','rwth':'RWTH Aachen'
+    'koeln':'Universität Alpha','hub':'HU Berlin','ffm':'Uni Frankfurt','rwth':'RWTH Aachen'
   };
   var name = nameMap[id] || id;
   var scores = {
     'LMU München':9.4,'TU München':9.2,'Uni Heidelberg':9.1,
-    'Uni Köln':8.7,'HU Berlin':8.5,'Uni Frankfurt':8.3,'RWTH Aachen':8.9
+    'Universität Alpha':8.7,'HU Berlin':8.5,'Uni Frankfurt':8.3,'RWTH Aachen':8.9
   };
-  var studCounts = {'LMU München':'52.400','TU München':'47.800','Uni Heidelberg':'28.900','Uni Köln':'54.300','HU Berlin':'36.200','Uni Frankfurt':'46.500','RWTH Aachen':'45.600'};
-  var bewCount   = {'LMU München':'2.841','TU München':'3.120','Uni Heidelberg':'1.988','Uni Köln':'4.820','HU Berlin':'2.340','Uni Frankfurt':'3.612','RWTH Aachen':'2.540'};
-  var sgCount    = {'LMU München':'320','TU München':'290','Uni Heidelberg':'180','Uni Köln':'260','HU Berlin':'220','Uni Frankfurt':'280','RWTH Aachen':'185'};
-  var cityMap    = {'LMU München':'München, Bayern','TU München':'München, Bayern','Uni Heidelberg':'Heidelberg, Baden-Württemberg','Uni Köln':'Köln, NRW','HU Berlin':'Berlin','Uni Frankfurt':'Frankfurt, Hessen','RWTH Aachen':'Aachen, NRW'};
+  var studCounts = {'LMU München':'52.400','TU München':'47.800','Uni Heidelberg':'28.900','Universität Alpha':'54.300','HU Berlin':'36.200','Uni Frankfurt':'46.500','RWTH Aachen':'45.600'};
+  var bewCount   = {'LMU München':'2.841','TU München':'3.120','Uni Heidelberg':'1.988','Universität Alpha':'4.820','HU Berlin':'2.340','Uni Frankfurt':'3.612','RWTH Aachen':'2.540'};
+  var sgCount    = {'LMU München':'320','TU München':'290','Uni Heidelberg':'180','Universität Alpha':'260','HU Berlin':'220','Uni Frankfurt':'280','RWTH Aachen':'185'};
+  var cityMap    = {'LMU München':'München, Bayern','TU München':'München, Bayern','Uni Heidelberg':'Heidelberg, Baden-Württemberg','Universität Alpha':'Köln, NRW','HU Berlin':'Berlin','Uni Frankfurt':'Frankfurt, Hessen','RWTH Aachen':'Aachen, NRW'};
 
   var currentUniId = id;
   var sc      = scores[name]     || 8.5;
@@ -1583,7 +1583,7 @@ function openUniDetail(id) {
 
 // ── BEWERTUNGEN IN MODALVIEW ──────────────────────────────────────────────
 function showAllBewertungen(id) {
-  var nameMap = {'lmu':'LMU München','tum':'TU München','hd':'Uni Heidelberg','koeln':'Uni Köln','hub':'HU Berlin','ffm':'Uni Frankfurt','rwth':'RWTH Aachen'};
+  var nameMap = {'lmu':'LMU München','tum':'TU München','hd':'Uni Heidelberg','koeln':'Universität Alpha','hub':'HU Berlin','ffm':'Uni Frankfurt','rwth':'RWTH Aachen'};
   var uniName = nameMap[id] || id;
   document.getElementById('uniModalTitle').innerHTML = '👻 Bewertungen — <em>' + uniName + '</em>';
   var reviews = [
@@ -1635,7 +1635,7 @@ function showAllBewertungen(id) {
 
 // ── STUDIENGÄNGE IN MODALVIEW ──────────────────────────────────────────────
 function showAllStudiengaenge(id) {
-  var nameMap = {'lmu':'LMU München','tum':'TU München','hd':'Uni Heidelberg','koeln':'Uni Köln','hub':'HU Berlin','ffm':'Uni Frankfurt','rwth':'RWTH Aachen'};
+  var nameMap = {'lmu':'LMU München','tum':'TU München','hd':'Uni Heidelberg','koeln':'Universität Alpha','hub':'HU Berlin','ffm':'Uni Frankfurt','rwth':'RWTH Aachen'};
   var uniName = nameMap[id] || id;
   document.getElementById('uniModalTitle').innerHTML = '📚 Studiengänge — <em>' + uniName + '</em>';
   var groups = [
