@@ -175,6 +175,9 @@
   const sb = window.supabase.createClient('https://izbokhexirglwthffkis.supabase.co','sb_publishable_5ojCJQblvrXTf4lk1rNQ0A_fzmkvz4q');
 
   // Spezial-Routen für bestimmte E-Mails
+  // Org-Admin Domains → admin.html
+  const orgAdminDomains = ['inu.de', 'tu-berlin.de'];
+
   const specialRoutes = {
     'admin@academify.xyz': 'master.html',
     'master@academify.xyz': 'master.html'
@@ -206,7 +209,10 @@
         document.getElementById('err-login').style.display = 'block';
       } else {
         showToast('✓ Erfolgreich angemeldet!');
-        const redirect = specialRoutes[email] || 'dashboard.html';
+        // Prüfe: Special Route → Org-Admin → Dashboard
+        const domain = email.split('@')[1];
+        const isOrgAdmin = orgAdminDomains.includes(domain);
+        const redirect = specialRoutes[email] || (isOrgAdmin ? 'admin.html' : 'dashboard.html');
         setTimeout(function() { window.location.href = redirect; }, 700);
       }
     }).catch(function() {
