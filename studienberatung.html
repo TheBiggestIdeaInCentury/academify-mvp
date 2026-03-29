@@ -19,7 +19,8 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
 /* ── SHELL ── */
 .shell{display:flex;height:100vh;position:relative;z-index:1}
-.sidebar{width:220px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;overflow:hidden}
+.sidebar{width:220px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;overflow:hidden;position:relative;z-index:10}
+.sidebar::after{content:'';position:absolute;top:0;right:0;width:1px;height:100%;background:linear-gradient(to bottom,transparent,rgba(124,109,250,0.3) 40%,rgba(124,109,250,0.1) 70%,transparent)}
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden}
 .topbar{display:flex;align-items:center;gap:10px;padding:.85rem 1.5rem;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--surface)}
 .content{flex:1;overflow-y:auto;padding:1.4rem 1.6rem}

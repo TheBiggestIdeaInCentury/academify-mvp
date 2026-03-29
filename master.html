@@ -13,12 +13,14 @@
   --text:#e8e6f0;--muted:#6b6880;--muted2:#4a4860;
   --success:#4ade80;--warn:#fbbf24;--info:#38bdf8;--coral:#f87171;
   --border:rgba(255,255,255,0.06);--border-hover:rgba(255,255,255,0.13);
-  --sidebar-w:250px;
+  --sidebar-w:220px;
   --gold:#FFD700;--gold2:#FFA500;
 }
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;overflow-x:hidden}
+html,body{height:100%;overflow:hidden}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);display:flex}
 
-.sidebar{width:var(--sidebar-w);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:10}
+.sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;position:relative;z-index:10}
+.sidebar::after{content:'';position:absolute;top:0;right:0;width:1px;height:100%;background:linear-gradient(to bottom,transparent,rgba(255,215,0,0.3) 40%,rgba(255,215,0,0.1) 70%,transparent)}
 .sidebar-header{padding:1.5rem 1.2rem;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(124,109,250,0.06),rgba(167,139,250,0.03))}
 .master-badge{display:flex;align-items:center;gap:10px;margin-bottom:.6rem}
 .master-icon{width:44px;height:44px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 0 20px rgba(255,215,0,0.2)}
@@ -39,7 +41,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 .sidebar-footer{padding:1rem 1.2rem;border-top:1px solid var(--border)}
 .sidebar-footer .nav-item{padding:9px 0;color:var(--coral)}
 
-.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.5rem;border-bottom:1px solid var(--border);background:var(--surface)}
 .topbar-title{font-family:'DM Serif Display',serif;font-size:18px}
 .topbar-title em{font-style:italic;color:var(--gold)}
