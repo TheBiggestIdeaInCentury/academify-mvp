@@ -188,7 +188,7 @@ input[type=file]{display:none}
           <div class="sg-card" id="role-student" onclick="show('sec-verify',2)" style="padding:12px 8px;cursor:pointer">
             <div class="sg-icon">🎓</div><div class="sg-name">Individuen mit akademischem Potenzial</div>
           </div>
-          <div class="sg-card" id="role-eduind" onclick="show('sec-whitelist',2)" style="padding:12px 8px;cursor:pointer">
+          <div class="sg-card" id="role-eduind" onclick="show('sec-verify',2)" style="padding:12px 8px;cursor:pointer">
             <div class="sg-icon">🏛️</div><div class="sg-name">EduIndividuen</div>
           </div>
         </div>
@@ -259,17 +259,17 @@ input[type=file]{display:none}
       <button class="btn-back" onclick="show('sec-role',1)">← Zurück</button>
       <div class="card-header">
         <h1>Konto <em>erstellen</em></h1>
-        <p>Melde dich mit deiner studentischen E-Mail an.</p>
+        <p>Melde dich mit deiner offiziellen Hochschul-E-Mail an.</p>
       </div>
 
       <div class="domain-hint">
         💡 Nutze deine offizielle Uni-Adresse:<br>
-        <strong>vorname.name@stud.uni-beispiel.de</strong>
+        <strong>vorname.name@uni-beispiel.de</strong>
       </div>
       <div class="field">
-        <label>Studenten-E-Mail</label>
+        <label>Hochschul-E-Mail</label>
         <input type="email" id="uniEmail" placeholder="max.mueller@stud.uni-koeln.de">
-        <div class="error-msg" id="err-uniEmail">Keine gültige Studenten-E-Mail erkannt</div>
+        <div class="error-msg" id="err-uniEmail">Keine gültige Hochschul-E-Mail erkannt</div>
       </div>
       <div class="field">
         <label>Passwort erstellen</label>
@@ -502,7 +502,8 @@ function switchMethod(m){
 
 // Whitelist: Zugelassene Uni-Domains
 const whitelistedDomains = [
-  'stud.inu.de'
+  'stud.inu.de',
+  'inu.de'
 ];
 
 function isWhitelistedDomain(email) {
