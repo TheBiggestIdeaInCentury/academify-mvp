@@ -316,9 +316,183 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .sr-ico{font-size:14px;width:28px;text-align:center}
 .sr-label{font-size:12px}
 .sr-sub{font-size:11px;color:var(--muted)}
+/* ── ONBOARDING OVERLAY ── */
+.onboard-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
+.onboard-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;width:95%;max-width:640px;max-height:90vh;overflow-y:auto;padding:2rem;position:relative}
+.onboard-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
+.onboard-card::-webkit-scrollbar{width:3px}
+.onboard-card::-webkit-scrollbar-thumb{background:var(--muted2);border-radius:2px}
+.onboard-header{text-align:center;margin-bottom:1.5rem}
+.onboard-header h1{font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:.4rem}
+.onboard-header h1 em{font-style:italic;color:var(--accent2)}
+.onboard-header p{font-size:12px;color:var(--muted);line-height:1.5}
+.ob-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ob-field{margin-bottom:0}
+.ob-field.full{grid-column:1/-1}
+.ob-label{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;display:flex;align-items:center;gap:4px}
+.ob-label .req{color:var(--coral)}
+.ob-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;transition:border-color .2s}
+.ob-input:focus{border-color:var(--accent)}
+.ob-input::placeholder{color:var(--muted2)}
+.ob-locked{background:rgba(255,255,255,0.02);border-color:rgba(255,255,255,0.04);color:var(--muted);cursor:not-allowed;display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:9px;font-size:13px;border:1px solid rgba(255,255,255,0.04)}
+.ob-locked .lock-icon{font-size:14px}
+.ob-locked-sub{font-size:9px;color:var(--muted2);margin-top:2px}
+.ob-verified{margin-left:auto;font-size:9px;background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.18);color:var(--success);padding:2px 8px;border-radius:100px}
+.ob-select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 5l3 3 3-3' stroke='%236b6880' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.ob-select:focus{border-color:var(--accent)}
+.ob-hint{font-size:10px;color:var(--muted);margin-top:3px}
+.ob-divider{height:1px;background:var(--border);margin:1.2rem 0;grid-column:1/-1}
+.ob-section-title{font-size:11px;font-weight:500;color:var(--accent2);margin-bottom:.5rem;grid-column:1/-1;display:flex;align-items:center;gap:6px}
+.ob-submit{width:100%;padding:12px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;margin-top:.5rem;grid-column:1/-1}
+.ob-submit:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(124,109,250,0.3)}
+.ob-submit:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none}
+.ob-info-bar{grid-column:1/-1;background:rgba(74,222,128,0.05);border:1px solid rgba(74,222,128,0.1);border-radius:9px;padding:10px 14px;font-size:11px;color:var(--success);display:flex;align-items:center;gap:8px}
 </style>
 </head>
 <body>
+
+<!-- ── ONBOARDING OVERLAY ── -->
+<div class="onboard-overlay" id="onboardOverlay">
+<div class="onboard-card">
+  <div class="onboard-header">
+    <div style="font-size:40px;margin-bottom:.5rem">📋</div>
+    <h1>Willkommen bei <em>Academify</em></h1>
+    <p>Bevor du loslegen kannst, benötigen wir einige Basisdaten von dir.<br>Diese Daten werden für die Universitätsbewertungen benötigt.</p>
+  </div>
+
+  <div class="ob-grid">
+    <div class="ob-section-title">👤 Persönliche Daten</div>
+
+    <div class="ob-field">
+      <div class="ob-label">Vorname <span class="req">*</span></div>
+      <input class="ob-input" id="ob-vorname" type="text" placeholder="Max" required>
+    </div>
+    <div class="ob-field">
+      <div class="ob-label">Nachname <span class="req">*</span></div>
+      <input class="ob-input" id="ob-nachname" type="text" placeholder="Müller" required>
+    </div>
+    <div class="ob-field">
+      <div class="ob-label">Geburtsdatum <span class="req">*</span></div>
+      <input class="ob-input" id="ob-geburt" type="date" required>
+    </div>
+    <div class="ob-field">
+      <div class="ob-label">Geschlecht <span class="req">*</span></div>
+      <select class="ob-select" id="ob-geschlecht" required>
+        <option value="">Bitte wählen</option>
+        <option>Männlich</option>
+        <option>Weiblich</option>
+        <option>Divers</option>
+        <option>Keine Angabe</option>
+      </select>
+    </div>
+
+    <div class="ob-divider"></div>
+    <div class="ob-section-title">🎓 Studium</div>
+
+    <div class="ob-field full">
+      <div class="ob-label">Hochschule / Universität <span class="req">*</span></div>
+      <div class="ob-locked">
+        <span class="lock-icon">🔒</span>
+        <div>
+          <div>Wird automatisch erkannt</div>
+          <div class="ob-locked-sub">Basierend auf deiner E-Mail-Domain</div>
+        </div>
+        <span class="ob-verified">✓ Verifiziert</span>
+      </div>
+    </div>
+
+    <div class="ob-field full">
+      <div class="ob-label">Studiengang <span class="req">*</span></div>
+      <input class="ob-input" id="ob-studiengang" type="text" placeholder="z.B. Wirtschaftspsychologie B.Sc." required>
+    </div>
+
+    <div class="ob-field">
+      <div class="ob-label">Studienort <span class="req">*</span></div>
+      <input class="ob-input" id="ob-ort" type="text" placeholder="z.B. Köln" required>
+    </div>
+    <div class="ob-field">
+      <div class="ob-label">Land <span class="req">*</span></div>
+      <select class="ob-select" id="ob-land" required>
+        <option value="">Bitte wählen</option>
+        <option selected>Deutschland</option>
+        <option>Österreich</option>
+        <option>Schweiz</option>
+        <option>Andere</option>
+      </select>
+    </div>
+
+    <div class="ob-field">
+      <div class="ob-label">Studienbeginn <span class="req">*</span></div>
+      <select class="ob-select" id="ob-beginn" required>
+        <option value="">Bitte wählen</option>
+        <option>2026</option>
+        <option>2025</option>
+        <option>2024</option>
+        <option>2023</option>
+        <option>2022</option>
+        <option>2021</option>
+        <option>2020</option>
+        <option>Früher</option>
+      </select>
+    </div>
+    <div class="ob-field">
+      <div class="ob-label">Aktuelles Fachsemester <span class="req">*</span></div>
+      <select class="ob-select" id="ob-semester" required>
+        <option value="">Bitte wählen</option>
+        <option>1</option><option>2</option><option>3</option><option>4</option>
+        <option>5</option><option>6</option><option>7</option><option>8</option>
+        <option>9</option><option>10</option><option>11</option><option>12+</option>
+      </select>
+    </div>
+
+    <div class="ob-field">
+      <div class="ob-label">Abschluss vorhanden?</div>
+      <select class="ob-select" id="ob-abschluss">
+        <option>Nein — noch im Studium</option>
+        <option>Ja</option>
+      </select>
+    </div>
+    <div class="ob-field">
+      <div class="ob-label">E-Mail-Adresse</div>
+      <div class="ob-locked">
+        <span class="lock-icon">🔒</span>
+        <div>
+          <div id="ob-email-display">deine@stud.uni.de</div>
+          <div class="ob-locked-sub">Aus deinem Profil — wird nicht veröffentlicht</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ob-divider"></div>
+    <div class="ob-section-title">🏷️ Cluster-Zuordnung</div>
+
+    <div class="ob-field full">
+      <div class="ob-label">Fachbereich / Cluster <span class="req">*</span></div>
+      <select class="ob-select" id="ob-cluster" required>
+        <option value="">Bitte wählen</option>
+        <option>Wirtschaft & Management</option>
+        <option>Psychologie & Sozialwissenschaften</option>
+        <option>Ingenieurwesen & Technik</option>
+        <option>Informatik & IT</option>
+        <option>Naturwissenschaften</option>
+        <option>Medizin & Gesundheit</option>
+        <option>Rechtswissenschaften</option>
+        <option>Geisteswissenschaften</option>
+        <option>Kunst, Design & Medien</option>
+        <option>Bildung & Pädagogik</option>
+        <option>Sonstige</option>
+      </select>
+    </div>
+
+    <div class="ob-info-bar">
+      ✓ Deine Daten werden anonymisiert für Bewertungen verwendet. Deine Universität kann dich nicht identifizieren.
+    </div>
+
+    <button class="ob-submit" id="ob-submit-btn" onclick="submitOnboarding()">Profil vervollständigen →</button>
+  </div>
+</div>
+</div>
+
 <div class="shell">
 
 <!-- ── SIDEBAR ── -->
@@ -1023,10 +1197,46 @@ function showToast(msg, type) {
   setTimeout(() => { t.style.transition='opacity .3s,transform .3s'; t.style.opacity='0'; t.style.transform='translateY(6px)'; setTimeout(()=>t.remove(),300); }, 3000);
 }
 
+// ── ONBOARDING ──────────────────────────────────────────────────────────────
+function checkOnboarding(){
+  const done = localStorage.getItem('academify_onboarding_done');
+  const overlay = document.getElementById('onboardOverlay');
+  if(done === 'true'){
+    overlay.style.display='none';
+  } else {
+    overlay.style.display='flex';
+  }
+}
+
+function submitOnboarding(){
+  const fields = ['ob-vorname','ob-nachname','ob-geburt','ob-geschlecht','ob-studiengang','ob-ort','ob-land','ob-beginn','ob-semester','ob-cluster'];
+  let valid = true;
+  fields.forEach(id => {
+    const el = document.getElementById(id);
+    if(!el.value || el.value === ''){
+      el.style.borderColor='var(--coral)';
+      valid = false;
+      setTimeout(() => el.style.borderColor='', 2000);
+    }
+  });
+  if(!valid){
+    showToast('Bitte fülle alle Pflichtfelder aus.','error');
+    return;
+  }
+  // Save to localStorage
+  const data = {};
+  fields.forEach(id => { data[id.replace('ob-','')] = document.getElementById(id).value; });
+  localStorage.setItem('academify_profile_data', JSON.stringify(data));
+  localStorage.setItem('academify_onboarding_done', 'true');
+  document.getElementById('onboardOverlay').style.display='none';
+  showToast('Profil erfolgreich vervollständigt!','success');
+}
+
 // ── INIT ──────────────────────────────────────────────────────────────────────
 (function(){
   const fill = document.getElementById('bp-fill');
   if (fill) setTimeout(() => fill.style.width = '18.75%', 400);
+  checkOnboarding();
 })();
 </script>
 <script src="js/lang.js"></script>

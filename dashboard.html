@@ -262,6 +262,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 
   <div class="content" id="mainContent">
 
+    <!-- ONBOARDING REQUIRED BANNER -->
+    <div id="onboard-required" style="display:none;text-align:center;padding:4rem 2rem">
+      <div style="font-size:60px;margin-bottom:1rem">📋</div>
+      <h2 style="font-family:'DM Serif Display',serif;font-size:24px;margin-bottom:.5rem">Profil <em style="font-style:italic;color:var(--accent2)">vervollständigen</em></h2>
+      <p style="color:var(--muted);font-size:13px;max-width:400px;margin:0 auto 1.5rem;line-height:1.6">Bevor du Academify nutzen kannst, benötigen wir einige Basisdaten von dir. Diese Daten werden für die Universitätsbewertungen benötigt.</p>
+      <button onclick="window.location.href='profil.html'" style="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:12px 32px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s">Zum Profil →</button>
+    </div>
+
     <!-- DASHBOARD -->
     <div class="page active" id="page-dashboard">
       <div class="welcome-banner">
@@ -2010,6 +2018,14 @@ function showToast(msg, type) {
   clearTimeout(t._timer);
   t._timer = setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(20px)'; }, 2800);
 }
+// ── ONBOARDING CHECK ──
+(function(){
+  var done = localStorage.getItem('academify_onboarding_done');
+  if(done !== 'true'){
+    document.getElementById('page-dashboard').style.display='none';
+    document.getElementById('onboard-required').style.display='block';
+  }
+})();
 </script>
 <script src="js/lang.js"></script>
 </body>
