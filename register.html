@@ -587,7 +587,29 @@ function sendCode(){
 function setupOTP(){
   const ids=['o1','o2','o3','o4','o5','o6','o7','o8'];
   const inputs=ids.map(id=>document.getElementById(id));
-  inputs.forEach((inp,i)=>{inp.value='';inp.oninput=()=>{if(inp.value&&i<7)inputs[i+1].focus()};inp.onkeydown=e=>{if(e.key==='Backspace'&&!inp.value&&i>0)inputs[i-1].focus()}});
+  inputs.forEach((inp,i)=>{
+    inp.value='';
+    inp.oninput=()=>{
+      if(inp.value.length===1&&i<7)inputs[i+1].focus();
+      if(inp.value.length===1&&i===7)verifyOTP();
+    };
+    inp.onkeydown=e=>{if(e.key==='Backspace'&&!inp.value&&i>0)inputs[i-1].focus()};
+    inp.onpaste=e=>{
+      e.preventDefault();
+      const paste=(e.clipboardData||window.clipboardData).getData('text').replace(/\s/g,'').slice(0,8);
+      if(paste.length>0){
+        for(let j=0;j<paste.length&&(i+j)<inputs.length;j++){
+          inputs[i+j].value=paste[j];
+        }
+        if(paste.length>=8-i){
+          inputs[Math.min(i+paste.length-1,7)].focus();
+          setTimeout(()=>verifyOTP(),300);
+        }else{
+          inputs[Math.min(i+paste.length,7)].focus();
+        }
+      }
+    };
+  });
   setTimeout(()=>inputs[0].focus(),200);
 }
 
