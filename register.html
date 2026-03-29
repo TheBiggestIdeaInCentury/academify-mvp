@@ -546,9 +546,13 @@ function sendCode(){
   let ok=true;
 
   // E-Mail Whitelist prüfen
-  if(!email||!email.includes('@')||!isWhitelistedDomain(email)){
+  if(!email||!email.includes('@')){
     document.getElementById('err-uniEmail').classList.add('show');
-    document.getElementById('err-uniEmail').textContent='Keine zugelassene Studenten-E-Mail. Deine Hochschule muss auf der Whitelist stehen.';
+    document.getElementById('err-uniEmail').innerHTML='Bitte gib eine gültige E-Mail-Adresse ein.';
+    ok=false;
+  }else if(!isWhitelistedDomain(email)){
+    document.getElementById('err-uniEmail').classList.add('show');
+    document.getElementById('err-uniEmail').innerHTML='🏫 Deine Hochschule ist noch nicht bei Academify registriert.<br><br><span style="font-size:12px;color:var(--accent2)">Informiere deine Hochschule über <a href="landing.html" style="color:var(--accent);text-decoration:underline">academify.xyz</a> — sobald sie beigetreten ist, kannst du dich anmelden!</span>';
     ok=false;
   }else{
     document.getElementById('err-uniEmail').classList.remove('show');

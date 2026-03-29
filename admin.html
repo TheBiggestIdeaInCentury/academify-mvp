@@ -203,7 +203,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
     <div class="nav-item" onclick="showPage('bewertungen')"><span class="nav-icon">📋</span>Bewertungen<span class="nav-badge">12</span></div>
     <div class="nav-item" onclick="showPage('statistiken')"><span class="nav-icon">📊</span>Statistiken</div>
     <div class="nav-item" onclick="showPage('api')"><span class="nav-icon">🔌</span>API-Zugang<span class="nav-badge" style="background:rgba(74,222,128,0.15);color:var(--success)">Live</span></div>
-    <div class="nav-item"><span class="nav-icon">⚙️</span>Einstellungen</div>
+    <div class="nav-item" onclick="showPage('einstellungen')"><span class="nav-icon">⚙️</span>Einstellungen</div>
   </div>
 
   <div class="sidebar-footer">
@@ -922,6 +922,152 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
   </div>
 </div>
 
+<!-- PAGE: Einstellungen -->
+<div class="page" id="page-einstellungen">
+  <div class="page-header">
+    <div>
+      <h1>⚙️ Einstellungen</h1>
+      <p class="page-subtitle">Organisation, Domains & Profil verwalten</p>
+    </div>
+  </div>
+
+  <!-- Organisations-Profil -->
+  <div class="card" style="margin-bottom:1.5rem">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:1.5rem">
+      <span style="font-size:1.5rem">🏫</span>
+      <div>
+        <h3 style="font-size:1.1rem;font-weight:700">Organisations-Profil</h3>
+        <p style="font-size:0.8rem;color:var(--muted)">Grunddaten Ihrer Bildungseinrichtung</p>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+      <div class="modal-field">
+        <label>Name der Organisation</label>
+        <input type="text" id="orgName" value="Universität Alpha" onchange="markUnsaved()">
+      </div>
+      <div class="modal-field">
+        <label>Typ</label>
+        <select id="orgType" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none" onchange="markUnsaved()">
+          <option value="edu" selected>Bildungseinrichtung (Edu)</option>
+          <option value="unternehmen">Unternehmen</option>
+          <option value="stiftung">Stiftung & Förderanstalt</option>
+          <option value="regierung">Regierung</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Admin E-Mail</label>
+        <input type="email" id="orgAdminEmail" value="admin@uni-alpha.de" onchange="markUnsaved()">
+      </div>
+      <div class="modal-field">
+        <label>Status</label>
+        <div style="display:flex;align-items:center;gap:8px;padding:12px 0">
+          <span style="display:inline-block;width:10px;height:10px;background:var(--success);border-radius:50%"></span>
+          <span style="color:var(--success);font-weight:600;font-size:14px">Whitelist — Aktiv</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Domain-Verwaltung -->
+  <div class="card" style="margin-bottom:1.5rem">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="font-size:1.5rem">🌐</span>
+        <div>
+          <h3 style="font-size:1.1rem;font-weight:700">Domain-Verwaltung</h3>
+          <p style="font-size:0.8rem;color:var(--muted)">E-Mail-Domains für automatische Zuordnung (max. 4)</p>
+        </div>
+      </div>
+      <div id="domainSyncStatus" style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.2)">
+        <span style="font-size:10px;color:var(--success)">●</span>
+        <span style="font-size:11px;color:var(--success);font-weight:600">Sync mit Supabase</span>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+      <div class="modal-field">
+        <label>Domain 1 — Studierende</label>
+        <div style="display:flex;gap:8px">
+          <span style="color:var(--muted);padding:12px 0;font-size:14px">@</span>
+          <input type="text" id="domain1" placeholder="stud.uni-beispiel.de" onchange="markUnsaved()" style="flex:1">
+        </div>
+      </div>
+      <div class="modal-field">
+        <label>Domain 2 — Mitarbeiter</label>
+        <div style="display:flex;gap:8px">
+          <span style="color:var(--muted);padding:12px 0;font-size:14px">@</span>
+          <input type="text" id="domain2" placeholder="uni-beispiel.de" onchange="markUnsaved()" style="flex:1">
+        </div>
+      </div>
+      <div class="modal-field">
+        <label>Domain 3 — Optional</label>
+        <div style="display:flex;gap:8px">
+          <span style="color:var(--muted);padding:12px 0;font-size:14px">@</span>
+          <input type="text" id="domain3" placeholder="verwaltung.uni-beispiel.de" onchange="markUnsaved()" style="flex:1">
+        </div>
+      </div>
+      <div class="modal-field">
+        <label>Domain 4 — Optional</label>
+        <div style="display:flex;gap:8px">
+          <span style="color:var(--muted);padding:12px 0;font-size:14px">@</span>
+          <input type="text" id="domain4" placeholder="medizin.uni-beispiel.de" onchange="markUnsaved()" style="flex:1">
+        </div>
+      </div>
+    </div>
+
+    <div style="background:rgba(139,92,246,0.05);border:1px solid rgba(139,92,246,0.15);border-radius:12px;padding:14px 18px;margin-bottom:1.5rem">
+      <p style="font-size:12px;color:var(--accent2);line-height:1.6">
+        💡 <strong>So funktioniert es:</strong> Wenn ein Student sich mit z.B. <em>max@stud.uni-alpha.de</em> registriert, wird er automatisch Ihrer Organisation zugeordnet. Mitarbeiter mit <em>@uni-alpha.de</em> erhalten einen eigenen Zugang.
+      </p>
+    </div>
+
+    <div style="display:flex;gap:12px;justify-content:flex-end">
+      <button class="btn-ghost" onclick="loadDomains()">↺ Zurücksetzen</button>
+      <button class="btn-primary" id="btnSaveDomains" onclick="saveDomains()">💾 Domains speichern</button>
+    </div>
+  </div>
+
+  <!-- API-Schnellzugang Domains -->
+  <div class="card" style="margin-bottom:1.5rem">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem">
+      <span style="font-size:1.5rem">🔌</span>
+      <div>
+        <h3 style="font-size:1.1rem;font-weight:700">API — Domain-Verwaltung</h3>
+        <p style="font-size:0.8rem;color:var(--muted)">Domains auch per API verwalten</p>
+      </div>
+    </div>
+    <div style="background:var(--surface2);border-radius:10px;padding:16px;font-family:monospace;font-size:12px;color:var(--accent2);line-height:1.8;overflow-x:auto">
+      <span style="color:var(--success)">// Domains aktualisieren</span><br>
+      <span style="color:var(--coral)">PATCH</span> /api/v1/organization/domains<br>
+      <span style="color:var(--muted)">Authorization: Bearer {API_KEY}</span><br><br>
+      <span style="color:var(--muted)">{</span><br>
+      &nbsp;&nbsp;"domain_1": "stud.uni-alpha.de",<br>
+      &nbsp;&nbsp;"domain_2": "uni-alpha.de",<br>
+      &nbsp;&nbsp;"domain_3": "verwaltung.uni-alpha.de",<br>
+      &nbsp;&nbsp;"domain_4": null<br>
+      <span style="color:var(--muted)">}</span>
+    </div>
+  </div>
+
+  <!-- Gefahrenzone -->
+  <div class="card" style="border-color:rgba(248,113,113,0.2)">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem">
+      <span style="font-size:1.5rem">⚠️</span>
+      <div>
+        <h3 style="font-size:1.1rem;font-weight:700;color:var(--coral)">Gefahrenzone</h3>
+        <p style="font-size:0.8rem;color:var(--muted)">Unwiderrufliche Aktionen</p>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border:1px solid rgba(248,113,113,0.15);border-radius:12px">
+      <div>
+        <p style="font-weight:600;font-size:14px">Organisation deaktivieren</p>
+        <p style="font-size:12px;color:var(--muted)">Alle Mitarbeiter und Studierende verlieren den Zugang</p>
+      </div>
+      <button class="btn-ghost" style="border-color:rgba(248,113,113,0.3);color:var(--coral)" onclick="if(confirm('Sind Sie sicher? Alle Zugänge werden gesperrt.'))showToast('⚠️ Organisation wurde deaktiviert')">Deaktivieren</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL -->
 <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
   <div class="modal">
@@ -948,7 +1094,97 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 
 <div class="toast" id="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+const SUPABASE_URL = 'https://izbokhexirglwthffkis.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_5ojCJQblvrXTf4lk1rNQ0A_fzmkvz4q';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Demo org ID (wird später dynamisch aus Login geladen)
+let currentOrgId = null;
+let unsavedChanges = false;
+
+function markUnsaved() {
+  unsavedChanges = true;
+  document.getElementById('btnSaveDomains').textContent = '💾 Domains speichern *';
+  document.getElementById('btnSaveDomains').style.background = 'var(--accent)';
+}
+
+// Domains aus Supabase laden
+async function loadDomains() {
+  try {
+    const { data, error } = await sb.from('organizations').select('*').eq('status', 'active').limit(1);
+    if (error) throw error;
+    if (data && data.length > 0) {
+      const org = data[0];
+      currentOrgId = org.id;
+      document.getElementById('orgName').value = org.name || '';
+      document.getElementById('orgType').value = org.type || 'edu';
+      document.getElementById('domain1').value = org.domain_1 || '';
+      document.getElementById('domain2').value = org.domain_2 || '';
+      document.getElementById('domain3').value = org.domain_3 || '';
+      document.getElementById('domain4').value = org.domain_4 || '';
+      unsavedChanges = false;
+      document.getElementById('btnSaveDomains').textContent = '💾 Domains speichern';
+      document.getElementById('domainSyncStatus').innerHTML = '<span style="font-size:10px;color:var(--success)">●</span><span style="font-size:11px;color:var(--success);font-weight:600">Sync mit Supabase ✓</span>';
+    }
+  } catch (e) {
+    document.getElementById('domainSyncStatus').innerHTML = '<span style="font-size:10px;color:var(--coral)">●</span><span style="font-size:11px;color:var(--coral);font-weight:600">Offline</span>';
+  }
+}
+
+// Domains in Supabase speichern
+async function saveDomains() {
+  const btn = document.getElementById('btnSaveDomains');
+  btn.textContent = 'Wird gespeichert...';
+  btn.disabled = true;
+
+  const updates = {
+    name: document.getElementById('orgName').value,
+    type: document.getElementById('orgType').value,
+    domain_1: document.getElementById('domain1').value || null,
+    domain_2: document.getElementById('domain2').value || null,
+    domain_3: document.getElementById('domain3').value || null,
+    domain_4: document.getElementById('domain4').value || null
+  };
+
+  try {
+    if (currentOrgId) {
+      const { error } = await sb.from('organizations').update(updates).eq('id', currentOrgId);
+      if (error) throw error;
+    } else {
+      updates.status = 'active';
+      const { data, error } = await sb.from('organizations').insert(updates).select();
+      if (error) throw error;
+      if (data && data.length > 0) currentOrgId = data[0].id;
+    }
+    unsavedChanges = false;
+    btn.textContent = '✓ Gespeichert!';
+    btn.style.background = 'rgba(74,222,128,0.2)';
+    btn.style.color = 'var(--success)';
+    setTimeout(() => {
+      btn.textContent = '💾 Domains speichern';
+      btn.style.background = '';
+      btn.style.color = '';
+      btn.disabled = false;
+    }, 2000);
+    showToast('✓ Domains erfolgreich in Supabase gespeichert!');
+    document.getElementById('domainSyncStatus').innerHTML = '<span style="font-size:10px;color:var(--success)">●</span><span style="font-size:11px;color:var(--success);font-weight:600">Sync mit Supabase ✓</span>';
+  } catch (e) {
+    btn.textContent = '❌ Fehler — erneut versuchen';
+    btn.style.background = 'rgba(248,113,113,0.2)';
+    btn.disabled = false;
+    setTimeout(() => {
+      btn.textContent = '💾 Domains speichern';
+      btn.style.background = '';
+    }, 3000);
+    showToast('❌ Fehler beim Speichern: ' + e.message);
+  }
+}
+
+// Domains beim Laden der Seite abrufen
+document.addEventListener('DOMContentLoaded', loadDomains);
+
 function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
