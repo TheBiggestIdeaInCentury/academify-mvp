@@ -80,31 +80,90 @@
   </div>
 
   <div class="card">
-    <div class="card-header">
-      <h1>Willkommen <em>zurück</em></h1>
-      <p>Melde dich mit deinem Academify-Konto an.</p>
+    <div id="loginPart">
+      <div class="card-header">
+        <h1>Willkommen <em>zurück</em></h1>
+        <p>Melde dich mit deinem Academify-Konto an.</p>
+      </div>
+
+      <div class="field">
+        <label>E-Mail</label>
+        <input type="email" id="email" placeholder="deine@email.de">
+        <div class="error-msg" id="err-email">Bitte eine gültige E-Mail eingeben</div>
+      </div>
+
+      <div class="field">
+        <label>Passwort</label>
+        <input type="password" id="pw" placeholder="Passwort">
+        <div class="error-msg" id="err-pw">Bitte Passwort eingeben</div>
+      </div>
+
+      <div class="error-msg" id="err-login" style="text-align:center;margin-bottom:1rem;font-size:13px">
+        ❌ E-Mail oder Passwort falsch. Bitte überprüfe deine Eingaben.
+      </div>
+
+      <button class="btn-primary" id="btnLogin" onclick="handleLogin()">Anmelden →</button>
+
+      <div class="register-link">
+        Noch kein Konto? <a href="#" onclick="toggleRegister();return false">Jetzt registrieren</a>
+      </div>
     </div>
 
-    <div class="field">
-      <label>E-Mail</label>
-      <input type="email" id="email" placeholder="deine@email.de">
-      <div class="error-msg" id="err-email">Bitte eine gültige E-Mail eingeben</div>
-    </div>
+    <!-- Registrierung (versteckt) -->
+    <div id="registerSection" style="display:none;margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border)">
+      <div class="card-header" style="margin-bottom:1rem">
+        <h2 style="font-family:'DM Serif Display',serif;font-size:20px;font-weight:400">Konto <em>erstellen</em></h2>
+        <p style="font-size:13px;color:var(--muted)">Nutze deine offizielle Hochschul-E-Mail.</p>
+      </div>
 
-    <div class="field">
-      <label>Passwort</label>
-      <input type="password" id="pw" placeholder="Passwort">
-      <div class="error-msg" id="err-pw">Bitte Passwort eingeben</div>
-    </div>
+      <div class="field">
+        <label>Hochschul-E-Mail</label>
+        <input type="email" id="regEmail" placeholder="vorname.name@stud.uni-beispiel.de">
+        <div class="error-msg" id="err-regEmail">Keine gültige E-Mail</div>
+      </div>
 
-    <div class="error-msg" id="err-login" style="text-align:center;margin-bottom:1rem;font-size:13px">
-      ❌ E-Mail oder Passwort falsch. Bitte überprüfe deine Eingaben.
-    </div>
+      <div class="field">
+        <label>Passwort erstellen</label>
+        <input type="password" id="regPw" placeholder="Min. 8 Zeichen, 1 Großbuchstabe, 1 Zahl, 1 Sonderzeichen" oninput="checkRegPw()">
+        <div id="reg-pw-rules" style="margin-top:6px;font-size:10px;line-height:1.8">
+          <div id="rpw-len" style="color:var(--muted)">❌ Mindestens 8 Zeichen</div>
+          <div id="rpw-upper" style="color:var(--muted)">❌ 1 Großbuchstabe (A-Z)</div>
+          <div id="rpw-num" style="color:var(--muted)">❌ 1 Zahl (0-9)</div>
+          <div id="rpw-special" style="color:var(--muted)">❌ 1 Sonderzeichen (!@#$%&*)</div>
+        </div>
+      </div>
 
-    <button class="btn-primary" id="btnLogin" onclick="handleLogin()">Anmelden →</button>
+      <div class="field">
+        <label>Passwort bestätigen</label>
+        <input type="password" id="regPwConfirm" placeholder="Passwort wiederholen">
+        <div class="error-msg" id="err-regPwConfirm">Passwörter stimmen nicht überein</div>
+      </div>
 
-    <div class="register-link">
-      Noch kein Konto? <a href="register.html">Jetzt registrieren</a>
+      <div class="error-msg" id="err-register" style="text-align:center;margin-bottom:1rem;font-size:13px"></div>
+
+      <button class="btn-primary" id="btnRegister" onclick="handleRegister()">Registrieren →</button>
+
+      <!-- OTP Verifizierung -->
+      <div id="otpSection" style="display:none;margin-top:1.5rem;text-align:center">
+        <p style="font-size:13px;color:var(--muted);margin-bottom:8px">Verifizierungscode gesendet an:</p>
+        <p style="font-weight:600;margin-bottom:1rem" id="regSentTo"></p>
+        <div style="display:flex;gap:6px;justify-content:center;margin-bottom:1rem" id="regOtpWrap">
+          <input class="otp-input" maxlength="1" type="text" inputmode="numeric" style="width:36px;height:44px;text-align:center;font-size:18px;font-weight:700;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);outline:none">
+          <input class="otp-input" maxlength="1" type="text" inputmode="numeric" style="width:36px;height:44px;text-align:center;font-size:18px;font-weight:700;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);outline:none">
+          <input class="otp-input" maxlength="1" type="text" inputmode="numeric" style="width:36px;height:44px;text-align:center;font-size:18px;font-weight:700;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);outline:none">
+          <input class="otp-input" maxlength="1" type="text" inputmode="numeric" style="width:36px;height:44px;text-align:center;font-size:18px;font-weight:700;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);outline:none">
+          <input class="otp-input" maxlength="1" type="text" inputmode="numeric" style="width:36px;height:44px;text-align:center;font-size:18px;font-weight:700;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);outline:none">
+          <input class="otp-input" maxlength="1" type="text" inputmode="numeric" style="width:36px;height:44px;text-align:center;font-size:18px;font-weight:700;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);outline:none">
+          <input class="otp-input" maxlength="1" type="text" inputmode="numeric" style="width:36px;height:44px;text-align:center;font-size:18px;font-weight:700;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);outline:none">
+          <input class="otp-input" maxlength="1" type="text" inputmode="numeric" style="width:36px;height:44px;text-align:center;font-size:18px;font-weight:700;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);outline:none">
+        </div>
+        <div class="error-msg" id="err-regOtp" style="text-align:center;margin-bottom:1rem"></div>
+        <button class="btn-primary" id="btnVerifyOtp" onclick="handleVerifyOtp()">Bestätigen ✓</button>
+      </div>
+
+      <div class="register-link" style="margin-top:1rem">
+        <a href="#" onclick="toggleRegister();return false">← Zurück zum Login</a>
+      </div>
     </div>
   </div>
 </div>
@@ -162,6 +221,150 @@
     t.textContent = msg;
     t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  // === REGISTRIERUNG ===
+  let regEmail = '';
+  let whitelistedDomains = [];
+
+  // Domains aus Supabase laden
+  sb.from('organizations').select('domain_1,domain_2,domain_3,domain_4').eq('status','active').then(function(result){
+    if(result.data){
+      result.data.forEach(function(org){
+        [org.domain_1, org.domain_2, org.domain_3, org.domain_4].forEach(function(d){
+          if(d && d.trim()) whitelistedDomains.push(d.trim().toLowerCase());
+        });
+      });
+    }
+  });
+
+  function toggleRegister() {
+    const sec = document.getElementById('registerSection');
+    const loginPart = document.getElementById('loginPart');
+    if (sec.style.display === 'none') {
+      sec.style.display = 'block';
+      loginPart.style.display = 'none';
+    } else {
+      sec.style.display = 'none';
+      loginPart.style.display = '';
+    }
+  }
+
+  function checkRegPw() {
+    const pw = document.getElementById('regPw').value;
+    const rules = [
+      {id:'rpw-len', ok: pw.length >= 8},
+      {id:'rpw-upper', ok: /[A-Z]/.test(pw)},
+      {id:'rpw-num', ok: /[0-9]/.test(pw)},
+      {id:'rpw-special', ok: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pw)}
+    ];
+    rules.forEach(r => {
+      const el = document.getElementById(r.id);
+      if(r.ok){el.style.color='#22c55e';el.textContent='✅'+el.textContent.substring(1)}
+      else{el.style.color='var(--muted)';el.textContent='❌'+el.textContent.substring(1)}
+    });
+    return rules.every(r => r.ok);
+  }
+
+  function handleRegister() {
+    const email = document.getElementById('regEmail').value.trim().toLowerCase();
+    const pw = document.getElementById('regPw').value;
+    const pwConfirm = document.getElementById('regPwConfirm').value;
+    const errEl = document.getElementById('err-register');
+    let ok = true;
+
+    // E-Mail prüfen
+    if (!email || !email.includes('@')) {
+      document.getElementById('err-regEmail').style.display = 'block';
+      document.getElementById('err-regEmail').textContent = 'Bitte eine gültige E-Mail eingeben.';
+      ok = false;
+    } else {
+      const domain = email.split('@')[1];
+      if (!whitelistedDomains.includes(domain)) {
+        document.getElementById('err-regEmail').style.display = 'block';
+        document.getElementById('err-regEmail').innerHTML = '🏫 Deine Hochschule ist noch nicht bei Academify.<br><span style="font-size:11px">Informiere deine Hochschule über academify.xyz</span>';
+        ok = false;
+      } else {
+        document.getElementById('err-regEmail').style.display = 'none';
+      }
+    }
+
+    // Passwort prüfen
+    if (!checkRegPw()) { ok = false; }
+
+    // Passwort bestätigen
+    if (pw !== pwConfirm) {
+      document.getElementById('err-regPwConfirm').style.display = 'block';
+      ok = false;
+    } else {
+      document.getElementById('err-regPwConfirm').style.display = 'none';
+    }
+
+    if (!ok) return;
+
+    const btn = document.getElementById('btnRegister');
+    btn.textContent = 'Wird registriert...';
+    btn.disabled = true;
+
+    sb.auth.signUp({email: email, password: pw}).then(function(result) {
+      if (result.error) {
+        errEl.style.display = 'block';
+        errEl.textContent = '❌ ' + result.error.message;
+        btn.textContent = 'Registrieren →';
+        btn.disabled = false;
+      } else {
+        regEmail = email;
+        document.getElementById('regSentTo').textContent = email;
+        btn.style.display = 'none';
+        document.querySelectorAll('#registerSection .field').forEach(f => f.style.display = 'none');
+        document.querySelector('#registerSection .card-header').style.display = 'none';
+        document.getElementById('otpSection').style.display = 'block';
+        setupRegOtp();
+      }
+    });
+  }
+
+  function setupRegOtp() {
+    const inputs = document.querySelectorAll('#regOtpWrap .otp-input');
+    inputs.forEach((inp, i) => {
+      inp.value = '';
+      inp.oninput = () => {
+        if (inp.value && i < 7) inputs[i+1].focus();
+        if (i === 7 && inp.value) handleVerifyOtp();
+      };
+      inp.onkeydown = e => {
+        if (e.key === 'Backspace' && !inp.value && i > 0) inputs[i-1].focus();
+      };
+      inp.onpaste = e => {
+        e.preventDefault();
+        const paste = (e.clipboardData || window.clipboardData).getData('text').replace(/\s/g,'');
+        paste.split('').forEach((c, j) => { if (inputs[i+j]) inputs[i+j].value = c; });
+        if (paste.length >= 8) handleVerifyOtp();
+      };
+    });
+    setTimeout(() => inputs[0].focus(), 200);
+  }
+
+  function handleVerifyOtp() {
+    const inputs = document.querySelectorAll('#regOtpWrap .otp-input');
+    const code = Array.from(inputs).map(i => i.value).join('');
+    if (code.length !== 8) return;
+
+    const btn = document.getElementById('btnVerifyOtp');
+    btn.textContent = 'Wird geprüft...';
+    btn.disabled = true;
+
+    sb.auth.verifyOtp({email: regEmail, token: code, type: 'signup'}).then(function(result) {
+      if (result.error) {
+        document.getElementById('err-regOtp').style.display = 'block';
+        document.getElementById('err-regOtp').textContent = '❌ ' + result.error.message;
+        btn.textContent = 'Bestätigen ✓';
+        btn.disabled = false;
+      } else {
+        showToast('✓ Erfolgreich registriert!');
+        setTimeout(function() { window.location.href = 'dashboard.html'; }, 700);
+      }
+    });
   }
 </script>
 </body>

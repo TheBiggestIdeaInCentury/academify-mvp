@@ -182,39 +182,36 @@ input[type=file]{display:none}
         <p>Wähle deine Rolle und registriere dich.</p>
       </div>
 
-      <span style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:block">Ich bin...</span>
+      <span style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:block">Ich bin eine...</span>
       <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:1.4rem">
+        <!-- Bildungseinrichtung — Hauptoption -->
+        <div class="sg-card" id="role-edu" onclick="show('sec-whitelist',2)" style="padding:16px 12px;cursor:pointer;border:1px solid rgba(124,109,250,0.3)">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="sg-icon" style="font-size:28px">🏫</div>
+            <div>
+              <div class="sg-name" style="font-size:14px;font-weight:600">Bildungseinrichtung</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:3px">Universität, Hochschule, Fachhochschule</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Noch nicht verfügbar -->
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <div class="sg-card" id="role-student" onclick="show('sec-verify',2)" style="padding:12px 8px;cursor:pointer">
-            <div class="sg-icon">🎓</div><div class="sg-name">Individuen mit akademischem Potenzial</div>
-          </div>
-          <div class="sg-card" id="role-eduind" onclick="show('sec-verify',2)" style="padding:12px 8px;cursor:pointer">
-            <div class="sg-icon">🏛️</div><div class="sg-name">EduIndividuen</div>
-          </div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <div class="sg-card" id="role-edu" onclick="show('sec-whitelist',2)" style="padding:12px 8px;cursor:pointer">
-            <div class="sg-icon">🏫</div><div class="sg-name">Edu</div>
-          </div>
-          <div class="sg-card" id="role-company" style="padding:12px 8px;opacity:0.3;cursor:not-allowed;pointer-events:none;position:relative">
+          <div class="sg-card" style="padding:12px 8px;opacity:0.3;cursor:not-allowed;pointer-events:none">
             <div class="sg-icon" style="font-size:2rem">❓</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:4px">Unternehmen</div>
           </div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <div class="sg-card" id="role-stiftung" style="padding:12px 8px;opacity:0.3;cursor:not-allowed;pointer-events:none;position:relative">
+          <div class="sg-card" style="padding:12px 8px;opacity:0.3;cursor:not-allowed;pointer-events:none">
             <div class="sg-icon" style="font-size:2rem">❓</div>
-          </div>
-          <div class="sg-card" id="role-gov" style="padding:12px 8px;opacity:0.3;cursor:not-allowed;pointer-events:none;position:relative">
-            <div class="sg-icon" style="font-size:2rem">❓</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:4px">Stiftungen</div>
           </div>
         </div>
-        <!-- MasterOfTheUniverse — langer Balken -->
-        <div style="display:grid;grid-template-columns:1fr;gap:8px;margin-top:8px">
-          <div class="sg-card" id="role-master" onclick="selectRole('master')" style="padding:14px 12px;background:linear-gradient(135deg,rgba(124,109,250,0.12),rgba(167,139,250,0.08));border:2px solid rgba(124,109,250,0.4);box-shadow:0 0 20px rgba(124,109,250,0.15),0 0 40px rgba(124,109,250,0.05),inset 0 0 20px rgba(124,109,250,0.05);animation:masterGlow 3s ease-in-out infinite">
-            <div class="sg-icon" style="font-size:24px">🧙‍♂️</div><div class="sg-name" style="font-size:13px;font-weight:700;color:var(--accent2)">MasterOfTheUniverse</div>
-            <div style="font-size:10px;color:var(--accent2);margin-top:2px;opacity:.7">Super-Admin · Vollzugriff auf alle Organisationen</div>
-          </div>
+        <div class="sg-card" style="padding:12px 8px;opacity:0.3;cursor:not-allowed;pointer-events:none">
+          <div class="sg-icon" style="font-size:2rem">❓</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:4px">Regierungen</div>
         </div>
+
+        <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:8px;line-height:1.6">👋 Du bist <strong>Student</strong> oder <strong>Mitarbeiter</strong>? Deine Hochschule muss sich zuerst bei Academify registrieren. Danach kannst du dich über <a href="login.html" style="color:var(--accent)">Login</a> ein Konto erstellen.</p>
       </div>
 
       <div class="login-link">Bereits Mitglied? <a href="login.html">Einloggen</a></div>
