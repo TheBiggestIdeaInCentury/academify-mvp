@@ -578,6 +578,7 @@ function sendCode(){
       verifiedEmail=email;
       document.getElementById('sentTo').textContent=email;
       show('sec-otp',1);
+      setupOTP();
       btn.textContent='Verifizierungscode senden →';
       btn.disabled=false;
     }
