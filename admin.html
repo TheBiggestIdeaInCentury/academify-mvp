@@ -235,25 +235,25 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-icon">🏛️</div>
-          <div class="stat-val">6</div>
+          <div class="stat-val">0</div>
           <div class="stat-label">Fakultäten</div>
-          <div class="stat-change">✓ Vollständig</div>
+          <div class="stat-change" style="color:var(--muted)">Noch keine Daten</div>
         </div>
         <div class="stat-card">
           <div class="stat-icon">👥</div>
-          <div class="stat-val">4.832</div>
+          <div class="stat-val">0</div>
           <div class="stat-label">Mitarbeiter</div>
-          <div class="stat-change">↑ +48 diesen Monat</div>
+          <div class="stat-change" style="color:var(--muted)">Noch keine Daten</div>
         </div>
         <div class="stat-card">
           <div class="stat-icon">🎓</div>
-          <div class="stat-val">51.400</div>
+          <div class="stat-val">0</div>
           <div class="stat-label">Studierende</div>
           <div class="stat-change" style="color:var(--accent2)">🔒 Anonymisiert</div>
         </div>
         <div class="stat-card">
           <div class="stat-icon">👻</div>
-          <div class="stat-val">2.841</div>
+          <div class="stat-val">0</div>
           <div class="stat-label">Bewertungen</div>
           <div class="stat-change" style="color:var(--accent2)">🔒 Anonymisiert</div>
         </div>
@@ -265,25 +265,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
             <span class="card-title">📋 Letzte Aktivitäten</span>
             <span class="card-action">Alle →</span>
           </div>
-          <div class="activity-item">
-            <div class="activity-icon" style="background:rgba(74,222,128,0.1)">✅</div>
-            <div class="activity-text"><strong>Wirtschaftsfakultät</strong> wurde aktualisiert</div>
-            <div class="activity-time">vor 2h</div>
-          </div>
-          <div class="activity-item">
-            <div class="activity-icon" style="background:rgba(124,109,250,0.1)">👤</div>
-            <div class="activity-text"><strong>Prof. Dr. Müller</strong> als Dekan hinzugefügt</div>
-            <div class="activity-time">vor 5h</div>
-          </div>
-          <div class="activity-item">
-            <div class="activity-icon" style="background:rgba(56,189,248,0.1)">📊</div>
-            <div class="activity-text">Neue <strong>Bewertung</strong> für Psychologie</div>
-            <div class="activity-time">gestern</div>
-          </div>
-          <div class="activity-item">
-            <div class="activity-icon" style="background:rgba(251,191,36,0.1)">🏛️</div>
-            <div class="activity-text"><strong>Institut für Informatik</strong> erstellt</div>
-            <div class="activity-time">vor 3 Tagen</div>
+          <div style="text-align:center;padding:2rem 0;color:var(--muted);font-size:13px">
+            <div style="font-size:2rem;margin-bottom:8px">📋</div>
+            Noch keine Aktivitäten vorhanden.
           </div>
         </div>
 
@@ -328,106 +312,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
       </div>
 
       <div class="org-tree">
-        <!-- EBENE 1: Rektorat -->
-        <div class="org-level">
-          <div class="org-node top" onclick="openModal('Rektorat','Prof. Dr. Joybrato Mukherjee','Leitung der gesamten Universität','Rektorat bearbeiten')">
-            <div class="org-node-icon">🎓</div>
-            <div class="org-node-name">Rektorat</div>
-            <div class="org-node-role">Prof. Dr. Joybrato Mukherjee</div>
-            <div class="org-node-count">6 Fakultäten · 4.832 Mitarbeiter</div>
-            <div class="org-node-actions">
-              <div class="org-act" title="Bearbeiten">✏️</div>
-              <div class="org-act" title="Hinzufügen">➕</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="org-connector"></div>
-        <div class="org-branch-line"></div>
-
-        <!-- EBENE 2: Fakultäten -->
-        <div class="org-level">
-          <div class="org-node" onclick="openModal('Wirtschafts- & Sozialwiss. Fakultät','Prof. Dr. Werner Mellis','Wirtschaftswissenschaften, Sozialwissenschaften, VWL','Fakultät bearbeiten')">
-            <div class="org-node-icon">📊</div>
-            <div class="org-node-name">Wirtschafts- & Sozialwiss.</div>
-            <div class="org-node-role">Prof. Dr. Werner Mellis</div>
-            <div class="org-node-count">812 Mitarbeiter</div>
-            <div class="org-node-actions">
-              <div class="org-act" title="Bearbeiten">✏️</div>
-              <div class="org-act" title="Hinzufügen">➕</div>
-              <div class="org-act delete" title="Entfernen">🗑️</div>
-            </div>
-          </div>
-
-          <div class="org-node" onclick="openModal('Philosophische Fakultät','Prof. Dr. Anja Bettenworth','Germanistik, Philosophie, Geschichte, Sprachen','Fakultät bearbeiten')">
-            <div class="org-node-icon">📖</div>
-            <div class="org-node-name">Philosophische Fakultät</div>
-            <div class="org-node-role">Prof. Dr. Anja Bettenworth</div>
-            <div class="org-node-count">680 Mitarbeiter</div>
-            <div class="org-node-actions">
-              <div class="org-act" title="Bearbeiten">✏️</div>
-              <div class="org-act" title="Hinzufügen">➕</div>
-              <div class="org-act delete" title="Entfernen">🗑️</div>
-            </div>
-          </div>
-
-          <div class="org-node" onclick="openModal('Mathematisch-Naturwiss. Fakultät','Prof. Dr. Susanne Crewell','Mathematik, Physik, Chemie, Biologie, Informatik','Fakultät bearbeiten')">
-            <div class="org-node-icon">🔬</div>
-            <div class="org-node-name">Math.-Naturwiss. Fakultät</div>
-            <div class="org-node-role">Prof. Dr. Susanne Crewell</div>
-            <div class="org-node-count">920 Mitarbeiter</div>
-            <div class="org-node-actions">
-              <div class="org-act" title="Bearbeiten">✏️</div>
-              <div class="org-act" title="Hinzufügen">➕</div>
-              <div class="org-act delete" title="Entfernen">🗑️</div>
-            </div>
-          </div>
-        </div>
-
-        <div style="height:12px"></div>
-
-        <div class="org-level">
-          <div class="org-node" onclick="openModal('Medizinische Fakultät','Prof. Dr. Edgar Schömig','Humanmedizin, Zahnmedizin, Uniklinik','Fakultät bearbeiten')">
-            <div class="org-node-icon">🩺</div>
-            <div class="org-node-name">Medizinische Fakultät</div>
-            <div class="org-node-role">Prof. Dr. Edgar Schömig</div>
-            <div class="org-node-count">1.540 Mitarbeiter</div>
-            <div class="org-node-actions">
-              <div class="org-act" title="Bearbeiten">✏️</div>
-              <div class="org-act" title="Hinzufügen">➕</div>
-              <div class="org-act delete" title="Entfernen">🗑️</div>
-            </div>
-          </div>
-
-          <div class="org-node" onclick="openModal('Rechtswiss. Fakultät','Prof. Dr. Barbara Dauner-Lieb','Zivilrecht, Strafrecht, Öffentliches Recht','Fakultät bearbeiten')">
-            <div class="org-node-icon">⚖️</div>
-            <div class="org-node-name">Rechtswiss. Fakultät</div>
-            <div class="org-node-role">Prof. Dr. Barbara Dauner-Lieb</div>
-            <div class="org-node-count">420 Mitarbeiter</div>
-            <div class="org-node-actions">
-              <div class="org-act" title="Bearbeiten">✏️</div>
-              <div class="org-act" title="Hinzufügen">➕</div>
-              <div class="org-act delete" title="Entfernen">🗑️</div>
-            </div>
-          </div>
-
-          <div class="org-node" onclick="openModal('Humanwiss. Fakultät','Prof. Dr. Birgit Weber','Erziehungswissenschaft, Psychologie, Heilpädagogik','Fakultät bearbeiten')">
-            <div class="org-node-icon">🧠</div>
-            <div class="org-node-name">Humanwiss. Fakultät</div>
-            <div class="org-node-role">Prof. Dr. Birgit Weber</div>
-            <div class="org-node-count">460 Mitarbeiter</div>
-            <div class="org-node-actions">
-              <div class="org-act" title="Bearbeiten">✏️</div>
-              <div class="org-act" title="Hinzufügen">➕</div>
-              <div class="org-act delete" title="Entfernen">🗑️</div>
-            </div>
-          </div>
-        </div>
-
-        <div style="height:16px"></div>
-
-        <div class="org-level">
-          <div class="add-node-btn" onclick="openModal('Neue Fakultät','','','Neue Fakultät hinzufügen')">➕ Neue Fakultät hinzufügen</div>
+        <div style="text-align:center;padding:3rem 0;color:var(--muted)">
+          <div style="font-size:3rem;margin-bottom:1rem">🏛️</div>
+          <h3 style="font-size:16px;font-weight:600;margin-bottom:8px;color:var(--text)">Noch kein Organigramm erstellt</h3>
+          <p style="font-size:13px;line-height:1.6;max-width:400px;margin:0 auto 1.5rem">Erstellen Sie Ihre Organisationsstruktur, indem Sie Fakultäten und Abteilungen hinzufügen.</p>
+          <button class="btn-primary" style="padding:10px 20px" onclick="openModal('Neue Einheit','','','Erste Organisationseinheit hinzufügen')">+ Erste Einheit erstellen</button>
         </div>
       </div>
     </div>
@@ -437,158 +326,31 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
         <div>
           <h2 style="font-family:'DM Serif Display',serif;font-size:22px">Mitarbeiter</h2>
-          <p style="font-size:13px;color:var(--muted)">Alle Mitarbeiter der Universität Alpha</p>
+          <p style="font-size:13px;color:var(--muted)">Verwalten Sie hier Ihre Mitarbeiter</p>
         </div>
         <button class="btn-primary" style="flex:none;padding:10px 16px" onclick="openModal('Neuer Mitarbeiter','','','Mitarbeiter hinzufügen')">+ Mitarbeiter</button>
       </div>
-
       <div class="card">
-        <div class="card-head">
-          <span class="card-title">👥 Führungspositionen</span>
-          <span class="card-action">Alle anzeigen →</span>
+        <div style="text-align:center;padding:3rem 0;color:var(--muted)">
+          <div style="font-size:3rem;margin-bottom:1rem">👥</div>
+          <h3 style="font-size:16px;font-weight:600;margin-bottom:8px;color:var(--text)">Noch keine Mitarbeiter eingetragen</h3>
+          <p style="font-size:13px;line-height:1.6;max-width:400px;margin:0 auto">Fügen Sie Ihre ersten Mitarbeiter hinzu, um die Organisationsstruktur aufzubauen.</p>
         </div>
-        <table style="width:100%;border-collapse:collapse;font-size:12px">
-          <thead>
-            <tr style="border-bottom:1px solid var(--border);color:var(--muted);text-align:left">
-              <th style="padding:8px 0;font-weight:500">Name</th>
-              <th style="padding:8px 0;font-weight:500">Position</th>
-              <th style="padding:8px 0;font-weight:500">Fakultät</th>
-              <th style="padding:8px 0;font-weight:500">Status</th>
-              <th style="padding:8px 0;font-weight:500"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr style="border-bottom:1px solid var(--border)">
-              <td style="padding:10px 0"><div style="display:flex;align-items:center;gap:8px"><div style="width:30px;height:30px;border-radius:8px;background:rgba(124,109,250,0.1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">JM</div><strong>Prof. Dr. Joybrato Mukherjee</strong></div></td>
-              <td style="padding:10px 0;color:var(--muted)">Rektor</td>
-              <td style="padding:10px 0;color:var(--muted)">Rektorat</td>
-              <td style="padding:10px 0"><span style="background:rgba(74,222,128,0.1);color:var(--success);padding:2px 8px;border-radius:100px;font-size:10px">Aktiv</span></td>
-              <td style="padding:10px 0;text-align:right"><span style="cursor:pointer;color:var(--muted)" onclick="openModal('Prof. Dr. Joybrato Mukherjee','Rektor','Leitung der gesamten Universität Alpha','Mitarbeiter bearbeiten')">✏️</span></td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border)">
-              <td style="padding:10px 0"><div style="display:flex;align-items:center;gap:8px"><div style="width:30px;height:30px;border-radius:8px;background:rgba(56,189,248,0.1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">WM</div><strong>Prof. Dr. Werner Mellis</strong></div></td>
-              <td style="padding:10px 0;color:var(--muted)">Dekan</td>
-              <td style="padding:10px 0;color:var(--muted)">Wirtschafts- & Sozialwiss.</td>
-              <td style="padding:10px 0"><span style="background:rgba(74,222,128,0.1);color:var(--success);padding:2px 8px;border-radius:100px;font-size:10px">Aktiv</span></td>
-              <td style="padding:10px 0;text-align:right"><span style="cursor:pointer;color:var(--muted)" onclick="openModal('Prof. Dr. Werner Mellis','Dekan','Wirtschafts- und Sozialwissenschaftliche Fakultät','Mitarbeiter bearbeiten')">✏️</span></td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border)">
-              <td style="padding:10px 0"><div style="display:flex;align-items:center;gap:8px"><div style="width:30px;height:30px;border-radius:8px;background:rgba(251,191,36,0.1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">SC</div><strong>Prof. Dr. Susanne Crewell</strong></div></td>
-              <td style="padding:10px 0;color:var(--muted)">Dekanin</td>
-              <td style="padding:10px 0;color:var(--muted)">Math.-Naturwiss.</td>
-              <td style="padding:10px 0"><span style="background:rgba(74,222,128,0.1);color:var(--success);padding:2px 8px;border-radius:100px;font-size:10px">Aktiv</span></td>
-              <td style="padding:10px 0;text-align:right"><span style="cursor:pointer;color:var(--muted)" onclick="openModal('Prof. Dr. Susanne Crewell','Dekanin','Mathematisch-Naturwissenschaftliche Fakultät','Mitarbeiter bearbeiten')">✏️</span></td>
-            </tr>
-            <tr>
-              <td style="padding:10px 0"><div style="display:flex;align-items:center;gap:8px"><div style="width:30px;height:30px;border-radius:8px;background:rgba(248,113,113,0.1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">ES</div><strong>Prof. Dr. Edgar Schömig</strong></div></td>
-              <td style="padding:10px 0;color:var(--muted)">Dekan</td>
-              <td style="padding:10px 0;color:var(--muted)">Medizinische Fakultät</td>
-              <td style="padding:10px 0"><span style="background:rgba(74,222,128,0.1);color:var(--success);padding:2px 8px;border-radius:100px;font-size:10px">Aktiv</span></td>
-              <td style="padding:10px 0;text-align:right"><span style="cursor:pointer;color:var(--muted)" onclick="openModal('Prof. Dr. Edgar Schömig','Dekan','Medizinische Fakultät und Uniklinik Köln','Mitarbeiter bearbeiten')">✏️</span></td>
-            </tr>
-          </tbody>
-        </table>
       </div>
     </div>
 
     <!-- PAGE: Bewertungen (anonymisiert) -->
     <div class="page" id="page-bewertungen">
       <h2 style="font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:1.2rem">👻 Bewertungen</h2>
-
       <div class="anon-banner">
         <span class="anon-icon">🔒</span>
         <div><strong>Alle Bewertungen sind anonymisiert.</strong> Einzelne Studierende können nicht identifiziert werden. Ergebnisse werden erst ab mindestens 5 Bewertungen angezeigt (k-Anonymität).</div>
       </div>
-
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-icon">👻</div>
-          <div class="stat-val">4.2</div>
-          <div class="stat-label">Ø Ghost-Rating</div>
-          <div class="stat-change">↑ +0.3 vs. Vorjahr</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">📝</div>
-          <div class="stat-val">2.841</div>
-          <div class="stat-label">Bewertungen gesamt</div>
-          <div class="stat-change" style="color:var(--accent2)">🔒 Anonymisiert</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">👍</div>
-          <div class="stat-val">78%</div>
-          <div class="stat-label">Weiterempfehlung</div>
-          <div class="stat-change">↑ +5% vs. Vorjahr</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">📊</div>
-          <div class="stat-val">12</div>
-          <div class="stat-label">Neue diese Woche</div>
-          <div class="stat-change" style="color:var(--accent2)">🔒 Anonymisiert</div>
-        </div>
-      </div>
-
       <div class="card">
-        <div class="card-head">
-          <span class="card-title">📊 Bewertungen nach Fakultät (Durchschnitt)</span>
-          <span class="anon-badge">🔒 Anonymisiert</span>
-        </div>
-        <div class="anon-bar">
-          <span class="anon-bar-label">WiSo</span>
-          <div class="anon-bar-fill"><div style="width:84%;background:var(--success)"></div></div>
-          <span class="anon-bar-val">4.2 👻</span>
-          <span style="font-size:10px;color:var(--muted)">623 Bew.</span>
-        </div>
-        <div class="anon-bar">
-          <span class="anon-bar-label">Philosophie</span>
-          <div class="anon-bar-fill"><div style="width:90%;background:var(--success)"></div></div>
-          <span class="anon-bar-val">4.5 👻</span>
-          <span style="font-size:10px;color:var(--muted)">412 Bew.</span>
-        </div>
-        <div class="anon-bar">
-          <span class="anon-bar-label">Math.-Naturwiss.</span>
-          <div class="anon-bar-fill"><div style="width:76%;background:var(--warn)"></div></div>
-          <span class="anon-bar-val">3.8 👻</span>
-          <span style="font-size:10px;color:var(--muted)">534 Bew.</span>
-        </div>
-        <div class="anon-bar">
-          <span class="anon-bar-label">Medizin</span>
-          <div class="anon-bar-fill"><div style="width:72%;background:var(--warn)"></div></div>
-          <span class="anon-bar-val">3.6 👻</span>
-          <span style="font-size:10px;color:var(--muted)">489 Bew.</span>
-        </div>
-        <div class="anon-bar">
-          <span class="anon-bar-label">Rechtswiss.</span>
-          <div class="anon-bar-fill"><div style="width:82%;background:var(--success)"></div></div>
-          <span class="anon-bar-val">4.1 👻</span>
-          <span style="font-size:10px;color:var(--muted)">398 Bew.</span>
-        </div>
-        <div class="anon-bar">
-          <span class="anon-bar-label">Humanwiss.</span>
-          <div class="anon-bar-fill"><div style="width:88%;background:var(--success)"></div></div>
-          <span class="anon-bar-val">4.4 👻</span>
-          <span style="font-size:10px;color:var(--muted)">385 Bew.</span>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-head">
-          <span class="card-title">💬 Letzte anonyme Kommentare</span>
-          <span class="anon-badge">🔒 Identität geschützt</span>
-        </div>
-        <div class="activity-item">
-          <div class="activity-icon" style="background:rgba(124,109,250,0.1)">👻</div>
-          <div class="activity-text"><strong>Anonymer Studierender</strong> · WiSo · Sem. 3–4<br><span style="font-style:italic;color:var(--muted)">"Gute Dozenten, aber Raumplanung könnte besser sein."</span></div>
-          <div class="activity-time">👻👻👻👻</div>
-        </div>
-        <div class="activity-item">
-          <div class="activity-icon" style="background:rgba(74,222,128,0.1)">👻</div>
-          <div class="activity-text"><strong>Anonymer Studierender</strong> · Humanwiss. · Sem. 1–2<br><span style="font-style:italic;color:var(--muted)">"Sehr engagierte Professoren. Fühle mich gut aufgehoben."</span></div>
-          <div class="activity-time">👻👻👻👻👻</div>
-        </div>
-        <div class="activity-item">
-          <div class="activity-icon" style="background:rgba(251,191,36,0.1)">👻</div>
-          <div class="activity-text"><strong>Anonymer Studierender</strong> · Medizin · Sem. 5–6<br><span style="font-style:italic;color:var(--muted)">"Praxisbezug könnte stärker sein. Theorie überwiegt."</span></div>
-          <div class="activity-time">👻👻👻</div>
+        <div style="text-align:center;padding:3rem 0;color:var(--muted)">
+          <div style="font-size:3rem;margin-bottom:1rem">👻</div>
+          <h3 style="font-size:16px;font-weight:600;margin-bottom:8px;color:var(--text)">Noch keine Bewertungen eingegangen</h3>
+          <p style="font-size:13px;line-height:1.6;max-width:400px;margin:0 auto">Bewertungen erscheinen hier, sobald Studierende Feedback abgeben. Alle Daten werden anonymisiert dargestellt.</p>
         </div>
       </div>
     </div>
@@ -596,101 +358,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
     <!-- PAGE: Statistiken (anonymisiert) -->
     <div class="page" id="page-statistiken">
       <h2 style="font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:1.2rem">📊 Statistiken</h2>
-
       <div class="anon-banner">
         <span class="anon-icon">🛡️</span>
-        <div><strong>Anonymisierung by Design.</strong> Alle Statistiken zeigen ausschließlich aggregierte, nicht rückverfolgbare Daten. Keine Einzelprofile, keine Überwachung. Die Ranking-Logik wird in Zusammenarbeit mit der Community definiert.</div>
+        <div><strong>Anonymisierung by Design.</strong> Alle Statistiken zeigen ausschließlich aggregierte, nicht rückverfolgbare Daten. Keine Einzelprofile, keine Überwachung.</div>
       </div>
-
       <div class="card">
-        <div class="card-head">
-          <span class="card-title">🎓 Studierende — Übersicht</span>
-          <span class="anon-badge">🔒 Nur Aggregat-Daten</span>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:1rem">
-          <div style="text-align:center;padding:1rem;background:var(--surface2);border-radius:10px">
-            <div style="font-family:'DM Serif Display',serif;font-size:26px">51.400</div>
-            <div style="font-size:10px;color:var(--muted);text-transform:uppercase">Gesamt registriert</div>
-          </div>
-          <div style="text-align:center;padding:1rem;background:var(--surface2);border-radius:10px">
-            <div style="font-family:'DM Serif Display',serif;font-size:26px;color:var(--success)">68%</div>
-            <div style="font-size:10px;color:var(--muted);text-transform:uppercase">Aktive Nutzer</div>
-          </div>
-          <div style="text-align:center;padding:1rem;background:var(--surface2);border-radius:10px">
-            <div style="font-family:'DM Serif Display',serif;font-size:26px">4.2</div>
-            <div style="font-size:10px;color:var(--muted);text-transform:uppercase">Ø Zufriedenheit 👻</div>
-          </div>
-        </div>
-        <div style="font-size:11px;color:var(--muted);padding:8px 12px;background:rgba(124,109,250,0.04);border-radius:8px;line-height:1.6;text-align:center">
-          🔒 Sie sehen keine individuellen Studierenden-Daten. Alle Werte sind Durchschnitte über mindestens 50 Datenpunkte.
-        </div>
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-        <div class="card">
-          <div class="card-head">
-            <span class="card-title">📈 Verteilung nach Semester</span>
-            <span class="anon-badge">🔒 Anonym</span>
-          </div>
-          <div class="anon-bar">
-            <span class="anon-bar-label">Sem. 1–2</span>
-            <div class="anon-bar-fill"><div style="width:35%;background:var(--accent)"></div></div>
-            <span class="anon-bar-val">35%</span>
-          </div>
-          <div class="anon-bar">
-            <span class="anon-bar-label">Sem. 3–4</span>
-            <div class="anon-bar-fill"><div style="width:28%;background:var(--accent2)"></div></div>
-            <span class="anon-bar-val">28%</span>
-          </div>
-          <div class="anon-bar">
-            <span class="anon-bar-label">Sem. 5–6</span>
-            <div class="anon-bar-fill"><div style="width:22%;background:var(--info)"></div></div>
-            <span class="anon-bar-val">22%</span>
-          </div>
-          <div class="anon-bar">
-            <span class="anon-bar-label">Sem. 7+</span>
-            <div class="anon-bar-fill"><div style="width:15%;background:var(--warn)"></div></div>
-            <span class="anon-bar-val">15%</span>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-head">
-            <span class="card-title">🏛️ Verteilung nach Fakultät</span>
-            <span class="anon-badge">🔒 Anonym</span>
-          </div>
-          <div class="anon-bar">
-            <span class="anon-bar-label">WiSo</span>
-            <div class="anon-bar-fill"><div style="width:24%;background:var(--accent)"></div></div>
-            <span class="anon-bar-val">24%</span>
-          </div>
-          <div class="anon-bar">
-            <span class="anon-bar-label">Medizin</span>
-            <div class="anon-bar-fill"><div style="width:22%;background:var(--coral)"></div></div>
-            <span class="anon-bar-val">22%</span>
-          </div>
-          <div class="anon-bar">
-            <span class="anon-bar-label">Math.-Nat.</span>
-            <div class="anon-bar-fill"><div style="width:20%;background:var(--success)"></div></div>
-            <span class="anon-bar-val">20%</span>
-          </div>
-          <div class="anon-bar">
-            <span class="anon-bar-label">Andere</span>
-            <div class="anon-bar-fill"><div style="width:34%;background:var(--muted)"></div></div>
-            <span class="anon-bar-val">34%</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="card" style="margin-top:12px">
-        <div class="card-head">
-          <span class="card-title">🏆 Studiengang-Ranking</span>
-          <span style="font-size:11px;color:var(--warn);font-style:italic">⏳ Ranking-Logik wird noch definiert</span>
-        </div>
-        <div style="text-align:center;padding:2rem 1rem;color:var(--muted)">
-          <div style="font-size:32px;margin-bottom:.8rem">🏗️</div>
-          <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:.4rem">Ranking kommt bald</div>
-          <div style="font-size:12px;line-height:1.6;max-width:400px;margin:0 auto">Die Ranking-Kriterien werden transparent und in Zusammenarbeit mit der Community definiert. Alle Daten bleiben anonymisiert.</div>
+        <div style="text-align:center;padding:3rem 0;color:var(--muted)">
+          <div style="font-size:3rem;margin-bottom:1rem">📊</div>
+          <h3 style="font-size:16px;font-weight:600;margin-bottom:8px;color:var(--text)">Noch keine Statistiken verfügbar</h3>
+          <p style="font-size:13px;line-height:1.6;max-width:400px;margin:0 auto">Statistiken werden automatisch generiert, sobald genügend anonymisierte Daten vorliegen.</p>
         </div>
       </div>
     </div>
