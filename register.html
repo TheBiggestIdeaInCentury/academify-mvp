@@ -500,13 +500,20 @@ function switchMethod(m){
 // Whitelist: Domains werden live aus Supabase geladen
 const sbReg = window.supabase.createClient('https://izbokhexirglwthffkis.supabase.co','sb_publishable_5ojCJQblvrXTf4lk1rNQ0A_fzmkvz4q');
 let whitelistedDomains = [];
+let domainToOrgId = {};
+let matchedOrgId = null;
+let matchedOrgName = '';
 
 // Lade Domains aus Supabase beim Start
-sbReg.from('organizations').select('domain_1,domain_2,domain_3,domain_4').eq('status','active').then(function(result){
+sbReg.from('organizations').select('id,name,domain_1,domain_2,domain_3,domain_4').eq('status','active').then(function(result){
   if(result.data){
     result.data.forEach(function(org){
       [org.domain_1, org.domain_2, org.domain_3, org.domain_4].forEach(function(d){
-        if(d && d.trim()) whitelistedDomains.push(d.trim().toLowerCase());
+        if(d && d.trim()){
+          var domain = d.trim().toLowerCase();
+          whitelistedDomains.push(domain);
+          domainToOrgId[domain] = {id: org.id, name: org.name};
+        }
       });
     });
   }
@@ -514,7 +521,12 @@ sbReg.from('organizations').select('domain_1,domain_2,domain_3,domain_4').eq('st
 
 function isWhitelistedDomain(email) {
   const domain = email.toLowerCase().split('@')[1];
-  return whitelistedDomains.includes(domain);
+  if(whitelistedDomains.includes(domain)){
+    matchedOrgId = domainToOrgId[domain].id;
+    matchedOrgName = domainToOrgId[domain].name;
+    return true;
+  }
+  return false;
 }
 
 function isUniEmail(e){return isWhitelistedDomain(e)}
@@ -646,8 +658,31 @@ function verifyOTP(){
       btn.disabled=false;
       ['o1','o2','o3','o4','o5','o6','o7','o8'].forEach(id=>{const el=document.getElementById(id);el.style.borderColor='#f87171';setTimeout(()=>el.style.borderColor='',1500)});
     }else{
-      // Erfolgreich verifiziert → ins Dashboard
-      window.location.href='dashboard.html';
+      // Erfolgreich verifiziert → Profil-Eintrag erstellen
+      var userId = result.data.user.id;
+      var domain = verifiedEmail.toLowerCase().split('@')[1];
+      var rolle = domain.startsWith('stud.') ? 'student' : 'verwaltung';
+
+      // Prüfe ob Email in mitarbeiter-Tabelle → Rolle übernehmen
+      sb.from('mitarbeiter').select('rolle').eq('email', verifiedEmail.toLowerCase()).limit(1).then(function(mResult){
+        if(mResult.data && mResult.data.length > 0){
+          rolle = mResult.data[0].rolle;
+        }
+        // Profil-Eintrag erstellen
+        sb.from('profiles').insert({
+          id: userId,
+          email: verifiedEmail.toLowerCase(),
+          rolle: rolle,
+          organization_id: matchedOrgId || null,
+          onboarding_done: false
+        }).then(function(){
+          if(rolle === 'student'){
+            window.location.href='dashboard.html';
+          } else {
+            window.location.href='admin.html';
+          }
+        });
+      });
     }
   });
 }

@@ -209,11 +209,22 @@
         document.getElementById('err-login').style.display = 'block';
       } else {
         showToast('✓ Erfolgreich angemeldet!');
-        // Prüfe: Special Route → Org-Admin → Dashboard
-        const domain = email.split('@')[1];
-        const isOrgAdmin = orgAdminDomains.includes(domain);
-        const redirect = specialRoutes[email] || (isOrgAdmin ? 'admin.html' : 'dashboard.html');
-        setTimeout(function() { window.location.href = redirect; }, 700);
+        // Prüfe Rolle aus profiles-Tabelle
+        var userId = result.data.user.id;
+        if(specialRoutes[email]){
+          setTimeout(function() { window.location.href = specialRoutes[email]; }, 700);
+        } else {
+          sb.from('profiles').select('rolle').eq('id', userId).single().then(function(pResult){
+            var rolle = pResult.data ? pResult.data.rolle : 'student';
+            var redirect = (rolle === 'student') ? 'dashboard.html' : 'admin.html';
+            setTimeout(function() { window.location.href = redirect; }, 500);
+          }).catch(function(){
+            // Kein Profil → Domain-basiertes Routing als Fallback
+            var domain = email.split('@')[1];
+            var isOrgAdmin = orgAdminDomains.includes(domain);
+            setTimeout(function() { window.location.href = isOrgAdmin ? 'admin.html' : 'dashboard.html'; }, 500);
+          });
+        }
       }
     }).catch(function() {
       btn.textContent = 'Anmelden →';

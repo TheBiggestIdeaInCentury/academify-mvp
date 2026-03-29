@@ -218,6 +218,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 .quick-icon{font-size:20px;margin-bottom:5px}
 .quick-label{font-size:10px;color:var(--muted);line-height:1.3}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -2019,13 +2020,18 @@ function showToast(msg, type) {
   clearTimeout(t._timer);
   t._timer = setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(20px)'; }, 2800);
 }
-// ── ONBOARDING CHECK ──
+// ── ONBOARDING CHECK (Supabase) ──
 (function(){
-  var done = localStorage.getItem('academify_onboarding_done');
-  if(done !== 'true'){
-    document.getElementById('page-dashboard').style.display='none';
-    document.getElementById('onboard-required').style.display='block';
-  }
+  var sbDash = window.supabase.createClient('https://izbokhexirglwthffkis.supabase.co','sb_publishable_5ojCJQblvrXTf4lk1rNQ0A_fzmkvz4q');
+  sbDash.auth.getSession().then(function(r){
+    if(!r.data.session) return;
+    sbDash.from('profiles').select('onboarding_done').eq('id', r.data.session.user.id).single().then(function(p){
+      if(!p.data || !p.data.onboarding_done){
+        document.getElementById('page-dashboard').style.display='none';
+        document.getElementById('onboard-required').style.display='block';
+      }
+    });
+  });
 })();
 </script>
 <script src="js/lang.js"></script>

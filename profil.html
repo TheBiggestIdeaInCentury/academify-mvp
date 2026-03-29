@@ -1198,15 +1198,28 @@ function showToast(msg, type) {
   setTimeout(() => { t.style.transition='opacity .3s,transform .3s'; t.style.opacity='0'; t.style.transform='translateY(6px)'; setTimeout(()=>t.remove(),300); }, 3000);
 }
 
+// ── SUPABASE ──────────────────────────────────────────────────────────────
+const sbProfile = window.supabase.createClient('https://izbokhexirglwthffkis.supabase.co','sb_publishable_5ojCJQblvrXTf4lk1rNQ0A_fzmkvz4q');
+
 // ── ONBOARDING ──────────────────────────────────────────────────────────────
 function checkOnboarding(){
-  const done = localStorage.getItem('academify_onboarding_done');
   const overlay = document.getElementById('onboardOverlay');
-  if(done === 'true'){
-    overlay.style.display='none';
-  } else {
-    overlay.style.display='flex';
-  }
+  sbProfile.auth.getSession().then(function(r){
+    if(!r.data.session){ overlay.style.display='flex'; return; }
+    var userId = r.data.session.user.id;
+    var userEmail = r.data.session.user.email;
+    // Email anzeigen im gesperrten Feld
+    var emailDisplay = document.getElementById('ob-email-display');
+    if(emailDisplay) emailDisplay.textContent = userEmail;
+    // Profil aus Supabase laden
+    sbProfile.from('profiles').select('onboarding_done').eq('id', userId).single().then(function(pResult){
+      if(pResult.data && pResult.data.onboarding_done){
+        overlay.style.display='none';
+      } else {
+        overlay.style.display='flex';
+      }
+    });
+  });
 }
 
 function submitOnboarding(){
@@ -1224,13 +1237,38 @@ function submitOnboarding(){
     showToast('Bitte fülle alle Pflichtfelder aus.','error');
     return;
   }
-  // Save to localStorage
-  const data = {};
-  fields.forEach(id => { data[id.replace('ob-','')] = document.getElementById(id).value; });
-  localStorage.setItem('academify_profile_data', JSON.stringify(data));
-  localStorage.setItem('academify_onboarding_done', 'true');
-  document.getElementById('onboardOverlay').style.display='none';
-  showToast('Profil erfolgreich vervollständigt!','success');
+  var btn = document.getElementById('ob-submit-btn');
+  btn.textContent='Wird gespeichert...';
+  btn.disabled=true;
+
+  sbProfile.auth.getSession().then(function(r){
+    if(!r.data.session) return;
+    var userId = r.data.session.user.id;
+    sbProfile.from('profiles').update({
+      vorname: document.getElementById('ob-vorname').value,
+      nachname: document.getElementById('ob-nachname').value,
+      geburtsdatum: document.getElementById('ob-geburt').value,
+      geschlecht: document.getElementById('ob-geschlecht').value,
+      studiengang: document.getElementById('ob-studiengang').value,
+      studienort: document.getElementById('ob-ort').value,
+      land: document.getElementById('ob-land').value,
+      studienbeginn: document.getElementById('ob-beginn').value,
+      semester: document.getElementById('ob-semester').value,
+      abschluss: document.getElementById('ob-abschluss') ? document.getElementById('ob-abschluss').value : 'Nein',
+      cluster: document.getElementById('ob-cluster').value,
+      onboarding_done: true,
+      updated_at: new Date().toISOString()
+    }).eq('id', userId).then(function(result){
+      if(result.error){
+        showToast('Fehler beim Speichern: '+result.error.message,'error');
+        btn.textContent='Profil vervollständigen →';
+        btn.disabled=false;
+      } else {
+        document.getElementById('onboardOverlay').style.display='none';
+        showToast('Profil erfolgreich vervollständigt!','success');
+      }
+    });
+  });
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────

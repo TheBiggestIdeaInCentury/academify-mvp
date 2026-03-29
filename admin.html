@@ -330,13 +330,43 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
           <h2 style="font-family:'DM Serif Display',serif;font-size:22px">Mitarbeiter</h2>
           <p style="font-size:13px;color:var(--muted)">Verwalten Sie hier Ihre Mitarbeiter</p>
         </div>
-        <button class="btn-primary" style="flex:none;padding:10px 16px" onclick="openModal('Neuer Mitarbeiter','','','Mitarbeiter hinzufügen')">+ Mitarbeiter</button>
+        <button class="btn-primary" style="flex:none;padding:10px 16px" onclick="showMitarbeiterForm()">+ Mitarbeiter</button>
       </div>
-      <div class="card">
-        <div style="text-align:center;padding:3rem 0;color:var(--muted)">
+      <!-- Mitarbeiter Formular (hidden) -->
+      <div class="card" id="ma-form" style="display:none;margin-bottom:1rem">
+        <h3 style="font-size:14px;font-weight:600;margin-bottom:1rem" id="ma-form-title">Neuer Mitarbeiter</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div><label style="font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.06em">Vorname *</label><input id="ma-vorname" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;outline:none;font-family:inherit" placeholder="Max"></div>
+          <div><label style="font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.06em">Nachname *</label><input id="ma-nachname" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;outline:none;font-family:inherit" placeholder="Müller"></div>
+          <div><label style="font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.06em">E-Mail</label><input id="ma-email" type="email" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;outline:none;font-family:inherit" placeholder="max@uni.de"></div>
+          <div><label style="font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.06em">Rolle *</label><select id="ma-rolle" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;outline:none;font-family:inherit;cursor:pointer"><option value="management">👔 Management</option><option value="professor">👨‍🏫 Professor</option><option value="wissenschaftlich">🔬 Wissenschaftlicher Mitarbeiter</option><option value="tutor">📚 Tutor</option><option value="verwaltung">🏢 Verwaltung</option><option value="social_media">📱 Social Media</option><option value="it_admin">⚙️ IT-Administration</option></select></div>
+          <div><label style="font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.06em">Abteilung</label><input id="ma-abteilung" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;outline:none;font-family:inherit" placeholder="z.B. Informatik"></div>
+          <div><label style="font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.06em">Position</label><input id="ma-position" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;outline:none;font-family:inherit" placeholder="z.B. Dekan"></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:1rem">
+          <button onclick="saveMitarbeiter()" style="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">Speichern</button>
+          <button onclick="document.getElementById('ma-form').style.display='none'" style="background:var(--surface2);color:var(--muted);border:1px solid var(--border);padding:8px 20px;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit">Abbrechen</button>
+        </div>
+        <input type="hidden" id="ma-edit-id">
+      </div>
+      <!-- Mitarbeiter Liste -->
+      <div class="card" id="ma-list">
+        <div style="text-align:center;padding:3rem 0;color:var(--muted)" id="ma-empty">
           <div style="font-size:3rem;margin-bottom:1rem">👥</div>
           <h3 style="font-size:16px;font-weight:600;margin-bottom:8px;color:var(--text)">Noch keine Mitarbeiter eingetragen</h3>
           <p style="font-size:13px;line-height:1.6;max-width:400px;margin:0 auto">Fügen Sie Ihre ersten Mitarbeiter hinzu, um die Organisationsstruktur aufzubauen.</p>
+        </div>
+        <div id="ma-table-wrap" style="display:none">
+          <table style="width:100%;border-collapse:collapse;font-size:12px">
+            <thead><tr style="border-bottom:1px solid var(--border);text-align:left">
+              <th style="padding:8px;color:var(--muted);font-weight:500;font-size:10px;text-transform:uppercase;letter-spacing:.06em">Name</th>
+              <th style="padding:8px;color:var(--muted);font-weight:500;font-size:10px;text-transform:uppercase;letter-spacing:.06em">E-Mail</th>
+              <th style="padding:8px;color:var(--muted);font-weight:500;font-size:10px;text-transform:uppercase;letter-spacing:.06em">Rolle</th>
+              <th style="padding:8px;color:var(--muted);font-weight:500;font-size:10px;text-transform:uppercase;letter-spacing:.06em">Abteilung</th>
+              <th style="padding:8px;color:var(--muted);font-weight:500;font-size:10px;text-transform:uppercase;letter-spacing:.06em">Aktionen</th>
+            </tr></thead>
+            <tbody id="ma-tbody"></tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -916,6 +946,96 @@ function showToast(msg) {
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2500);
 }
+
+// ── MITARBEITER CRUD (Supabase) ──
+var roleLabels = {management:'👔 Management',professor:'👨‍🏫 Professor',wissenschaftlich:'🔬 Wiss. Mitarbeiter',tutor:'📚 Tutor',verwaltung:'🏢 Verwaltung',social_media:'📱 Social Media',it_admin:'⚙️ IT-Admin'};
+
+function loadMitarbeiter(){
+  if(!currentOrgId) return;
+  sb.from('mitarbeiter').select('*').eq('organization_id',currentOrgId).order('created_at',{ascending:false}).then(function(r){
+    var tbody=document.getElementById('ma-tbody');
+    var empty=document.getElementById('ma-empty');
+    var wrap=document.getElementById('ma-table-wrap');
+    if(!r.data || r.data.length===0){ empty.style.display='block'; wrap.style.display='none'; return; }
+    empty.style.display='none'; wrap.style.display='block';
+    tbody.innerHTML='';
+    r.data.forEach(function(m){
+      var tr=document.createElement('tr');
+      tr.style.borderBottom='1px solid var(--border)';
+      tr.innerHTML='<td style="padding:10px 8px;font-weight:500">'+m.vorname+' '+m.nachname+'</td>'
+        +'<td style="padding:10px 8px;color:var(--muted)">'+(m.email||'—')+'</td>'
+        +'<td style="padding:10px 8px"><span style="background:rgba(124,109,250,0.1);color:var(--accent2);padding:2px 8px;border-radius:100px;font-size:10px">'+(roleLabels[m.rolle]||m.rolle)+'</span></td>'
+        +'<td style="padding:10px 8px;color:var(--muted)">'+(m.abteilung||'—')+'</td>'
+        +'<td style="padding:10px 8px"><button onclick="editMitarbeiter(\''+m.id+'\')" style="background:none;border:none;color:var(--accent2);cursor:pointer;font-size:12px;margin-right:8px">✏️</button><button onclick="deleteMitarbeiter(\''+m.id+'\')" style="background:none;border:none;color:var(--coral);cursor:pointer;font-size:12px">🗑️</button></td>';
+      tbody.appendChild(tr);
+    });
+    // Update stat
+    var statEl=document.querySelector('[data-stat="mitarbeiter"]');
+    if(statEl) statEl.textContent=r.data.length;
+  });
+}
+
+function showMitarbeiterForm(){
+  document.getElementById('ma-form').style.display='block';
+  document.getElementById('ma-form-title').textContent='Neuer Mitarbeiter';
+  document.getElementById('ma-edit-id').value='';
+  ['ma-vorname','ma-nachname','ma-email','ma-abteilung','ma-position'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('ma-rolle').value='professor';
+}
+
+function saveMitarbeiter(){
+  var vn=document.getElementById('ma-vorname').value.trim();
+  var nn=document.getElementById('ma-nachname').value.trim();
+  if(!vn||!nn){showToast('Bitte Vor- und Nachname ausfüllen');return;}
+  var data={
+    organization_id:currentOrgId,
+    vorname:vn, nachname:nn,
+    email:document.getElementById('ma-email').value.trim()||null,
+    rolle:document.getElementById('ma-rolle').value,
+    abteilung:document.getElementById('ma-abteilung').value.trim()||null,
+    position:document.getElementById('ma-position').value.trim()||null,
+    aktiv:true
+  };
+  var editId=document.getElementById('ma-edit-id').value;
+  if(editId){
+    sb.from('mitarbeiter').update(data).eq('id',editId).then(function(r){
+      if(r.error){showToast('Fehler: '+r.error.message);} else {showToast('✓ Mitarbeiter aktualisiert');document.getElementById('ma-form').style.display='none';loadMitarbeiter();}
+    });
+  } else {
+    sb.from('mitarbeiter').insert(data).then(function(r){
+      if(r.error){showToast('Fehler: '+r.error.message);} else {showToast('✓ Mitarbeiter hinzugefügt');document.getElementById('ma-form').style.display='none';loadMitarbeiter();}
+    });
+  }
+}
+
+function editMitarbeiter(id){
+  sb.from('mitarbeiter').select('*').eq('id',id).single().then(function(r){
+    if(!r.data) return;
+    document.getElementById('ma-form').style.display='block';
+    document.getElementById('ma-form-title').textContent='Mitarbeiter bearbeiten';
+    document.getElementById('ma-edit-id').value=id;
+    document.getElementById('ma-vorname').value=r.data.vorname;
+    document.getElementById('ma-nachname').value=r.data.nachname;
+    document.getElementById('ma-email').value=r.data.email||'';
+    document.getElementById('ma-rolle').value=r.data.rolle;
+    document.getElementById('ma-abteilung').value=r.data.abteilung||'';
+    document.getElementById('ma-position').value=r.data.position||'';
+  });
+}
+
+function deleteMitarbeiter(id){
+  if(!confirm('Mitarbeiter wirklich entfernen?')) return;
+  sb.from('mitarbeiter').delete().eq('id',id).then(function(r){
+    if(r.error){showToast('Fehler: '+r.error.message);} else {showToast('✓ Mitarbeiter entfernt');loadMitarbeiter();}
+  });
+}
+
+// Mitarbeiter laden wenn Seite gewechselt wird
+var origShowPage = window.showPage;
+window.showPage = function(id,el){
+  origShowPage(id,el);
+  if(id==='mitarbeiter') loadMitarbeiter();
+};
 </script>
 </body>
 </html>
