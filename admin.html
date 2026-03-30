@@ -334,25 +334,25 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-icon">🏛️</div>
-          <div class="stat-val">0</div>
+          <div class="stat-val" id="dash-fak">0</div>
           <div class="stat-label">Fakultäten</div>
-          <div class="stat-change" style="color:var(--muted)">Noch keine Daten</div>
+          <div class="stat-change" id="dash-fak-sub" style="color:var(--muted)">Wird geladen...</div>
         </div>
         <div class="stat-card">
           <div class="stat-icon">👥</div>
-          <div class="stat-val">0</div>
+          <div class="stat-val" id="dash-ma">0</div>
           <div class="stat-label">Mitarbeiter</div>
-          <div class="stat-change" style="color:var(--muted)">Noch keine Daten</div>
+          <div class="stat-change" id="dash-ma-sub" style="color:var(--muted)">Wird geladen...</div>
         </div>
         <div class="stat-card">
           <div class="stat-icon">🎓</div>
-          <div class="stat-val">0</div>
+          <div class="stat-val" id="dash-stud">0</div>
           <div class="stat-label">Studierende</div>
           <div class="stat-change" style="color:var(--accent2)">🔒 Anonymisiert</div>
         </div>
         <div class="stat-card">
           <div class="stat-icon">👻</div>
-          <div class="stat-val">0</div>
+          <div class="stat-val" id="dash-bew">0</div>
           <div class="stat-label">Bewertungen</div>
           <div class="stat-change" style="color:var(--accent2)">🔒 Anonymisiert</div>
         </div>
@@ -364,9 +364,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
             <span class="card-title">📋 Letzte Aktivitäten</span>
             <span class="card-action">Alle →</span>
           </div>
-          <div style="text-align:center;padding:2rem 0;color:var(--muted);font-size:13px">
-            <div style="font-size:2rem;margin-bottom:8px">📋</div>
-            Noch keine Aktivitäten vorhanden.
+          <div id="dash-activities" style="font-size:13px">
+            <div style="text-align:center;padding:2rem 0;color:var(--muted)">
+              <div style="font-size:2rem;margin-bottom:8px">📋</div>
+              Wird geladen...
+            </div>
           </div>
         </div>
 
@@ -410,12 +412,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
         <button class="btn-primary" style="flex:none;padding:10px 16px" onclick="openModal('Neue Einheit','','','Neue Organisationseinheit hinzufügen')">+ Einheit hinzufügen</button>
       </div>
 
-      <div class="org-tree">
+      <div class="org-tree" id="org-tree-content">
         <div style="text-align:center;padding:3rem 0;color:var(--muted)">
-          <div style="font-size:3rem;margin-bottom:1rem">🏛️</div>
-          <h3 style="font-size:16px;font-weight:600;margin-bottom:8px;color:var(--text)">Noch kein Organigramm erstellt</h3>
-          <p style="font-size:13px;line-height:1.6;max-width:400px;margin:0 auto 1.5rem">Erstellen Sie Ihre Organisationsstruktur, indem Sie Fakultäten und Abteilungen hinzufügen.</p>
-          <button class="btn-primary" style="padding:10px 20px" onclick="openModal('Neue Einheit','','','Erste Organisationseinheit hinzufügen')">+ Erste Einheit erstellen</button>
+          <div style="font-size:2rem;margin-bottom:8px">⏳</div>
+          Wird geladen...
         </div>
       </div>
     </div>
@@ -1176,7 +1176,111 @@ var origShowPage = window.showPage;
 window.showPage = function(id,el){
   origShowPage(id,el);
   if(id==='mitarbeiter') loadMitarbeiter();
+  if(id==='organigramm') loadOrganigramm();
+  if(id==='dashboard') loadDashboardStats();
 };
+
+// Dashboard Stats beim Start laden
+setTimeout(function(){loadDashboardStats();}, 800);
+
+// ── DASHBOARD LIVE STATS ──
+function loadDashboardStats(){
+  if(!currentOrgId) return;
+  // Fakultäten
+  sb.from('fakultaeten').select('id').eq('organization_id',currentOrgId).then(function(r){
+    var count = r.data ? r.data.length : 0;
+    document.getElementById('dash-fak').textContent = count;
+    document.getElementById('dash-fak-sub').textContent = count > 0 ? '✓ Eingerichtet' : 'Noch keine Daten';
+    document.getElementById('dash-fak-sub').style.color = count > 0 ? 'var(--success)' : 'var(--muted)';
+  });
+  // Mitarbeiter
+  sb.from('mitarbeiter').select('id,kategorie').eq('organization_id',currentOrgId).then(function(r){
+    var count = r.data ? r.data.length : 0;
+    document.getElementById('dash-ma').textContent = count;
+    document.getElementById('dash-ma-sub').textContent = count > 0 ? '✓ '+count+' eingetragen' : 'Noch keine Daten';
+    document.getElementById('dash-ma-sub').style.color = count > 0 ? 'var(--success)' : 'var(--muted)';
+  });
+  // Studierende (anonymisiert - nur Anzahl)
+  sb.from('profiles').select('id').eq('organization_id',currentOrgId).eq('rolle','student').then(function(r){
+    document.getElementById('dash-stud').textContent = r.data ? r.data.length : 0;
+  });
+  // Bewertungen
+  sb.from('bewertungen').select('id').eq('organization_id',currentOrgId).then(function(r){
+    document.getElementById('dash-bew').textContent = r.data ? r.data.length : 0;
+  });
+  // Letzte Aktivitäten (letzte 5 Mitarbeiter)
+  sb.from('mitarbeiter').select('vorname,nachname,rolle,created_at').eq('organization_id',currentOrgId).order('created_at',{ascending:false}).limit(5).then(function(r){
+    var el = document.getElementById('dash-activities');
+    if(!r.data || r.data.length===0){
+      el.innerHTML='<div style="text-align:center;padding:2rem 0;color:var(--muted)"><div style="font-size:2rem;margin-bottom:8px">📋</div>Noch keine Aktivitäten vorhanden.</div>';
+      return;
+    }
+    el.innerHTML='';
+    r.data.forEach(function(m){
+      var ago = timeAgo(m.created_at);
+      el.innerHTML+='<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:14px">👤</span><span><strong>'+m.vorname+' '+m.nachname+'</strong> als '+(roleLabels[m.rolle]||m.rolle)+' hinzugefügt</span></div><span style="color:var(--muted);font-size:11px">'+ago+'</span></div>';
+    });
+  });
+}
+
+function timeAgo(dateStr){
+  var diff = Date.now() - new Date(dateStr).getTime();
+  var mins = Math.floor(diff/60000);
+  if(mins<1) return 'gerade eben';
+  if(mins<60) return 'vor '+mins+'min';
+  var hrs = Math.floor(mins/60);
+  if(hrs<24) return 'vor '+hrs+'h';
+  var days = Math.floor(hrs/24);
+  return 'vor '+days+' Tagen';
+}
+
+// ── ORGANIGRAMM LIVE ──
+function loadOrganigramm(){
+  if(!currentOrgId) return;
+  var container = document.getElementById('org-tree-content');
+
+  Promise.all([
+    sb.from('fakultaeten').select('*').eq('organization_id',currentOrgId).order('sortierung'),
+    sb.from('mitarbeiter').select('*').eq('organization_id',currentOrgId).eq('aktiv',true).order('kategorie')
+  ]).then(function(results){
+    var faks = results[0].data || [];
+    var mas = results[1].data || [];
+
+    if(faks.length===0 && mas.length===0){
+      container.innerHTML='<div style="text-align:center;padding:3rem 0;color:var(--muted)"><div style="font-size:3rem;margin-bottom:1rem">🏛️</div><h3 style="font-size:16px;font-weight:600;margin-bottom:8px;color:var(--text)">Noch kein Organigramm erstellt</h3><p style="font-size:13px;line-height:1.6;max-width:400px;margin:0 auto">Fügen Sie Mitarbeiter hinzu, um das Organigramm automatisch zu befüllen.</p></div>';
+      return;
+    }
+
+    var html = '';
+    var katOrder = ['hochschulleitung','fakultaet','wissenschaft','verwaltung_technik','studentische_beschaeftigte'];
+    var katNames = {hochschulleitung:'👔 Hochschulleitung & Gremien',fakultaet:'🏛️ Fakultäten & Fachbereiche',wissenschaft:'🔬 Wissenschaftliches Personal',verwaltung_technik:'🏢 Verwaltung & Technik',studentische_beschaeftigte:'📚 Studentische Beschäftigte'};
+    var katColors = {hochschulleitung:'#fbbf24',fakultaet:'#38bdf8',wissenschaft:'#4ade80',verwaltung_technik:'#a78bfa',studentische_beschaeftigte:'#f87171'};
+
+    // Fakultäten anzeigen
+    if(faks.length>0){
+      html+='<div style="margin-bottom:1.5rem"><h3 style="font-size:14px;font-weight:600;color:var(--accent2);margin-bottom:10px">🏛️ Fakultäten ('+faks.length+')</h3><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px">';
+      faks.forEach(function(f){
+        html+='<div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;border-left:3px solid var(--accent)"><div style="font-size:13px;font-weight:600">'+f.name+'</div>'+(f.kuerzel?'<div style="font-size:10px;color:var(--muted)">'+f.kuerzel+'</div>':'')+'</div>';
+      });
+      html+='</div></div>';
+    }
+
+    // Mitarbeiter nach Kategorie
+    katOrder.forEach(function(kat){
+      var filtered = mas.filter(function(m){return m.kategorie===kat;});
+      if(filtered.length===0) return;
+      var color = katColors[kat]||'var(--accent2)';
+      html+='<div style="margin-bottom:1.5rem"><h3 style="font-size:14px;font-weight:600;margin-bottom:10px"><span style="color:'+color+'">'+katNames[kat]+'</span> <span style="font-size:11px;color:var(--muted);font-weight:400">('+filtered.length+')</span></h3>';
+      html+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px">';
+      filtered.forEach(function(m){
+        html+='<div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;border-left:3px solid '+color+'"><div style="font-size:13px;font-weight:600">'+(m.position?m.position+' ':'')+m.vorname+' '+m.nachname+'</div><div style="font-size:10px;color:var(--muted)">'+(roleLabels[m.rolle]||m.rolle)+'</div>'+(m.fakultaet?'<div style="font-size:10px;color:var(--muted2)">'+m.fakultaet+'</div>':'')+'</div>';
+      });
+      html+='</div></div>';
+    });
+
+    container.innerHTML = html;
+  });
+}
 
 // ── ADMIN ONBOARDING ──
 var obFakultaeten = [];
