@@ -237,6 +237,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 input[type=range]{-webkit-appearance:none;width:100%;height:4px;background:var(--surface2);border-radius:2px;outline:none}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg)}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <div class="shell">
@@ -1570,7 +1571,16 @@ document.querySelectorAll('.overlay').forEach(function(o){
 
 // Init
 document.addEventListener('DOMContentLoaded', function(){
-  showToast('Willkommen zurück, Max! 👋','success');
+  // Onboarding-Check
+  var sbNach = window.supabase.createClient('https://izbokhexirglwthffkis.supabase.co','sb_publishable_5ojCJQblvrXTf4lk1rNQ0A_fzmkvz4q');
+  sbNach.auth.getSession().then(function(r){
+    if(!r.data.session) return;
+    sbNach.from('profiles').select('onboarding_done').eq('id', r.data.session.user.id).single().then(function(p){
+      if(!p.data || !p.data.onboarding_done){
+        document.querySelector('.chat-main').innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;padding:2rem"><div style="font-size:4rem;margin-bottom:1rem">🔒</div><h2 style="font-family:DM Serif Display,serif;font-size:22px;margin-bottom:8px">Profil nicht vervollständigt</h2><p style="color:var(--muted);font-size:13px;max-width:360px;line-height:1.6;margin-bottom:1.5rem">Du musst zuerst dein Profil vervollständigen, bevor du Nachrichten nutzen kannst.</p><a href="profil.html" style="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:10px 24px;border-radius:10px;text-decoration:none;font-weight:600;font-size:14px">Profil vervollständigen →</a></div>';
+      }
+    });
+  });
 });
 </script>
 <script src="js/lang.js"></script>

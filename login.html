@@ -214,16 +214,21 @@
         if(specialRoutes[email]){
           setTimeout(function() { window.location.href = specialRoutes[email]; }, 700);
         } else {
-          sb.from('profiles').select('rolle').eq('id', userId).single().then(function(pResult){
-            var rolle = pResult.data ? pResult.data.rolle : 'student';
-            var redirect = (rolle === 'student') ? 'dashboard.html' : 'admin.html';
-            setTimeout(function() { window.location.href = redirect; }, 500);
-          }).catch(function(){
-            // Kein Profil → Domain-basiertes Routing als Fallback
-            var domain = email.split('@')[1];
-            var isOrgAdmin = orgAdminDomains.includes(domain);
-            setTimeout(function() { window.location.href = isOrgAdmin ? 'admin.html' : 'dashboard.html'; }, 500);
-          });
+          // Erst Domain prüfen (schneller & zuverlässiger)
+          var domain = email.split('@')[1];
+          var isOrgAdmin = orgAdminDomains.includes(domain);
+          if(isOrgAdmin){
+            setTimeout(function() { window.location.href = 'admin.html'; }, 500);
+          } else {
+            // Student → Profil prüfen
+            sb.from('profiles').select('rolle').eq('id', userId).single().then(function(pResult){
+              var rolle = (pResult.data && pResult.data.rolle) ? pResult.data.rolle : 'student';
+              var redirect = (rolle === 'student') ? 'dashboard.html' : 'admin.html';
+              setTimeout(function() { window.location.href = redirect; }, 500);
+            }).catch(function(){
+              setTimeout(function() { window.location.href = 'dashboard.html'; }, 500);
+            });
+          }
         }
       }
     }).catch(function() {
