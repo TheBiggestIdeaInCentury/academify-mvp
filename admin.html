@@ -461,18 +461,18 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
           <h2 style="font-family:'DM Serif Display',serif;font-size:22px">Studiengänge</h2>
           <p style="font-size:13px;color:var(--muted)">Vorschläge prüfen, bestätigen & verwalten</p>
         </div>
-        <button class="btn-primary" style="flex:none;padding:10px 16px" onclick="showStudiengangForm()">+ Vorschlagen</button>
+        <button class="btn-primary" style="flex:none;padding:10px 16px" onclick="showStudiengangForm()">+ Studiengang</button>
       </div>
       <!-- Info Banner -->
       <div class="anon-banner" style="margin-bottom:1rem">
         <span class="anon-icon">🎓</span>
         <div>
-          <strong>Workflow:</strong> Student oder Admin schlägt vor → Status <span style="color:#fbbf24;font-weight:600">⏳ Vorgeschlagen</span> → Admin prüft → <span style="color:#4ade80;font-weight:600">✅ Verifiziert</span> (live) oder <span style="color:#f87171;font-weight:600">❌ Abgelehnt</span>
+          <strong>Studiengänge verwalten:</strong> Aktive Studiengänge erscheinen im Organigramm und können von Studierenden bewertet werden. Inaktive Studiengänge werden ausgeblendet.
         </div>
       </div>
       <!-- Form (hidden) -->
       <div class="card" id="sg-form" style="display:none;margin-bottom:1rem">
-        <h3 style="font-size:14px;font-weight:600;margin-bottom:1rem">Neuen Studiengang vorschlagen</h3>
+        <h3 style="font-size:14px;font-weight:600;margin-bottom:1rem">Neuen Studiengang hinzufügen</h3>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
           <div style="grid-column:span 2">
             <label style="font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.06em;display:block;margin-bottom:4px">Name des Studiengangs *</label>
@@ -491,12 +491,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
           </div>
           <div>
             <label style="font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.06em;display:block;margin-bottom:4px">Fakultät</label>
-            <input id="sg-fak" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;outline:none;font-family:inherit" placeholder="z.B. Wirtschaftswissenschaften">
+            <select id="sg-fak" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;outline:none;font-family:inherit;cursor:pointer"><option value="">— Keine Angabe —</option></select>
           </div>
         </div>
         <input type="hidden" id="sg-edit-id">
         <div style="display:flex;gap:8px;margin-top:1rem">
-          <button onclick="saveStudiengang()" style="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">Vorschlagen</button>
+          <button onclick="saveStudiengang()" style="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">Speichern</button>
           <button onclick="document.getElementById('sg-form').style.display='none'" style="background:var(--surface2);color:var(--muted);border:1px solid var(--border);padding:8px 20px;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit">Abbrechen</button>
         </div>
       </div>
@@ -564,32 +564,36 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 
     <!-- PAGE: Bewertungen (anonymisiert) -->
     <div class="page" id="page-bewertungen">
-      <h2 style="font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:1.2rem">👻 Bewertungen</h2>
-      <div class="anon-banner">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem">
+        <h2 style="font-family:'DM Serif Display',serif;font-size:22px">👻 Bewertungen</h2>
+        <button onclick="loadBewertungen()" style="background:var(--surface2);border:1px solid var(--border);color:var(--muted);padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-family:inherit">↻ Aktualisieren</button>
+      </div>
+      <div class="anon-banner" style="margin-bottom:1rem">
         <span class="anon-icon">🔒</span>
         <div><strong>Alle Bewertungen sind anonymisiert.</strong> Einzelne Studierende können nicht identifiziert werden. Ergebnisse werden erst ab mindestens 5 Bewertungen angezeigt (k-Anonymität).</div>
       </div>
-      <div class="card">
+      <div id="bew-content">
         <div style="text-align:center;padding:3rem 0;color:var(--muted)">
           <div style="font-size:3rem;margin-bottom:1rem">👻</div>
-          <h3 style="font-size:16px;font-weight:600;margin-bottom:8px;color:var(--text)">Noch keine Bewertungen eingegangen</h3>
-          <p style="font-size:13px;line-height:1.6;max-width:400px;margin:0 auto">Bewertungen erscheinen hier, sobald Studierende Feedback abgeben. Alle Daten werden anonymisiert dargestellt.</p>
+          <h3 style="font-size:16px;font-weight:600;margin-bottom:8px;color:var(--text)">Wird geladen...</h3>
         </div>
       </div>
     </div>
 
     <!-- PAGE: Statistiken (anonymisiert) -->
     <div class="page" id="page-statistiken">
-      <h2 style="font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:1.2rem">📊 Statistiken</h2>
-      <div class="anon-banner">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem">
+        <h2 style="font-family:'DM Serif Display',serif;font-size:22px">📊 Statistiken</h2>
+        <button onclick="loadStatistiken()" style="background:var(--surface2);border:1px solid var(--border);color:var(--muted);padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-family:inherit">↻ Aktualisieren</button>
+      </div>
+      <div class="anon-banner" style="margin-bottom:1rem">
         <span class="anon-icon">🛡️</span>
         <div><strong>Anonymisierung by Design.</strong> Alle Statistiken zeigen ausschließlich aggregierte, nicht rückverfolgbare Daten. Keine Einzelprofile, keine Überwachung.</div>
       </div>
-      <div class="card">
+      <div id="stat-content">
         <div style="text-align:center;padding:3rem 0;color:var(--muted)">
           <div style="font-size:3rem;margin-bottom:1rem">📊</div>
-          <h3 style="font-size:16px;font-weight:600;margin-bottom:8px;color:var(--text)">Noch keine Statistiken verfügbar</h3>
-          <p style="font-size:13px;line-height:1.6;max-width:400px;margin:0 auto">Statistiken werden automatisch generiert, sobald genügend anonymisierte Daten vorliegen.</p>
+          <h3 style="font-size:16px;font-weight:600;margin-bottom:8px;color:var(--text)">Wird geladen...</h3>
         </div>
       </div>
     </div>
@@ -1108,6 +1112,10 @@ function showPage(id) {
   document.getElementById('page-' + id).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   event.currentTarget.classList.add('active');
+  if(id==='organigramm') loadOrganigramm();
+  if(id==='studiengaenge') loadStudiengaenge();
+  if(id==='bewertungen') loadBewertungen();
+  if(id==='statistiken') loadStatistiken();
 }
 
 function openModal(name, role, desc, title) {
@@ -1357,9 +1365,7 @@ var origShowPage = window.showPage;
 window.showPage = function(id,el){
   origShowPage(id,el);
   if(id==='mitarbeiter') loadMitarbeiter();
-  if(id==='organigramm') loadOrganigramm();
   if(id==='dashboard') loadDashboardStats();
-  if(id==='studiengaenge') loadStudiengaenge();
 };
 
 // Dashboard Stats beim Start laden
@@ -1446,10 +1452,12 @@ function loadOrganigramm(){
   Promise.all([
     sb.from('fakultaeten').select('*').eq('organization_id',currentOrgId).order('sortierung'),
     sb.from('mitarbeiter').select('*').eq('organization_id',currentOrgId).eq('aktiv',true),
-    sb.from('profiles').select('email,updated_at')
+    sb.from('profiles').select('email,updated_at'),
+    sb.from('studiengaenge').select('id,name,abschluss,fakultaet_id,aktiv').eq('organization_id',currentOrgId).eq('aktiv',true).order('name')
   ]).then(function(results){
     var faks = results[0].data || [];
     var mas = results[1].data || [];
+    var studiengaenge = results[3].data || [];
     // Online-Status Map (global for modal)
     orgOnlineEmailsGlobal={};
     var now=new Date().getTime();
@@ -1625,12 +1633,24 @@ function loadOrganigramm(){
         var fakStud = studBesch.filter(function(s){return s.fakultaet && (f.name.indexOf(s.fakultaet)!==-1 || (f.kuerzel && s.fakultaet.indexOf(f.kuerzel)!==-1))});
         var fakTotal = (dekan?1:0)+(prodekan?1:0)+fakWiss.length+fakStud.length;
 
+        // Studiengänge dieser Fakultät
+        var fakSGs = studiengaenge.filter(function(sg){ return sg.fakultaet_id === f.id; });
+        var abschlussShort={bachelor:'B',master:'M',diplom:'Dipl.',staatsexamen:'StEx',promotion:'Dr.',magister:'Mag.'};
+
         html += '<div style="display:flex;flex-direction:column;align-items:center">';
-        html += '<div class="org-node level-2" style="min-width:155px;position:relative">';
+        html += '<div class="org-node level-2" style="min-width:180px;max-width:230px;position:relative">';
         html += '<div class="org-node-name">'+f.name+'</div>';
         if(f.kuerzel) html += '<div class="org-node-dept">'+f.kuerzel+'</div>';
         if(dekan) html += '<div style="margin-top:6px;padding-top:6px;border-top:1px solid var(--border)"><div class="org-node-name" style="font-size:11px">'+(dekan.position?dekan.position+' ':'')+dekan.vorname+' '+dekan.nachname+onlineDot(dekan.email)+'</div><div class="org-node-role">Dekan</div></div>';
         if(prodekan) html += '<div style="margin-top:3px"><div class="org-node-name" style="font-size:10px;font-weight:400">'+(prodekan.position?prodekan.position+' ':'')+prodekan.vorname+' '+prodekan.nachname+onlineDot(prodekan.email)+'</div><div class="org-node-role" style="font-size:9px">Prodekan</div></div>';
+        if(fakSGs.length>0){
+          html += '<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;gap:3px;justify-content:center">';
+          fakSGs.forEach(function(sg){
+            var ab = abschlussShort[sg.abschluss]||sg.abschluss||'';
+            html += '<span style="font-size:9px;background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.2);color:#38bdf8;padding:1px 5px;border-radius:4px;white-space:nowrap">'+sg.name+(ab?' · '+ab:'')+'</span>';
+          });
+          html += '</div>';
+        }
         if(fakTotal>0) html += countBadge(fakTotal, '#38bdf8');
         html += '</div></div>';
       });
@@ -1840,42 +1860,64 @@ function toggleCluster(id){
 }
 
 // ── STUDIENGÄNGE ──
+var sgFakMap = {}; // global faculty lookup: id → name
+
 function loadStudiengaenge(){
   if(!currentOrgId) return;
   var cont = document.getElementById('sg-content');
   cont.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--muted)">Wird geladen...</div>';
-  sb.from('studiengaenge').select('*').eq('organization_id',currentOrgId).order('created_at',{ascending:false}).then(function(r){
-    var items = r.data||[];
-    if(items.length===0){
-      cont.innerHTML='<div style="text-align:center;padding:3rem 0;color:var(--muted)"><div style="font-size:3rem;margin-bottom:1rem">🎓</div><h3 style="font-size:16px;font-weight:600;margin-bottom:8px;color:var(--text)">Noch keine Studiengänge</h3><p style="font-size:13px;max-width:380px;margin:0 auto">Schlagen Sie Studiengänge vor — Admins können diese prüfen und bestätigen.</p></div>';
-      return;
-    }
-    var statusLabel={'vorgeschlagen':'⏳ Vorgeschlagen','verifiziert':'✅ Verifiziert','abgelehnt':'❌ Abgelehnt'};
-    var statusColor={'vorgeschlagen':'#fbbf24','verifiziert':'#4ade80','abgelehnt':'#f87171'};
-    var html='<table style="width:100%;border-collapse:collapse;font-size:12px">';
-    html+='<thead><tr style="border-bottom:1px solid var(--border)">';
-    html+='<th style="padding:8px;text-align:left;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Studiengang</th>';
-    html+='<th style="padding:8px;text-align:left;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Abschluss</th>';
-    html+='<th style="padding:8px;text-align:left;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Fakultät</th>';
-    html+='<th style="padding:8px;text-align:left;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Status</th>';
-    html+='<th style="padding:8px;text-align:left;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Aktionen</th>';
-    html+='</tr></thead><tbody>';
-    items.forEach(function(sg){
-      var sc = statusColor[sg.status]||'var(--muted)';
-      var sl = statusLabel[sg.status]||sg.status;
-      html+='<tr style="border-bottom:1px solid var(--border)">';
-      html+='<td style="padding:10px 8px;font-weight:500">'+sg.name+'</td>';
-      html+='<td style="padding:10px 8px;color:var(--muted)">'+( sg.abschluss||'—')+'</td>';
-      html+='<td style="padding:10px 8px;color:var(--muted)">'+(sg.fakultaet||'—')+'</td>';
-      html+='<td style="padding:10px 8px"><span style="background:'+sc+'18;color:'+sc+';padding:2px 10px;border-radius:100px;font-size:11px;font-weight:600">'+sl+'</span></td>';
-      html+='<td style="padding:10px 8px">';
-      if(sg.status!=='verifiziert') html+='<button onclick="confirmStudiengang(\''+sg.id+'\')" style="background:rgba(74,222,128,0.1);color:#4ade80;border:1px solid rgba(74,222,128,0.3);border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer;font-family:inherit;margin-right:4px" title="Bestätigen">✅</button>';
-      if(sg.status==='vorgeschlagen') html+='<button onclick="editStudiengang(\''+sg.id+'\',\''+sg.name.replace(/'/g,"\\'")+'\')" style="background:rgba(251,191,36,0.1);color:#fbbf24;border:1px solid rgba(251,191,36,0.3);border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer;font-family:inherit;margin-right:4px" title="Korrigieren">✏️</button>';
-      if(sg.status!=='abgelehnt') html+='<button onclick="rejectStudiengang(\''+sg.id+'\')" style="background:rgba(248,113,113,0.1);color:#f87171;border:1px solid rgba(248,113,113,0.3);border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer;font-family:inherit" title="Ablehnen">❌</button>';
-      html+='</td></tr>';
+  // Load faculties first to build lookup + populate dropdown
+  sb.from('fakultaeten').select('id,name,kuerzel').eq('organization_id',currentOrgId).order('sortierung').then(function(faksRes){
+    sgFakMap = {};
+    var faks = faksRes.data||[];
+    faks.forEach(function(f){ sgFakMap[f.id] = f.kuerzel ? f.name+' ('+f.kuerzel+')' : f.name; });
+    // Populate form dropdown
+    var sel = document.getElementById('sg-fak');
+    sel.innerHTML = '<option value="">— Keine Angabe —</option>';
+    faks.forEach(function(f){ sel.innerHTML += '<option value="'+f.id+'">'+sgFakMap[f.id]+'</option>'; });
+
+    sb.from('studiengaenge').select('*').eq('organization_id',currentOrgId).order('name').then(function(r){
+      var items = r.data||[];
+      if(items.length===0){
+        cont.innerHTML='<div style="text-align:center;padding:3rem 0;color:var(--muted)"><div style="font-size:3rem;margin-bottom:1rem">🎓</div><h3 style="font-size:16px;font-weight:600;margin-bottom:8px;color:var(--text)">Noch keine Studiengänge</h3><p style="font-size:13px;max-width:380px;margin:0 auto">Fügen Sie Studiengänge hinzu — sie erscheinen hier und im Organigramm.</p></div>';
+        return;
+      }
+      var abschlussLabel={bachelor:'B.Sc./B.A.',master:'M.Sc./M.A.',diplom:'Diplom',staatsexamen:'Staatsexamen',promotion:'Promotion',magister:'Magister'};
+      var html='<table style="width:100%;border-collapse:collapse;font-size:12px">';
+      html+='<thead><tr style="border-bottom:1px solid var(--border)">';
+      html+='<th style="padding:8px;text-align:left;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Studiengang</th>';
+      html+='<th style="padding:8px;text-align:left;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Abschluss</th>';
+      html+='<th style="padding:8px;text-align:left;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Fakultät</th>';
+      html+='<th style="padding:8px;text-align:left;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Sprache</th>';
+      html+='<th style="padding:8px;text-align:left;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Status</th>';
+      html+='<th style="padding:8px;text-align:left;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Aktionen</th>';
+      html+='</tr></thead><tbody>';
+      items.forEach(function(sg){
+        var isActive = sg.aktiv !== false;
+        var sc = isActive ? '#4ade80' : 'var(--muted)';
+        var sl = isActive ? '✅ Aktiv' : '⏸ Inaktiv';
+        var fakName = sg.fakultaet_id ? (sgFakMap[sg.fakultaet_id]||'—') : '—';
+        var abLabel = abschlussLabel[sg.abschluss]||sg.abschluss||'—';
+        var badges = (sg.akkreditiert?'<span style="background:rgba(56,189,248,0.1);color:#38bdf8;padding:1px 6px;border-radius:4px;font-size:10px;margin-right:3px">akkreditiert</span>':'')+(sg.nc?'<span style="background:rgba(251,191,36,0.1);color:#fbbf24;padding:1px 6px;border-radius:4px;font-size:10px">NC</span>':'');
+        var safeNameEsc = sg.name.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+        html+='<tr style="border-bottom:1px solid var(--border)">';
+        html+='<td style="padding:10px 8px;font-weight:500">'+sg.name+'<br><span style="font-weight:400">'+badges+'</span></td>';
+        html+='<td style="padding:10px 8px;color:var(--muted)">'+abLabel+'</td>';
+        html+='<td style="padding:10px 8px;color:var(--muted)">'+fakName+'</td>';
+        html+='<td style="padding:10px 8px;color:var(--muted)">'+(sg.sprache||'—')+'</td>';
+        html+='<td style="padding:10px 8px"><span style="background:'+sc+'18;color:'+sc+';padding:2px 10px;border-radius:100px;font-size:11px;font-weight:600">'+sl+'</span></td>';
+        html+='<td style="padding:10px 8px;display:flex;gap:4px;align-items:center">';
+        html+='<button onclick="editStudiengang(\''+sg.id+'\',\''+safeNameEsc+'\')" style="background:rgba(251,191,36,0.1);color:#fbbf24;border:1px solid rgba(251,191,36,0.3);border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer;font-family:inherit" title="Umbenennen">✏️</button>';
+        if(isActive){
+          html+='<button onclick="toggleStudiengangAktiv(\''+sg.id+'\',false)" style="background:rgba(248,113,113,0.1);color:#f87171;border:1px solid rgba(248,113,113,0.3);border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer;font-family:inherit" title="Deaktivieren">⏸</button>';
+        } else {
+          html+='<button onclick="toggleStudiengangAktiv(\''+sg.id+'\',true)" style="background:rgba(74,222,128,0.1);color:#4ade80;border:1px solid rgba(74,222,128,0.3);border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer;font-family:inherit" title="Aktivieren">▶</button>';
+        }
+        html+='</td></tr>';
+      });
+      html+='</tbody></table>';
+      cont.innerHTML=html;
     });
-    html+='</tbody></table>';
-    cont.innerHTML=html;
   });
 }
 
@@ -1891,10 +1933,10 @@ function showStudiengangForm(){
 function saveStudiengang(){
   var name=document.getElementById('sg-name').value.trim();
   var abschluss=document.getElementById('sg-abschluss').value;
-  var fak=document.getElementById('sg-fak').value.trim();
+  var fakId=document.getElementById('sg-fak').value||null;
   var editId=document.getElementById('sg-edit-id').value;
   if(!name){showToast('Bitte Namen eingeben');return;}
-  var data={name:name,abschluss:abschluss,fakultaet:fak||null};
+  var data={name:name,abschluss:abschluss,fakultaet_id:fakId};
   if(editId){
     sb.from('studiengaenge').update(data).eq('id',editId).then(function(r){
       if(r.error){showToast('Fehler: '+r.error.message);return;}
@@ -1904,40 +1946,205 @@ function saveStudiengang(){
     });
   } else {
     data.organization_id=currentOrgId;
-    data.status='vorgeschlagen';
+    data.aktiv=true;
     sb.from('studiengaenge').insert(data).then(function(r){
       if(r.error){showToast('Fehler: '+r.error.message);return;}
-      showToast('✓ Studiengang vorgeschlagen');
+      showToast('✓ Studiengang hinzugefügt');
       document.getElementById('sg-form').style.display='none';
       loadStudiengaenge();
     });
   }
 }
 
-function confirmStudiengang(id){
-  sb.from('studiengaenge').update({status:'verifiziert'}).eq('id',id).then(function(r){
-    if(r.error){showToast('Fehler: '+r.error.message);return;}
-    showToast('✅ Studiengang bestätigt & live');
-    loadStudiengaenge();
-  });
-}
-
 function editStudiengang(id, name){
-  var newName=prompt('Studiengang korrigieren:',name);
+  var newName=prompt('Studiengang umbenennen:',name);
   if(!newName||newName===name) return;
   sb.from('studiengaenge').update({name:newName}).eq('id',id).then(function(r){
     if(r.error){showToast('Fehler: '+r.error.message);return;}
-    showToast('✓ Name korrigiert');
+    showToast('✓ Name aktualisiert');
     loadStudiengaenge();
   });
 }
 
-function rejectStudiengang(id){
-  if(!confirm('Studiengang ablehnen?')) return;
-  sb.from('studiengaenge').update({status:'abgelehnt'}).eq('id',id).then(function(r){
+function toggleStudiengangAktiv(id, aktiv){
+  var msg = aktiv ? 'Studiengang aktivieren?' : 'Studiengang deaktivieren?';
+  if(!confirm(msg)) return;
+  sb.from('studiengaenge').update({aktiv:aktiv}).eq('id',id).then(function(r){
     if(r.error){showToast('Fehler: '+r.error.message);return;}
-    showToast('Studiengang abgelehnt');
+    showToast(aktiv ? '✅ Aktiviert' : '⏸ Deaktiviert');
     loadStudiengaenge();
+  });
+}
+
+// ── BEWERTUNGEN ──
+function loadBewertungen(){
+  if(!currentOrgId) return;
+  var cont = document.getElementById('bew-content');
+  cont.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--muted)">Wird geladen...</div>';
+  sb.from('bewertungen').select('*').eq('organization_id',currentOrgId).order('created_at',{ascending:false}).then(function(r){
+    var items = r.data||[];
+    if(items.length===0){
+      cont.innerHTML='<div class="card"><div style="text-align:center;padding:3rem 0;color:var(--muted)"><div style="font-size:3rem;margin-bottom:1rem">👻</div><h3 style="font-size:16px;font-weight:600;margin-bottom:8px;color:var(--text)">Noch keine Bewertungen</h3><p style="font-size:13px;max-width:400px;margin:0 auto">Bewertungen erscheinen hier, sobald Studierende Feedback abgeben.</p></div></div>';
+      return;
+    }
+    // Gruppieren nach Studiengang
+    var byStudiengang = {};
+    items.forEach(function(b){
+      var sg = b.studiengang||'Unbekannt';
+      if(!byStudiengang[sg]) byStudiengang[sg]=[];
+      byStudiengang[sg].push(b);
+    });
+    var criteriaLabels = {lehrqualitaet:'Lehrqualität',ausstattung:'Ausstattung',organisation:'Organisation',literaturzugang:'Literaturzugang',betreuung:'Betreuung',flexibilitaet:'Flexibilität',karrierebezug:'Karrierebezug'};
+    var html = '';
+    // Info line
+    html += '<div style="font-size:12px;color:var(--muted);margin-bottom:1rem">'+items.length+' Bewertungen insgesamt • '+Object.keys(byStudiengang).length+' Studiengänge</div>';
+    Object.keys(byStudiengang).sort().forEach(function(sgName){
+      var bews = byStudiengang[sgName];
+      if(bews.length < 5){
+        html += '<div class="card" style="margin-bottom:.75rem"><div class="card-head"><span class="card-title">🎓 '+sgName+'</span><span style="font-size:11px;color:var(--muted)">'+bews.length+' Bewertung(en)</span></div>';
+        html += '<div style="color:var(--muted);font-size:12px;padding:.5rem 0">⏳ Mindestens 5 Bewertungen erforderlich für Anzeige (k-Anonymität)</div></div>';
+        return;
+      }
+      // Durchschnittswerte berechnen
+      var criteria = Object.keys(criteriaLabels);
+      var avgs = {};
+      criteria.forEach(function(c){
+        var sum=0,count=0;
+        bews.forEach(function(b){ if(b[c]){sum+=b[c];count++;} });
+        avgs[c] = count>0 ? (sum/count).toFixed(1) : null;
+      });
+      var empfRate = Math.round(bews.filter(function(b){return b.empfehlung}).length/bews.length*100);
+      var overallAvg = (criteria.reduce(function(a,c){return a+(parseFloat(avgs[c])||0);},0)/criteria.length).toFixed(1);
+
+      html += '<div class="card" style="margin-bottom:.75rem">';
+      html += '<div class="card-head"><span class="card-title">🎓 '+sgName+'</span><div style="display:flex;gap:8px;align-items:center"><span style="font-size:20px;font-family:\'DM Serif Display\',serif;color:var(--accent2)">'+overallAvg+'</span><span style="font-size:10px;color:var(--muted)">/ 5.0 · '+bews.length+' Bew.</span></div></div>';
+      // Empfehlungsrate
+      html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:.75rem">';
+      html += '<div style="flex:1;height:6px;background:var(--surface3);border-radius:3px"><div style="height:100%;width:'+empfRate+'%;background:linear-gradient(90deg,#4ade80,#22c55e);border-radius:3px"></div></div>';
+      html += '<span style="font-size:11px;color:#4ade80;font-weight:600">'+empfRate+'% würden empfehlen</span></div>';
+      // Kriterien Bars
+      html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.5rem">';
+      criteria.forEach(function(c){
+        if(!avgs[c]) return;
+        var pct = (parseFloat(avgs[c])/5*100).toFixed(0);
+        var col = parseFloat(avgs[c])>=4 ? '#4ade80' : parseFloat(avgs[c])>=3 ? '#fbbf24' : '#f87171';
+        html += '<div>';
+        html += '<div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px"><span style="color:var(--muted)">'+criteriaLabels[c]+'</span><span style="color:'+col+';font-weight:600">'+avgs[c]+'</span></div>';
+        html += '<div style="height:4px;background:var(--surface3);border-radius:2px"><div style="height:100%;width:'+pct+'%;background:'+col+';border-radius:2px"></div></div>';
+        html += '</div>';
+      });
+      html += '</div>';
+      // Kommentare (max 3)
+      var withComments = bews.filter(function(b){return b.kommentar&&b.kommentar.trim()}).slice(0,3);
+      if(withComments.length>0){
+        html += '<div style="margin-top:.75rem;border-top:1px solid var(--border);padding-top:.75rem">';
+        html += '<div style="font-size:10px;text-transform:uppercase;color:var(--muted2);letter-spacing:.06em;margin-bottom:.5rem">Kommentare (anonymisiert)</div>';
+        withComments.forEach(function(b){
+          html += '<div style="background:var(--surface2);border-radius:8px;padding:.5rem .75rem;margin-bottom:.4rem;font-size:12px;line-height:1.5;color:var(--text)">';
+          html += '"'+b.kommentar+'"';
+          html += '<div style="font-size:10px;color:var(--muted);margin-top:3px">'+b.anon_semester+(b.anon_geschlecht?(' · '+{m:'männlich',w:'weiblich',d:'divers'}[b.anon_geschlecht]||b.anon_geschlecht):'')+'</div>';
+          html += '</div>';
+        });
+        html += '</div>';
+      }
+      html += '</div>';
+    });
+    cont.innerHTML = html;
+  });
+}
+
+// ── STATISTIKEN ──
+function loadStatistiken(){
+  if(!currentOrgId) return;
+  var cont = document.getElementById('stat-content');
+  cont.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--muted)">Wird geladen...</div>';
+  Promise.all([
+    sb.from('bewertungen').select('studiengang,lehrqualitaet,ausstattung,organisation,literaturzugang,betreuung,flexibilitaet,karrierebezug,empfehlung').eq('organization_id',currentOrgId),
+    sb.from('studiengaenge').select('id,name,fakultaet_id').eq('organization_id',currentOrgId).eq('aktiv',true),
+    sb.from('fakultaeten').select('id,name,kuerzel').eq('organization_id',currentOrgId)
+  ]).then(function(res){
+    var bews = res[0].data||[];
+    var sgs = res[1].data||[];
+    var faks = res[2].data||[];
+    if(bews.length===0){
+      cont.innerHTML='<div class="card"><div style="text-align:center;padding:3rem 0;color:var(--muted)"><div style="font-size:3rem;margin-bottom:1rem">📊</div><h3 style="font-size:16px;font-weight:600;margin-bottom:8px;color:var(--text)">Noch keine Statistiken</h3><p style="font-size:13px;max-width:400px;margin:0 auto">Statistiken werden automatisch berechnet, sobald Bewertungen eingehen.</p></div></div>';
+      return;
+    }
+    var fakMap={};
+    faks.forEach(function(f){ fakMap[f.id]=f.kuerzel||f.name; });
+
+    var criteriaKeys=['lehrqualitaet','ausstattung','organisation','literaturzugang','betreuung','flexibilitaet','karrierebezug'];
+    var criteriaLabels={lehrqualitaet:'Lehrqualität',ausstattung:'Ausstattung',organisation:'Organisation',literaturzugang:'Literaturzugang',betreuung:'Betreuung',flexibilitaet:'Flexibilität',karrierebezug:'Karrierebezug'};
+
+    // Berechne Gesamtdurchschnitt
+    var totalAvgs = {};
+    criteriaKeys.forEach(function(c){
+      var vals = bews.map(function(b){return b[c];}).filter(function(v){return v!=null;});
+      totalAvgs[c] = vals.length>0 ? vals.reduce(function(a,b){return a+b;},0)/vals.length : 0;
+    });
+    var gesamtNote = (criteriaKeys.reduce(function(a,c){return a+totalAvgs[c];},0)/criteriaKeys.length).toFixed(2);
+    var empfRate = bews.filter(function(b){return b.empfehlung}).length;
+
+    var html = '';
+    // Gesamt-KPIs
+    html += '<div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:1.5rem">';
+    html += '<div class="stat-card"><div class="stat-icon">📝</div><div class="stat-val">'+bews.length+'</div><div class="stat-label">Bewertungen gesamt</div></div>';
+    html += '<div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-val">'+gesamtNote+'</div><div class="stat-label">Gesamtdurchschnitt</div></div>';
+    html += '<div class="stat-card"><div class="stat-icon">👍</div><div class="stat-val">'+Math.round(empfRate/bews.length*100)+'%</div><div class="stat-label">Empfehlungsrate</div></div>';
+    html += '</div>';
+
+    // Ranking Tabelle
+    var sgStats = {};
+    sgs.forEach(function(sg){ sgStats[sg.name]={name:sg.name,fak:sg.fakultaet_id?fakMap[sg.fakultaet_id]||'—':'—',count:0,sum:0,empf:0}; });
+    bews.forEach(function(b){
+      if(!b.studiengang) return;
+      if(!sgStats[b.studiengang]) sgStats[b.studiengang]={name:b.studiengang,fak:'—',count:0,sum:0,empf:0};
+      var entry = sgStats[b.studiengang];
+      var avg = criteriaKeys.reduce(function(a,c){return a+(b[c]||0);},0)/criteriaKeys.length;
+      entry.sum += avg;
+      entry.count++;
+      if(b.empfehlung) entry.empf++;
+    });
+    var ranking = Object.values(sgStats).filter(function(s){return s.count>=5;});
+    ranking.sort(function(a,b){return (b.sum/b.count)-(a.sum/a.count);});
+
+    if(ranking.length>0){
+      html += '<div class="card"><div class="card-head"><span class="card-title">🏆 Studiengang-Ranking</span><span style="font-size:11px;color:var(--muted)">Nur Studiengänge mit ≥5 Bewertungen</span></div>';
+      html += '<table style="width:100%;border-collapse:collapse;font-size:12px">';
+      html += '<thead><tr style="border-bottom:1px solid var(--border)"><th style="padding:8px;text-align:left;color:var(--muted);font-size:10px;text-transform:uppercase">#</th><th style="padding:8px;text-align:left;color:var(--muted);font-size:10px;text-transform:uppercase">Studiengang</th><th style="padding:8px;text-align:left;color:var(--muted);font-size:10px;text-transform:uppercase">Fakultät</th><th style="padding:8px;text-align:right;color:var(--muted);font-size:10px;text-transform:uppercase">Ø Note</th><th style="padding:8px;text-align:right;color:var(--muted);font-size:10px;text-transform:uppercase">Empf.</th><th style="padding:8px;text-align:right;color:var(--muted);font-size:10px;text-transform:uppercase">Bew.</th></tr></thead><tbody>';
+      ranking.forEach(function(sg,i){
+        var note = (sg.sum/sg.count).toFixed(2);
+        var col = parseFloat(note)>=4?'#4ade80':parseFloat(note)>=3?'#fbbf24':'#f87171';
+        var medal = i===0?'🥇 ':i===1?'🥈 ':i===2?'🥉 ':'';
+        var empfPct = Math.round(sg.empf/sg.count*100);
+        html += '<tr style="border-bottom:1px solid var(--border)">';
+        html += '<td style="padding:10px 8px;color:var(--muted);font-size:11px">'+(i+1)+'</td>';
+        html += '<td style="padding:10px 8px;font-weight:500">'+medal+sg.name+'</td>';
+        html += '<td style="padding:10px 8px;color:var(--muted)">'+sg.fak+'</td>';
+        html += '<td style="padding:10px 8px;text-align:right"><span style="color:'+col+';font-weight:700;font-size:14px">'+note+'</span><span style="color:var(--muted);font-size:10px"> /5</span></td>';
+        html += '<td style="padding:10px 8px;text-align:right;color:#4ade80">'+empfPct+'%</td>';
+        html += '<td style="padding:10px 8px;text-align:right;color:var(--muted)">'+sg.count+'</td>';
+        html += '</tr>';
+      });
+      html += '</tbody></table></div>';
+    }
+
+    // Kriterien-Übersicht
+    html += '<div class="card" style="margin-top:.75rem"><div class="card-head"><span class="card-title">📈 Kriterien-Übersicht (gesamt)</span></div>';
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.75rem">';
+    criteriaKeys.forEach(function(c){
+      var val = totalAvgs[c].toFixed(2);
+      var pct = (totalAvgs[c]/5*100).toFixed(0);
+      var col = totalAvgs[c]>=4?'#4ade80':totalAvgs[c]>=3?'#fbbf24':'#f87171';
+      html += '<div style="background:var(--surface2);border-radius:10px;padding:.75rem">';
+      html += '<div style="font-size:11px;color:var(--muted);margin-bottom:.35rem">'+criteriaLabels[c]+'</div>';
+      html += '<div style="font-size:22px;font-family:\'DM Serif Display\',serif;color:'+col+';margin-bottom:.35rem">'+val+'</div>';
+      html += '<div style="height:4px;background:var(--surface3);border-radius:2px"><div style="height:100%;width:'+pct+'%;background:'+col+';border-radius:2px"></div></div>';
+      html += '</div>';
+    });
+    html += '</div></div>';
+
+    cont.innerHTML = html;
   });
 }
 </script>
