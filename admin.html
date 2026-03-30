@@ -182,6 +182,103 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 </head>
 <body>
 
+<!-- ADMIN ONBOARDING OVERLAY -->
+<div id="adminOnboard" style="display:none;position:fixed;inset:0;z-index:9999;background:var(--bg);overflow-y:auto">
+<div style="max-width:640px;margin:0 auto;padding:3rem 1.5rem">
+
+  <!-- Header -->
+  <div style="text-align:center;margin-bottom:2.5rem">
+    <div style="font-size:3rem;margin-bottom:.8rem">🏫</div>
+    <h1 style="font-family:'DM Serif Display',serif;font-size:28px;margin-bottom:.5rem">Organisation <em style="color:var(--accent2)">einrichten</em></h1>
+    <p style="color:var(--muted);font-size:13px;line-height:1.6">Richten Sie Ihre Bildungseinrichtung ein, um den Admin-Bereich vollständig nutzen zu können.</p>
+  </div>
+
+  <!-- Schritt-Anzeige -->
+  <div style="display:flex;justify-content:center;gap:8px;margin-bottom:2rem" id="ob-steps-indicator">
+    <div class="ob-step-dot ob-active" data-step="1">1</div>
+    <div class="ob-step-dot" data-step="2">2</div>
+    <div class="ob-step-dot" data-step="3">3</div>
+  </div>
+
+  <!-- SCHRITT 1: Grunddaten -->
+  <div class="ob-section" id="ob-step-1">
+    <div class="card" style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2rem">
+      <h3 style="font-size:15px;font-weight:600;margin-bottom:1.2rem;display:flex;align-items:center;gap:8px"><span style="background:var(--accent);color:#fff;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0">1</span> Grunddaten der Einrichtung</h3>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div style="grid-column:span 2"><label class="ob-label">Name der Einrichtung *</label><input id="ob-org-name" class="ob-input" placeholder="z.B. Universität zu Köln"></div>
+        <div><label class="ob-label">Hochschultyp *</label><select id="ob-org-typ" class="ob-input" style="cursor:pointer"><option value="">Bitte wählen</option><option value="universitaet">Universität</option><option value="fachhochschule">Fachhochschule</option><option value="technische_hochschule">Technische Hochschule</option><option value="kunst_musik">Kunst- & Musikhochschule</option><option value="private">Private Hochschule</option><option value="duale">Duale Hochschule</option></select></div>
+        <div><label class="ob-label">Gründungsjahr</label><input id="ob-org-jahr" class="ob-input" type="number" placeholder="z.B. 1388"></div>
+        <div><label class="ob-label">Stadt *</label><input id="ob-org-stadt" class="ob-input" placeholder="z.B. Köln"></div>
+        <div><label class="ob-label">Bundesland *</label><select id="ob-org-land" class="ob-input" style="cursor:pointer"><option value="">Bitte wählen</option><option>Baden-Württemberg</option><option>Bayern</option><option>Berlin</option><option>Brandenburg</option><option>Bremen</option><option>Hamburg</option><option>Hessen</option><option>Mecklenburg-Vorpommern</option><option>Niedersachsen</option><option>Nordrhein-Westfalen</option><option>Rheinland-Pfalz</option><option>Saarland</option><option>Sachsen</option><option>Sachsen-Anhalt</option><option>Schleswig-Holstein</option><option>Thüringen</option><option>Österreich</option><option>Schweiz</option></select></div>
+        <div style="grid-column:span 2"><label class="ob-label">Website</label><input id="ob-org-web" class="ob-input" placeholder="z.B. https://www.uni-koeln.de"></div>
+        <div><label class="ob-label">Anzahl Studierende (ca.)</label><input id="ob-org-stud" class="ob-input" type="number" placeholder="z.B. 51400"></div>
+        <div><label class="ob-label">Anzahl Mitarbeiter (ca.)</label><input id="ob-org-ma" class="ob-input" type="number" placeholder="z.B. 4800"></div>
+      </div>
+
+      <div style="margin-top:1.5rem;text-align:right">
+        <button onclick="obStep(2)" class="ob-btn-primary">Weiter → Domains einrichten</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCHRITT 2: Domains -->
+  <div class="ob-section" id="ob-step-2" style="display:none">
+    <div class="card" style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2rem">
+      <h3 style="font-size:15px;font-weight:600;margin-bottom:.5rem;display:flex;align-items:center;gap:8px"><span style="background:var(--accent);color:#fff;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0">2</span> E-Mail-Domains einrichten</h3>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:1.2rem;line-height:1.5">Tragen Sie die E-Mail-Domains ein, über die sich Studierende und Mitarbeiter registrieren können.</p>
+
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div><label class="ob-label">Domain 1 (Studierende) *</label><input id="ob-dom-1" class="ob-input" placeholder="z.B. stud.uni-koeln.de"></div>
+        <div><label class="ob-label">Domain 2 (Mitarbeiter)</label><input id="ob-dom-2" class="ob-input" placeholder="z.B. uni-koeln.de"></div>
+        <div><label class="ob-label">Domain 3 (optional)</label><input id="ob-dom-3" class="ob-input" placeholder="z.B. verwaltung.uni-koeln.de"></div>
+        <div><label class="ob-label">Domain 4 (optional)</label><input id="ob-dom-4" class="ob-input" placeholder="z.B. alumni.uni-koeln.de"></div>
+      </div>
+
+      <div style="margin-top:1.5rem;display:flex;justify-content:space-between">
+        <button onclick="obStep(1)" class="ob-btn-back">← Zurück</button>
+        <button onclick="obStep(3)" class="ob-btn-primary">Weiter → Fakultäten</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCHRITT 3: Fakultäten -->
+  <div class="ob-section" id="ob-step-3" style="display:none">
+    <div class="card" style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2rem">
+      <h3 style="font-size:15px;font-weight:600;margin-bottom:.5rem;display:flex;align-items:center;gap:8px"><span style="background:var(--accent);color:#fff;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0">3</span> Fakultäten anlegen</h3>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:1.2rem;line-height:1.5">Legen Sie Ihre Fakultäten an. Sie können später weitere hinzufügen und Mitarbeiter zuordnen.</p>
+
+      <div id="ob-fak-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:1rem"></div>
+
+      <div style="display:flex;gap:8px">
+        <input id="ob-fak-input" class="ob-input" placeholder="z.B. Wirtschafts- und Sozialwissenschaften" style="flex:1" onkeydown="if(event.key==='Enter'){obAddFak()}">
+        <button onclick="obAddFak()" style="background:var(--accent);color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit;white-space:nowrap">+ Hinzufügen</button>
+      </div>
+
+      <div style="margin-top:1.5rem;display:flex;justify-content:space-between">
+        <button onclick="obStep(2)" class="ob-btn-back">← Zurück</button>
+        <button onclick="obFinish()" class="ob-btn-primary" id="ob-finish-btn">✓ Einrichtung abschließen</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<style>
+.ob-label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px;font-weight:500}
+.ob-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;transition:border-color .2s}
+.ob-input:focus{border-color:var(--accent)}
+.ob-btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:10px 24px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:transform .15s}
+.ob-btn-primary:hover{transform:translateY(-1px)}
+.ob-btn-back{background:var(--surface2);color:var(--muted);border:1px solid var(--border);padding:10px 20px;border-radius:10px;font-size:13px;cursor:pointer;font-family:inherit}
+.ob-step-dot{width:32px;height:32px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--muted);transition:all .3s}
+.ob-step-dot.ob-active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.ob-step-dot.ob-done{background:var(--success);color:#fff;border-color:var(--success)}
+.ob-fak-item{display:flex;align-items:center;justify-content:space-between;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:13px}
+.ob-fak-remove{background:none;border:none;color:var(--coral);cursor:pointer;font-size:14px;padding:2px 6px}
+</style>
+
 <!-- SIDEBAR -->
 <aside class="sidebar">
   <div class="sidebar-header">
@@ -339,9 +436,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
           <div><label style="font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.06em">Vorname *</label><input id="ma-vorname" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;outline:none;font-family:inherit" placeholder="Max"></div>
           <div><label style="font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.06em">Nachname *</label><input id="ma-nachname" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;outline:none;font-family:inherit" placeholder="Müller"></div>
           <div><label style="font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.06em">E-Mail</label><input id="ma-email" type="email" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;outline:none;font-family:inherit" placeholder="max@uni.de"></div>
-          <div><label style="font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.06em">Rolle *</label><select id="ma-rolle" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;outline:none;font-family:inherit;cursor:pointer"><option value="management">👔 Management</option><option value="professor">👨‍🏫 Professor</option><option value="wissenschaftlich">🔬 Wissenschaftlicher Mitarbeiter</option><option value="tutor">📚 Tutor</option><option value="verwaltung">🏢 Verwaltung</option><option value="social_media">📱 Social Media</option><option value="it_admin">⚙️ IT-Administration</option></select></div>
-          <div><label style="font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.06em">Abteilung</label><input id="ma-abteilung" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;outline:none;font-family:inherit" placeholder="z.B. Informatik"></div>
-          <div><label style="font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.06em">Position</label><input id="ma-position" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;outline:none;font-family:inherit" placeholder="z.B. Dekan"></div>
+          <div><label style="font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.06em">Kategorie *</label><select id="ma-kategorie" onchange="updateRollenSelect()" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;outline:none;font-family:inherit;cursor:pointer"><option value="hochschulleitung">1. Hochschulleitung & Gremien</option><option value="fakultaet">2. Fakultäten & Fachbereiche</option><option value="wissenschaft">3. Wissenschaftliches Personal</option><option value="verwaltung_technik">4. Verwaltung & Technik</option><option value="studentische_beschaeftigte">5. Studentische Beschäftigte</option></select></div>
+          <div><label style="font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.06em">Rolle *</label><select id="ma-rolle" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;outline:none;font-family:inherit;cursor:pointer"></select></div>
+          <div><label style="font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.06em">Fakultät</label><input id="ma-fakultaet" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;outline:none;font-family:inherit" placeholder="z.B. Wirtschaftswissenschaften"></div>
+          <div><label style="font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.06em">Abteilung / Institut</label><input id="ma-abteilung" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;outline:none;font-family:inherit" placeholder="z.B. Institut für Informatik"></div>
+          <div><label style="font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.06em">Position / Titel</label><input id="ma-position" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;outline:none;font-family:inherit" placeholder="z.B. Prof. Dr."></div>
         </div>
         <div style="display:flex;gap:8px;margin-top:1rem">
           <button onclick="saveMitarbeiter()" style="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">Speichern</button>
@@ -361,8 +460,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
             <thead><tr style="border-bottom:1px solid var(--border);text-align:left">
               <th style="padding:8px;color:var(--muted);font-weight:500;font-size:10px;text-transform:uppercase;letter-spacing:.06em">Name</th>
               <th style="padding:8px;color:var(--muted);font-weight:500;font-size:10px;text-transform:uppercase;letter-spacing:.06em">E-Mail</th>
+              <th style="padding:8px;color:var(--muted);font-weight:500;font-size:10px;text-transform:uppercase;letter-spacing:.06em">Kategorie</th>
               <th style="padding:8px;color:var(--muted);font-weight:500;font-size:10px;text-transform:uppercase;letter-spacing:.06em">Rolle</th>
-              <th style="padding:8px;color:var(--muted);font-weight:500;font-size:10px;text-transform:uppercase;letter-spacing:.06em">Abteilung</th>
               <th style="padding:8px;color:var(--muted);font-weight:500;font-size:10px;text-transform:uppercase;letter-spacing:.06em">Aktionen</th>
             </tr></thead>
             <tbody id="ma-tbody"></tbody>
@@ -818,11 +917,29 @@ function markUnsaved() {
   document.getElementById('btnSaveDomains').style.background = 'var(--accent)';
 }
 
-// Domains aus Supabase laden
+// Domains aus Supabase laden (basierend auf eingeloggtem Admin)
 async function loadDomains() {
   try {
-    const { data, error } = await sb.from('organizations').select('*').eq('status', 'active').limit(1);
-    if (error) throw error;
+    // Finde die Organisation basierend auf der E-Mail-Domain des Admins
+    const {data:session} = await sb.auth.getSession();
+    var orgData = null;
+    if(session && session.session){
+      var adminEmail = session.session.user.email;
+      var adminDomain = adminEmail.split('@')[1];
+      const {data:allOrgs} = await sb.from('organizations').select('*').eq('status','active');
+      if(allOrgs){
+        orgData = allOrgs.find(function(o){
+          return [o.domain_1,o.domain_2,o.domain_3,o.domain_4].some(function(d){return d && d===adminDomain;});
+        });
+      }
+    }
+    // Fallback: erste Org
+    if(!orgData){
+      const {data:firstOrg} = await sb.from('organizations').select('*').eq('status','active').limit(1);
+      if(firstOrg && firstOrg.length>0) orgData = firstOrg[0];
+    }
+    const data = orgData ? [orgData] : [];
+    const error = null;
     if (data && data.length > 0) {
       const org = data[0];
       currentOrgId = org.id;
@@ -948,7 +1065,25 @@ function showToast(msg) {
 }
 
 // ── MITARBEITER CRUD (Supabase) ──
-var roleLabels = {management:'👔 Management',professor:'👨‍🏫 Professor',wissenschaftlich:'🔬 Wiss. Mitarbeiter',tutor:'📚 Tutor',verwaltung:'🏢 Verwaltung',social_media:'📱 Social Media',it_admin:'⚙️ IT-Admin'};
+var roleLabels = {praesident:'👔 Präsident/Rektor',vizepraesident:'👔 Vizepräsident',kanzler:'👔 Kanzler',praesidium:'👔 Präsidium',senat:'👔 Senat',hochschulrat:'👔 Hochschulrat',dekan:'🏛️ Dekan',prodekan:'🏛️ Prodekan',fakultaetsrat:'🏛️ Fakultätsrat',professor:'👨‍🏫 Professor',juniorprofessor:'👨‍🏫 Juniorprofessor',postdoc:'🔬 PostDoc',lehrkraft:'🔬 Lehrkraft',verwaltung:'🏢 Verwaltung',bibliothek_it:'🏢 Bibliothek/IT',service:'🏢 Service',tutor:'📚 Tutor',hiwi_wiss:'📚 Wiss. Hilfskraft',hiwi_verwaltung:'📚 Stud. Hilfskraft'};
+
+var rollenByKategorie = {
+  hochschulleitung:[{v:'praesident',t:'Präsident/Rektor'},{v:'vizepraesident',t:'Vizepräsident/Prorektor'},{v:'kanzler',t:'Kanzler'},{v:'praesidium',t:'Präsidium/Rektorat'},{v:'senat',t:'Senat'},{v:'hochschulrat',t:'Hochschulrat/Aufsichtsrat'}],
+  fakultaet:[{v:'dekan',t:'Dekan'},{v:'prodekan',t:'Prodekan/Studiendekan'},{v:'fakultaetsrat',t:'Fakultätsrat'}],
+  wissenschaft:[{v:'professor',t:'Professor'},{v:'juniorprofessor',t:'Juniorprofessor/Assistenzprof.'},{v:'postdoc',t:'Wiss. Mitarbeiter/PostDoc'},{v:'lehrkraft',t:'Lehrkraft f. bes. Aufgaben'}],
+  verwaltung_technik:[{v:'verwaltung',t:'Verwaltung'},{v:'bibliothek_it',t:'Bibliothek, IT, Labortechnik'},{v:'service',t:'Service (Hausdienst, Mensa, Sicherheit)'}],
+  studentische_beschaeftigte:[{v:'tutor',t:'Tutor'},{v:'hiwi_wiss',t:'Wiss. Hilfskraft (Hiwi)'},{v:'hiwi_verwaltung',t:'Stud. Hilfskraft (Verwaltung/Service)'}]
+};
+
+function updateRollenSelect(){
+  var kat=document.getElementById('ma-kategorie').value;
+  var sel=document.getElementById('ma-rolle');
+  sel.innerHTML='';
+  (rollenByKategorie[kat]||[]).forEach(function(r){
+    sel.innerHTML+='<option value="'+r.v+'">'+r.t+'</option>';
+  });
+}
+updateRollenSelect();
 
 function loadMitarbeiter(){
   if(!currentOrgId) return;
@@ -962,10 +1097,11 @@ function loadMitarbeiter(){
     r.data.forEach(function(m){
       var tr=document.createElement('tr');
       tr.style.borderBottom='1px solid var(--border)';
-      tr.innerHTML='<td style="padding:10px 8px;font-weight:500">'+m.vorname+' '+m.nachname+'</td>'
+      var katLabels={hochschulleitung:'Leitung',fakultaet:'Fakultät',wissenschaft:'Wissenschaft',verwaltung_technik:'Verwaltung',studentische_beschaeftigte:'Stud. Beschäftigte'};
+      tr.innerHTML='<td style="padding:10px 8px;font-weight:500">'+(m.position?m.position+' ':'')+m.vorname+' '+m.nachname+'</td>'
         +'<td style="padding:10px 8px;color:var(--muted)">'+(m.email||'—')+'</td>'
+        +'<td style="padding:10px 8px"><span style="background:rgba(255,255,255,0.04);color:var(--muted);padding:2px 8px;border-radius:100px;font-size:10px;border:1px solid var(--border)">'+(katLabels[m.kategorie]||m.kategorie)+'</span></td>'
         +'<td style="padding:10px 8px"><span style="background:rgba(124,109,250,0.1);color:var(--accent2);padding:2px 8px;border-radius:100px;font-size:10px">'+(roleLabels[m.rolle]||m.rolle)+'</span></td>'
-        +'<td style="padding:10px 8px;color:var(--muted)">'+(m.abteilung||'—')+'</td>'
         +'<td style="padding:10px 8px"><button onclick="editMitarbeiter(\''+m.id+'\')" style="background:none;border:none;color:var(--accent2);cursor:pointer;font-size:12px;margin-right:8px">✏️</button><button onclick="deleteMitarbeiter(\''+m.id+'\')" style="background:none;border:none;color:var(--coral);cursor:pointer;font-size:12px">🗑️</button></td>';
       tbody.appendChild(tr);
     });
@@ -991,7 +1127,9 @@ function saveMitarbeiter(){
     organization_id:currentOrgId,
     vorname:vn, nachname:nn,
     email:document.getElementById('ma-email').value.trim()||null,
+    kategorie:document.getElementById('ma-kategorie').value,
     rolle:document.getElementById('ma-rolle').value,
+    fakultaet:document.getElementById('ma-fakultaet').value.trim()||null,
     abteilung:document.getElementById('ma-abteilung').value.trim()||null,
     position:document.getElementById('ma-position').value.trim()||null,
     aktiv:true
@@ -1017,7 +1155,10 @@ function editMitarbeiter(id){
     document.getElementById('ma-vorname').value=r.data.vorname;
     document.getElementById('ma-nachname').value=r.data.nachname;
     document.getElementById('ma-email').value=r.data.email||'';
+    document.getElementById('ma-kategorie').value=r.data.kategorie||'verwaltung_technik';
+    updateRollenSelect();
     document.getElementById('ma-rolle').value=r.data.rolle;
+    document.getElementById('ma-fakultaet').value=r.data.fakultaet||'';
     document.getElementById('ma-abteilung').value=r.data.abteilung||'';
     document.getElementById('ma-position').value=r.data.position||'';
   });
@@ -1036,6 +1177,109 @@ window.showPage = function(id,el){
   origShowPage(id,el);
   if(id==='mitarbeiter') loadMitarbeiter();
 };
+
+// ── ADMIN ONBOARDING ──
+var obFakultaeten = [];
+
+function checkAdminOnboarding(){
+  if(!currentOrgId) return;
+  sb.from('organizations').select('onboarding_done').eq('id',currentOrgId).single().then(function(r){
+    if(r.data && !r.data.onboarding_done){
+      document.getElementById('adminOnboard').style.display='block';
+    }
+  });
+}
+
+function obStep(step){
+  // Validierung
+  if(step===2){
+    var name=document.getElementById('ob-org-name').value.trim();
+    var typ=document.getElementById('ob-org-typ').value;
+    var stadt=document.getElementById('ob-org-stadt').value.trim();
+    var bland=document.getElementById('ob-org-land').value;
+    if(!name||!typ||!stadt||!bland){showToast('Bitte alle Pflichtfelder (*) ausfüllen');return;}
+  }
+  if(step===3){
+    var dom1=document.getElementById('ob-dom-1').value.trim();
+    if(!dom1){showToast('Bitte mindestens Domain 1 ausfüllen');return;}
+  }
+  // Schritte anzeigen
+  document.querySelectorAll('.ob-section').forEach(function(s){s.style.display='none';});
+  document.getElementById('ob-step-'+step).style.display='block';
+  // Dots aktualisieren
+  document.querySelectorAll('.ob-step-dot').forEach(function(d){
+    var s=parseInt(d.getAttribute('data-step'));
+    d.className='ob-step-dot'+(s===step?' ob-active':'')+(s<step?' ob-done':'');
+  });
+}
+
+function obAddFak(){
+  var input=document.getElementById('ob-fak-input');
+  var name=input.value.trim();
+  if(!name) return;
+  obFakultaeten.push(name);
+  input.value='';
+  renderFakList();
+}
+
+function obRemoveFak(i){
+  obFakultaeten.splice(i,1);
+  renderFakList();
+}
+
+function renderFakList(){
+  var list=document.getElementById('ob-fak-list');
+  list.innerHTML='';
+  obFakultaeten.forEach(function(f,i){
+    list.innerHTML+='<div class="ob-fak-item"><span>🏛️ '+f+'</span><button class="ob-fak-remove" onclick="obRemoveFak('+i+')">✕</button></div>';
+  });
+}
+
+function obFinish(){
+  var btn=document.getElementById('ob-finish-btn');
+  btn.textContent='Wird gespeichert...';
+  btn.disabled=true;
+
+  // 1. Organisation aktualisieren
+  sb.from('organizations').update({
+    name: document.getElementById('ob-org-name').value.trim(),
+    hochschultyp: document.getElementById('ob-org-typ').value,
+    stadt: document.getElementById('ob-org-stadt').value.trim(),
+    bundesland: document.getElementById('ob-org-land').value,
+    website: document.getElementById('ob-org-web').value.trim()||null,
+    gruendungsjahr: parseInt(document.getElementById('ob-org-jahr').value)||null,
+    anzahl_studierende: parseInt(document.getElementById('ob-org-stud').value)||null,
+    anzahl_mitarbeiter: parseInt(document.getElementById('ob-org-ma').value)||null,
+    domain_1: document.getElementById('ob-dom-1').value.trim(),
+    domain_2: document.getElementById('ob-dom-2').value.trim()||null,
+    domain_3: document.getElementById('ob-dom-3').value.trim()||null,
+    domain_4: document.getElementById('ob-dom-4').value.trim()||null,
+    onboarding_done: true
+  }).eq('id',currentOrgId).then(function(r){
+    if(r.error){
+      showToast('Fehler: '+r.error.message);
+      btn.textContent='✓ Einrichtung abschließen';btn.disabled=false;
+      return;
+    }
+    // 2. Fakultäten anlegen
+    if(obFakultaeten.length>0){
+      var inserts=obFakultaeten.map(function(f,i){return{organization_id:currentOrgId,name:f,sortierung:i};});
+      sb.from('fakultaeten').insert(inserts).then(function(){
+        // 3. Org-Name in Sidebar aktualisieren
+        var orgNameEl=document.querySelector('.org-name');
+        if(orgNameEl) orgNameEl.textContent=document.getElementById('ob-org-name').value.trim();
+        document.getElementById('adminOnboard').style.display='none';
+        showToast('✓ Organisation erfolgreich eingerichtet!');
+      });
+    } else {
+      document.getElementById('adminOnboard').style.display='none';
+      showToast('✓ Organisation erfolgreich eingerichtet!');
+    }
+  });
+}
+
+// Onboarding beim Start prüfen
+setTimeout(checkAdminOnboarding, 500);
 </script>
 </body>
 </html>
