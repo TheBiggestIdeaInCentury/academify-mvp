@@ -1307,83 +1307,122 @@ function loadOrganigramm(){
     var verwaltung = mas.filter(function(m){return m.kategorie==='verwaltung_technik'});
     var studBesch = mas.filter(function(m){return m.kategorie==='studentische_beschaeftigte'});
     var gremien = mas.filter(function(m){return ['praesidium','senat','hochschulrat'].indexOf(m.rolle)!==-1});
+    var wissAll = profs.concat(junprofs).concat(postdocs).concat(lehrkraefte);
 
-    var html = '<div style="display:flex;flex-direction:column;align-items:center;min-width:800px">';
-
-    // EBENE 0: Präsident
-    if(praesident){
-      html += '<div style="display:flex;flex-direction:column;align-items:center">';
-      html += makeNode(praesident, 0);
-      html += connector();
-      html += '</div>';
-    }
-
-    // EBENE 1: VPs + Kanzler
+    // Gozintograph: Zähle untergeordnete Elemente
     var level1 = [];
     vps.forEach(function(v){level1.push(v)});
     if(kanzler) level1.push(kanzler);
     if(gremien.length>0) gremien.forEach(function(g){level1.push(g)});
 
+    // Zähler-Badge Funktion
+    function countBadge(n, color){
+      if(n===0) return '';
+      return '<div style="position:absolute;top:-8px;right:-8px;background:'+color+';color:#fff;font-size:9px;font-weight:700;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--surface)">'+n+'</div>';
+    }
+
+    // Verbindungslinie mit Anzahl (Gozintograph)
+    function gozLine(count, color){
+      if(!count) return '<div style="width:1px;height:24px;background:var(--border)"></div>';
+      return '<div style="position:relative;width:1px;height:32px;background:'+color+'">'
+        +'<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--bg);border:1px solid '+color+';border-radius:8px;padding:1px 6px;font-size:9px;font-weight:700;color:'+color+';white-space:nowrap">'+count+'</div>'
+        +'</div>';
+    }
+
+    var html = '<div style="display:flex;flex-direction:column;align-items:center;min-width:800px">';
+
+    // ── EBENE 0: Präsident ──
+    if(praesident){
+      var totalUnder = level1.length + faks.length + wissAll.length + verwaltung.length + studBesch.length;
+      html += '<div style="display:flex;flex-direction:column;align-items:center">';
+      html += '<div class="org-node level-0" style="position:relative">';
+      html += '<div class="org-node-name">'+(praesident.position?praesident.position+' ':'')+praesident.vorname+' '+praesident.nachname+'</div>';
+      html += '<div class="org-node-role">'+(roleLabels[praesident.rolle]||praesident.rolle)+'</div>';
+      html += countBadge(totalUnder, 'var(--gold)');
+      html += '</div>';
+      html += gozLine(level1.length+' direkt', 'var(--gold)');
+      html += '</div>';
+    }
+
+    // ── EBENE 1: VPs + Kanzler ──
     if(level1.length>0){
-      // Horizontale Linie
       html += '<div style="position:relative;width:100%;display:flex;justify-content:center">';
-      html += '<div style="position:absolute;top:0;height:1px;background:var(--border);width:'+(Math.min(level1.length*180, 800))+'px"></div>';
+      html += '<div style="position:absolute;top:0;height:1px;background:rgba(124,109,250,0.4);width:'+(Math.min(level1.length*180, 800))+'px"></div>';
       html += '</div>';
       html += '<div style="display:flex;gap:16px;justify-content:center;padding-top:0">';
       level1.forEach(function(m){
+        // Zähle wie viele dieser VP/Kanzler "verantwortet"
+        var underCount = 0;
+        if(m.rolle==='vizepraesident' && m.ressort){
+          if(m.ressort.indexOf('Lehre')!==-1) underCount = faks.length + dekane.length + studBesch.length;
+          if(m.ressort.indexOf('Forschung')!==-1) underCount = wissAll.length;
+        }
+        if(m.rolle==='kanzler') underCount = verwaltung.length;
         html += '<div style="display:flex;flex-direction:column;align-items:center">';
-        html += '<div style="width:1px;height:20px;background:var(--border)"></div>';
-        html += makeNode(m, 1);
+        html += '<div style="width:1px;height:20px;background:rgba(124,109,250,0.4)"></div>';
+        html += '<div class="org-node level-1" style="position:relative">';
+        html += '<div class="org-node-name">'+(m.position?m.position+' ':'')+m.vorname+' '+m.nachname+'</div>';
+        html += '<div class="org-node-role">'+(roleLabels[m.rolle]||m.rolle)+'</div>';
+        if(m.ressort) html += '<div class="org-node-dept">'+m.ressort+'</div>';
+        if(m.zustaendigkeiten) html += '<div class="org-node-dept">'+m.zustaendigkeiten+'</div>';
+        if(underCount>0) html += countBadge(underCount, 'var(--accent)');
+        html += '</div>';
         html += '</div>';
       });
       html += '</div>';
     }
 
-    // EBENE 2: Fakultäten mit Dekanen
-    if(dekane.length>0 || faks.length>0){
-      html += '<div style="margin-top:2rem;width:100%">';
-      html += '<div style="text-align:center;margin-bottom:12px"><span class="org-group-title" style="background:rgba(56,189,248,0.1);color:#38bdf8">🏛️ Fakultäten & Fachbereiche</span></div>';
+    // ── EBENE 2: Fakultäten ──
+    if(faks.length>0){
+      html += '<div style="margin-top:1.5rem;width:100%;display:flex;flex-direction:column;align-items:center">';
+      html += gozLine(faks.length+' Fakultäten', '#38bdf8');
+      html += '<div style="text-align:center;margin-bottom:8px;margin-top:4px"><span class="org-group-title" style="background:rgba(56,189,248,0.1);color:#38bdf8">🏛️ Fakultäten & Fachbereiche ('+faks.length+')</span></div>';
       html += '<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">';
-
-      // Match Dekane zu Fakultäten
       faks.forEach(function(f){
-        var dekan = dekane.find(function(d){return d.fakultaet && f.name.indexOf(d.fakultaet)!==-1 || d.fakultaet && d.fakultaet.indexOf(f.kuerzel||'XXX')!==-1});
-        var prodekan = prodekane.find(function(p){return p.fakultaet && f.name.indexOf(p.fakultaet)!==-1 || p.fakultaet && p.fakultaet.indexOf(f.kuerzel||'XXX')!==-1});
+        var dekan = dekane.find(function(d){return d.fakultaet && (f.name.indexOf(d.fakultaet)!==-1 || (f.kuerzel && d.fakultaet.indexOf(f.kuerzel)!==-1))});
+        var prodekan = prodekane.find(function(p){return p.fakultaet && (f.name.indexOf(p.fakultaet)!==-1 || (f.kuerzel && p.fakultaet.indexOf(f.kuerzel)!==-1))});
+        // Zähle Wissenschaftler in dieser Fakultät
+        var fakWiss = wissAll.filter(function(w){return w.fakultaet && (f.name.indexOf(w.fakultaet)!==-1 || (f.kuerzel && w.fakultaet.indexOf(f.kuerzel)!==-1))});
+        var fakStud = studBesch.filter(function(s){return s.fakultaet && (f.name.indexOf(s.fakultaet)!==-1 || (f.kuerzel && s.fakultaet.indexOf(f.kuerzel)!==-1))});
+        var fakTotal = (dekan?1:0)+(prodekan?1:0)+fakWiss.length+fakStud.length;
 
         html += '<div style="display:flex;flex-direction:column;align-items:center">';
-        html += '<div class="org-node level-2" style="min-width:160px">';
+        html += '<div class="org-node level-2" style="min-width:155px;position:relative">';
         html += '<div class="org-node-name">'+f.name+'</div>';
         if(f.kuerzel) html += '<div class="org-node-dept">'+f.kuerzel+'</div>';
         if(dekan) html += '<div style="margin-top:6px;padding-top:6px;border-top:1px solid var(--border)"><div class="org-node-name" style="font-size:11px">'+(dekan.position?dekan.position+' ':'')+dekan.vorname+' '+dekan.nachname+'</div><div class="org-node-role">Dekan</div></div>';
-        if(prodekan) html += '<div style="margin-top:4px"><div class="org-node-name" style="font-size:10px;font-weight:400">'+(prodekan.position?prodekan.position+' ':'')+prodekan.vorname+' '+prodekan.nachname+'</div><div class="org-node-role" style="font-size:9px">Prodekan</div></div>';
+        if(prodekan) html += '<div style="margin-top:3px"><div class="org-node-name" style="font-size:10px;font-weight:400">'+(prodekan.position?prodekan.position+' ':'')+prodekan.vorname+' '+prodekan.nachname+'</div><div class="org-node-role" style="font-size:9px">Prodekan</div></div>';
+        if(fakTotal>0) html += countBadge(fakTotal, '#38bdf8');
         html += '</div></div>';
       });
       html += '</div></div>';
     }
 
-    // EBENE 3: Wissenschaftliches Personal
-    var wissAll = profs.concat(junprofs).concat(postdocs).concat(lehrkraefte);
+    // ── EBENE 3: Wissenschaft ──
     if(wissAll.length>0){
-      html += '<div style="margin-top:2rem;width:100%">';
-      html += '<div style="text-align:center;margin-bottom:12px"><span class="org-group-title" style="background:rgba(74,222,128,0.1);color:#4ade80">🔬 Wissenschaftliches Personal</span></div>';
+      html += '<div style="margin-top:1.5rem;width:100%;display:flex;flex-direction:column;align-items:center">';
+      html += gozLine(wissAll.length+' Wissenschaftler', '#4ade80');
+      html += '<div style="text-align:center;margin-bottom:8px;margin-top:4px"><span class="org-group-title" style="background:rgba(74,222,128,0.1);color:#4ade80">🔬 Wissenschaftliches Personal ('+wissAll.length+')</span></div>';
       html += '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">';
       wissAll.forEach(function(m){ html += makeNode(m, 3); });
       html += '</div></div>';
     }
 
-    // EBENE 4: Verwaltung & Technik
+    // ── EBENE 4: Verwaltung ──
     if(verwaltung.length>0){
-      html += '<div style="margin-top:2rem;width:100%">';
-      html += '<div style="text-align:center;margin-bottom:12px"><span class="org-group-title" style="background:rgba(167,139,250,0.1);color:#a78bfa">🏢 Verwaltung & Technik</span></div>';
+      html += '<div style="margin-top:1.5rem;width:100%;display:flex;flex-direction:column;align-items:center">';
+      html += gozLine(verwaltung.length+' Mitarbeiter', '#a78bfa');
+      html += '<div style="text-align:center;margin-bottom:8px;margin-top:4px"><span class="org-group-title" style="background:rgba(167,139,250,0.1);color:#a78bfa">🏢 Verwaltung & Technik ('+verwaltung.length+')</span></div>';
       html += '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">';
       verwaltung.forEach(function(m){ html += makeNode(m, 4); });
       html += '</div></div>';
     }
 
-    // EBENE 5: Studentische Beschäftigte
+    // ── EBENE 5: Studentische ──
     if(studBesch.length>0){
-      html += '<div style="margin-top:2rem;width:100%">';
-      html += '<div style="text-align:center;margin-bottom:12px"><span class="org-group-title" style="background:rgba(248,113,113,0.1);color:#f87171">📚 Studentische Beschäftigte</span></div>';
+      html += '<div style="margin-top:1.5rem;width:100%;display:flex;flex-direction:column;align-items:center">';
+      html += gozLine(studBesch.length+' Beschäftigte', '#f87171');
+      html += '<div style="text-align:center;margin-bottom:8px;margin-top:4px"><span class="org-group-title" style="background:rgba(248,113,113,0.1);color:#f87171">📚 Studentische Beschäftigte ('+studBesch.length+')</span></div>';
       html += '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">';
       studBesch.forEach(function(m){ html += makeNode(m, 5); });
       html += '</div></div>';
