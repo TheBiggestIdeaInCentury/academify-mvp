@@ -297,6 +297,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
     <div class="nav-item active" onclick="showPage('dashboard')"><span class="nav-icon">📊</span>Dashboard</div>
     <div class="nav-item" onclick="showPage('organigramm')"><span class="nav-icon">🏛️</span>Organigramm<span class="nav-badge">Neu</span></div>
     <div class="nav-item" onclick="showPage('mitarbeiter')"><span class="nav-icon">👥</span>Mitarbeiter</div>
+    <div class="nav-item" onclick="showPage('studiengaenge')"><span class="nav-icon">🎓</span>Studiengänge</div>
 
     <div class="nav-label">Verwaltung</div>
     <div class="nav-item" onclick="showPage('bewertungen')"><span class="nav-icon">📋</span>Bewertungen<span class="nav-badge">12</span></div>
@@ -439,7 +440,76 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
       .org-hline{position:absolute;top:0;height:1px;background:var(--border)}
       .org-group{margin-top:1.5rem}
       .org-group-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;padding:4px 12px;border-radius:100px;display:inline-block}
+      /* Clickable nodes */
+      .org-clickable{cursor:pointer}
+      /* Expandable clusters */
+      .org-cluster{width:100%;margin-top:1.5rem;display:flex;flex-direction:column;align-items:center}
+      .org-cluster-hdr{display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:10px;padding:9px 16px;cursor:pointer;transition:all .2s;font-size:12px;font-weight:600;width:100%;max-width:700px;letter-spacing:.02em}
+      .org-cluster-hdr:hover{border-color:rgba(124,109,250,0.4);background:rgba(124,109,250,0.04)}
+      .org-cluster-arr{font-size:10px;color:var(--muted);transition:transform .3s;margin-left:8px}
+      .org-cluster-arr.open{transform:rotate(0deg)}
+      .org-cluster-arr.closed{transform:rotate(-90deg)}
+      .org-cluster-body{width:100%;display:flex;flex-direction:column;align-items:center;overflow:hidden;transition:all .3s}
+      .org-cluster-body.collapsed{display:none}
       </style>
+    </div>
+
+    <!-- PAGE: Studiengänge -->
+    <div class="page" id="page-studiengaenge">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+        <div>
+          <h2 style="font-family:'DM Serif Display',serif;font-size:22px">Studiengänge</h2>
+          <p style="font-size:13px;color:var(--muted)">Vorschläge prüfen, bestätigen & verwalten</p>
+        </div>
+        <button class="btn-primary" style="flex:none;padding:10px 16px" onclick="showStudiengangForm()">+ Vorschlagen</button>
+      </div>
+      <!-- Info Banner -->
+      <div class="anon-banner" style="margin-bottom:1rem">
+        <span class="anon-icon">🎓</span>
+        <div>
+          <strong>Workflow:</strong> Student oder Admin schlägt vor → Status <span style="color:#fbbf24;font-weight:600">⏳ Vorgeschlagen</span> → Admin prüft → <span style="color:#4ade80;font-weight:600">✅ Verifiziert</span> (live) oder <span style="color:#f87171;font-weight:600">❌ Abgelehnt</span>
+        </div>
+      </div>
+      <!-- Form (hidden) -->
+      <div class="card" id="sg-form" style="display:none;margin-bottom:1rem">
+        <h3 style="font-size:14px;font-weight:600;margin-bottom:1rem">Neuen Studiengang vorschlagen</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div style="grid-column:span 2">
+            <label style="font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.06em;display:block;margin-bottom:4px">Name des Studiengangs *</label>
+            <input id="sg-name" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;outline:none;font-family:inherit" placeholder="z.B. Betriebswirtschaftslehre">
+          </div>
+          <div>
+            <label style="font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.06em;display:block;margin-bottom:4px">Abschluss *</label>
+            <select id="sg-abschluss" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;outline:none;font-family:inherit;cursor:pointer">
+              <option value="bachelor">Bachelor</option>
+              <option value="master">Master</option>
+              <option value="diplom">Diplom</option>
+              <option value="staatsexamen">Staatsexamen</option>
+              <option value="promotion">Promotion</option>
+              <option value="magister">Magister</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.06em;display:block;margin-bottom:4px">Fakultät</label>
+            <input id="sg-fak" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;outline:none;font-family:inherit" placeholder="z.B. Wirtschaftswissenschaften">
+          </div>
+        </div>
+        <input type="hidden" id="sg-edit-id">
+        <div style="display:flex;gap:8px;margin-top:1rem">
+          <button onclick="saveStudiengang()" style="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">Vorschlagen</button>
+          <button onclick="document.getElementById('sg-form').style.display='none'" style="background:var(--surface2);color:var(--muted);border:1px solid var(--border);padding:8px 20px;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit">Abbrechen</button>
+        </div>
+      </div>
+      <!-- List -->
+      <div class="card" id="sg-list">
+        <div id="sg-content">
+          <div style="text-align:center;padding:3rem 0;color:var(--muted)">
+            <div style="font-size:3rem;margin-bottom:1rem">🎓</div>
+            <h3 style="font-size:16px;font-weight:600;margin-bottom:8px;color:var(--text)">Noch keine Studiengänge</h3>
+            <p style="font-size:13px;max-width:380px;margin:0 auto">Schlagen Sie Studiengänge vor — Admins können diese prüfen und bestätigen.</p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- PAGE: Mitarbeiter -->
@@ -1289,6 +1359,7 @@ window.showPage = function(id,el){
   if(id==='mitarbeiter') loadMitarbeiter();
   if(id==='organigramm') loadOrganigramm();
   if(id==='dashboard') loadDashboardStats();
+  if(id==='studiengaenge') loadStudiengaenge();
 };
 
 // Dashboard Stats beim Start laden
@@ -1347,12 +1418,13 @@ function timeAgo(dateStr){
 
 // ── ORGANIGRAMM BAUMDIAGRAMM ──
 function makeNode(m, level){
-  var cls = 'org-node level-'+level;
+  var cls = 'org-node level-'+level+' org-clickable';
   var name = (m.position?m.position+' ':'')+m.vorname+' '+m.nachname;
   var role = roleLabels[m.rolle]||m.rolle;
   var dept = m.fakultaet||m.abteilung||'';
-  return '<div class="'+cls+'">'
-    +'<div class="org-node-name">'+name+'</div>'
+  if(m.id) orgPersonMap[m.id]=m;
+  return '<div class="'+cls+'" onclick="openPersonProfile(\''+m.id+'\')" title="Profil anzeigen">'
+    +'<div class="org-node-name">'+name+(orgOnlineEmailsGlobal[m.email]?'<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;margin-left:5px;box-shadow:0 0 5px rgba(34,197,94,0.5);animation:pulse 2s infinite"></span>':'')+'</div>'
     +'<div class="org-node-role">'+role+'</div>'
     +(dept?'<div class="org-node-dept">'+dept+'</div>':'')
     +'</div>';
@@ -1378,19 +1450,21 @@ function loadOrganigramm(){
   ]).then(function(results){
     var faks = results[0].data || [];
     var mas = results[1].data || [];
-    // Online-Status Map
-    var onlineEmails={};
+    // Online-Status Map (global for modal)
+    orgOnlineEmailsGlobal={};
     var now=new Date().getTime();
     (results[2].data||[]).forEach(function(p){
       if(p.email && p.updated_at){
         var diff=now-new Date(p.updated_at).getTime();
-        if(diff < 30*60*1000) onlineEmails[p.email.toLowerCase()]=true;
+        if(diff < 30*60*1000) orgOnlineEmailsGlobal[p.email.toLowerCase()]=true;
       }
     });
     function onlineDot(email){
       if(!email) return '';
-      return onlineEmails[email.toLowerCase()]?'<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;margin-left:5px;box-shadow:0 0 5px rgba(34,197,94,0.5);animation:pulse 2s infinite"></span>':'';
+      return orgOnlineEmailsGlobal[email.toLowerCase()]?'<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;margin-left:5px;box-shadow:0 0 5px rgba(34,197,94,0.5);animation:pulse 2s infinite"></span>':'';
     }
+    // Reset person map for this load
+    orgPersonMap={};
 
     if(mas.length===0){
       container.innerHTML='<div style="text-align:center;padding:3rem 0;color:var(--muted)"><div style="font-size:3rem;margin-bottom:1rem">🏛️</div><h3 style="font-size:16px;font-weight:600;margin-bottom:8px;color:var(--text)">Noch kein Organigramm erstellt</h3><p style="font-size:13px;line-height:1.6;max-width:400px;margin:0 auto">Fügen Sie Mitarbeiter hinzu, um das Organigramm automatisch zu befüllen.</p></div>';
@@ -1411,8 +1485,9 @@ function loadOrganigramm(){
       if(ceos.length>0){
         html += '<div style="display:flex;gap:16px;justify-content:center">';
         ceos.forEach(function(m){
+          orgPersonMap[m.id]=m;
           html += '<div style="display:flex;flex-direction:column;align-items:center">';
-          html += '<div class="org-node level-0" style="position:relative">';
+          html += '<div class="org-node level-0 org-clickable" style="position:relative" onclick="openPersonProfile(\''+m.id+'\')" title="Profil anzeigen">';
           html += '<div class="org-node-name">'+(m.position?m.position+' ':'')+m.vorname+' '+m.nachname+onlineDot(m.email)+'</div>';
           html += '<div class="org-node-role">'+(labels[m.rolle]||m.rolle)+'</div>';
           html += countBadge(mas.length, 'var(--gold)');
@@ -1435,16 +1510,17 @@ function loadOrganigramm(){
       }
 
       // Alle anderen Kategorien (nur wenn Mitarbeiter vorhanden)
-      kats.forEach(function(kat){
+      kats.forEach(function(kat, ki){
         if(kat.v==='geschaeftsfuehrung') return; // schon oben
         var filtered = mas.filter(function(m){return m.kategorie===kat.v});
         if(filtered.length===0) return; // LEER = AUSBLENDEN
-        html += '<div style="margin-top:1.5rem;width:100%;display:flex;flex-direction:column;align-items:center">';
+        var cid = 'kat'+ki;
+        html += '<div class="org-cluster">';
         html += gozLine(filtered.length+' '+kat.t.replace(/^\d+\.\s*/,''), kat.color);
-        html += '<div style="text-align:center;margin-bottom:8px;margin-top:4px"><span class="org-group-title" style="background:'+kat.color+'15;color:'+kat.color+'">'+kat.icon+' '+kat.t+' ('+filtered.length+')</span></div>';
-        html += '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">';
-        filtered.forEach(function(m){ html += makeNode(m, kats.indexOf(kat)+1 > 5 ? 4 : kats.indexOf(kat)+1); });
-        html += '</div></div>';
+        html += '<div class="org-cluster-hdr" onclick="toggleCluster(\''+cid+'\')" style="border-color:'+kat.color+'44;color:'+kat.color+'"><span>'+kat.icon+' '+kat.t+' ('+filtered.length+')</span><span class="org-cluster-arr open" id="cluster-arr-'+cid+'">▼</span></div>';
+        html += '<div class="org-cluster-body" id="cluster-body-'+cid+'"><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px">';
+        filtered.forEach(function(m){ html += makeNode(m, ki+1 > 5 ? 4 : ki+1); });
+        html += '</div></div></div>';
       });
 
       html += '</div>';
@@ -1493,9 +1569,10 @@ function loadOrganigramm(){
 
     // ── EBENE 0: Präsident ──
     if(praesident){
+      orgPersonMap[praesident.id]=praesident;
       var totalUnder = level1.length + faks.length + wissAll.length + verwaltung.length + studBesch.length;
       html += '<div style="display:flex;flex-direction:column;align-items:center">';
-      html += '<div class="org-node level-0" style="position:relative">';
+      html += '<div class="org-node level-0 org-clickable" style="position:relative" onclick="openPersonProfile(\''+praesident.id+'\')" title="Profil anzeigen">';
       html += '<div class="org-node-name">'+(praesident.position?praesident.position+' ':'')+praesident.vorname+' '+praesident.nachname+onlineDot(praesident.email)+'</div>';
       html += '<div class="org-node-role">'+(roleLabels[praesident.rolle]||praesident.rolle)+'</div>';
       html += countBadge(totalUnder, 'var(--gold)');
@@ -1518,9 +1595,10 @@ function loadOrganigramm(){
           if(m.ressort.indexOf('Forschung')!==-1) underCount = wissAll.length;
         }
         if(m.rolle==='kanzler') underCount = verwaltung.length;
+        orgPersonMap[m.id]=m;
         html += '<div style="display:flex;flex-direction:column;align-items:center">';
         html += '<div style="width:1px;height:20px;background:rgba(124,109,250,0.4)"></div>';
-        html += '<div class="org-node level-1" style="position:relative">';
+        html += '<div class="org-node level-1 org-clickable" style="position:relative" onclick="openPersonProfile(\''+m.id+'\')" title="Profil anzeigen">';
         html += '<div class="org-node-name">'+(m.position?m.position+' ':'')+m.vorname+' '+m.nachname+onlineDot(m.email)+'</div>';
         html += '<div class="org-node-role">'+(roleLabels[m.rolle]||m.rolle)+'</div>';
         if(m.ressort) html += '<div class="org-node-dept">'+m.ressort+'</div>';
@@ -1534,10 +1612,11 @@ function loadOrganigramm(){
 
     // ── EBENE 2: Fakultäten ──
     if(faks.length>0){
-      html += '<div style="margin-top:1.5rem;width:100%;display:flex;flex-direction:column;align-items:center">';
+      html += '<div class="org-cluster">';
       html += gozLine(faks.length+' Fakultäten', '#38bdf8');
-      html += '<div style="text-align:center;margin-bottom:8px;margin-top:4px"><span class="org-group-title" style="background:rgba(56,189,248,0.1);color:#38bdf8">🏛️ Fakultäten & Fachbereiche ('+faks.length+')</span></div>';
-      html += '<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">';
+      html += '<div class="org-cluster-hdr" onclick="toggleCluster(\'faks\')" style="border-color:rgba(56,189,248,0.25);color:#38bdf8"><span>🏛️ Fakultäten & Fachbereiche ('+faks.length+')</span><span class="org-cluster-arr open" id="cluster-arr-faks">▼</span></div>';
+      html += '<div class="org-cluster-body" id="cluster-body-faks">';
+      html += '<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:8px">';
       faks.forEach(function(f){
         var dekan = dekane.find(function(d){return d.fakultaet && (f.name.indexOf(d.fakultaet)!==-1 || (f.kuerzel && d.fakultaet.indexOf(f.kuerzel)!==-1))});
         var prodekan = prodekane.find(function(p){return p.fakultaet && (f.name.indexOf(p.fakultaet)!==-1 || (f.kuerzel && p.fakultaet.indexOf(f.kuerzel)!==-1))});
@@ -1555,37 +1634,37 @@ function loadOrganigramm(){
         if(fakTotal>0) html += countBadge(fakTotal, '#38bdf8');
         html += '</div></div>';
       });
-      html += '</div></div>';
+      html += '</div></div></div>'; // close: flex-wrap, cluster-body, org-cluster
     }
 
     // ── EBENE 3: Wissenschaft ──
     if(wissAll.length>0){
-      html += '<div style="margin-top:1.5rem;width:100%;display:flex;flex-direction:column;align-items:center">';
+      html += '<div class="org-cluster">';
       html += gozLine(wissAll.length+' Wissenschaftler', '#4ade80');
-      html += '<div style="text-align:center;margin-bottom:8px;margin-top:4px"><span class="org-group-title" style="background:rgba(74,222,128,0.1);color:#4ade80">🔬 Wissenschaftliches Personal ('+wissAll.length+')</span></div>';
-      html += '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">';
+      html += '<div class="org-cluster-hdr" onclick="toggleCluster(\'wiss\')" style="border-color:rgba(74,222,128,0.25);color:#4ade80"><span>🔬 Wissenschaftliches Personal ('+wissAll.length+')</span><span class="org-cluster-arr open" id="cluster-arr-wiss">▼</span></div>';
+      html += '<div class="org-cluster-body" id="cluster-body-wiss"><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px">';
       wissAll.forEach(function(m){ html += makeNode(m, 3); });
-      html += '</div></div>';
+      html += '</div></div></div>';
     }
 
     // ── EBENE 4: Verwaltung ──
     if(verwaltung.length>0){
-      html += '<div style="margin-top:1.5rem;width:100%;display:flex;flex-direction:column;align-items:center">';
+      html += '<div class="org-cluster">';
       html += gozLine(verwaltung.length+' Mitarbeiter', '#a78bfa');
-      html += '<div style="text-align:center;margin-bottom:8px;margin-top:4px"><span class="org-group-title" style="background:rgba(167,139,250,0.1);color:#a78bfa">🏢 Verwaltung & Technik ('+verwaltung.length+')</span></div>';
-      html += '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">';
+      html += '<div class="org-cluster-hdr" onclick="toggleCluster(\'verw\')" style="border-color:rgba(167,139,250,0.25);color:#a78bfa"><span>🏢 Verwaltung & Technik ('+verwaltung.length+')</span><span class="org-cluster-arr open" id="cluster-arr-verw">▼</span></div>';
+      html += '<div class="org-cluster-body" id="cluster-body-verw"><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px">';
       verwaltung.forEach(function(m){ html += makeNode(m, 4); });
-      html += '</div></div>';
+      html += '</div></div></div>';
     }
 
     // ── EBENE 5: Studentische ──
     if(studBesch.length>0){
-      html += '<div style="margin-top:1.5rem;width:100%;display:flex;flex-direction:column;align-items:center">';
+      html += '<div class="org-cluster">';
       html += gozLine(studBesch.length+' Beschäftigte', '#f87171');
-      html += '<div style="text-align:center;margin-bottom:8px;margin-top:4px"><span class="org-group-title" style="background:rgba(248,113,113,0.1);color:#f87171">📚 Studentische Beschäftigte ('+studBesch.length+')</span></div>';
-      html += '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">';
+      html += '<div class="org-cluster-hdr" onclick="toggleCluster(\'stud\')" style="border-color:rgba(248,113,113,0.25);color:#f87171"><span>📚 Studentische Beschäftigte ('+studBesch.length+')</span><span class="org-cluster-arr open" id="cluster-arr-stud">▼</span></div>';
+      html += '<div class="org-cluster-body" id="cluster-body-stud"><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px">';
       studBesch.forEach(function(m){ html += makeNode(m, 5); });
-      html += '</div></div>';
+      html += '</div></div></div>';
     }
 
     html += '</div>';
@@ -1695,6 +1774,201 @@ function obFinish(){
 
 // Onboarding beim Start prüfen
 setTimeout(checkAdminOnboarding, 500);
+
+// ── PERSON PROFILE MODAL ──
+var orgPersonMap = {};
+var orgOnlineEmailsGlobal = {};
+
+function openPersonProfile(id){
+  var m = orgPersonMap[id];
+  if(!m) return;
+  var name = (m.position?m.position+' ':'')+m.vorname+' '+m.nachname;
+  var role = roleLabels[m.rolle]||m.rolle;
+  var dept = m.abteilung||'';
+  var fak = m.fakultaet||'';
+  var isOnline = m.email && orgOnlineEmailsGlobal[m.email.toLowerCase()];
+  // Initials
+  var initials = (m.vorname?m.vorname[0]:'')+(m.nachname?m.nachname[0]:'');
+  // Level colors
+  var lvlColors = {praesident:'#FFD700',vizepraesident:'#7c6dfa',kanzler:'#7c6dfa',dekan:'#38bdf8',prodekan:'#38bdf8',professor:'#4ade80',juniorprofessor:'#4ade80',postdoc:'#4ade80',lehrkraft:'#4ade80'};
+  var color = lvlColors[m.rolle]||'#a78bfa';
+  document.getElementById('pm-banner').style.background = 'linear-gradient(135deg,'+color+'55,'+color+'22)';
+  document.getElementById('pm-avatar').style.background = 'linear-gradient(135deg,'+color+','+color+'99)';
+  document.getElementById('pm-avatar').textContent = initials.toUpperCase();
+  document.getElementById('pm-name').textContent = name;
+  document.getElementById('pm-role').textContent = role;
+  var deptLine = [fak,dept].filter(Boolean).join(' · ');
+  document.getElementById('pm-dept').textContent = deptLine;
+  var onlineEl = document.getElementById('pm-online');
+  onlineEl.style.display = isOnline?'inline-block':'none';
+  // Details
+  var details = '';
+  if(m.email) details += '<div style="display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted)"><span>✉️</span><span style="color:var(--text)">'+m.email+'</span></div>';
+  if(fak) details += '<div style="display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted)"><span>🏛️</span><span>'+fak+'</span></div>';
+  if(dept) details += '<div style="display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted)"><span>🏢</span><span>'+dept+'</span></div>';
+  if(m.ressort) details += '<div style="display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted)"><span>📋</span><span>Ressort: '+m.ressort+'</span></div>';
+  if(m.zustaendigkeiten) details += '<div style="display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted)"><span>🎯</span><span>'+m.zustaendigkeiten+'</span></div>';
+  if(!details) details = '<div style="font-size:12px;color:var(--muted);font-style:italic">Keine weiteren Angaben</div>';
+  document.getElementById('pm-details').innerHTML = details;
+  var emailBtn = document.getElementById('pm-email-btn');
+  if(m.email){ emailBtn.href='mailto:'+m.email; emailBtn.style.display='flex'; }
+  else { emailBtn.style.display='none'; }
+  document.getElementById('personModal').style.display='flex';
+}
+
+function closePersonModal(){
+  document.getElementById('personModal').style.display='none';
+}
+
+// ── CLUSTER TOGGLE ──
+var orgClusterState = {};
+
+function toggleCluster(id){
+  var body = document.getElementById('cluster-body-'+id);
+  var arr = document.getElementById('cluster-arr-'+id);
+  if(!body) return;
+  var isOpen = !body.classList.contains('collapsed');
+  if(isOpen){
+    body.classList.add('collapsed');
+    arr.classList.remove('open'); arr.classList.add('closed');
+    orgClusterState[id]=false;
+  } else {
+    body.classList.remove('collapsed');
+    arr.classList.add('open'); arr.classList.remove('closed');
+    orgClusterState[id]=true;
+  }
+}
+
+// ── STUDIENGÄNGE ──
+function loadStudiengaenge(){
+  if(!currentOrgId) return;
+  var cont = document.getElementById('sg-content');
+  cont.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--muted)">Wird geladen...</div>';
+  sb.from('studiengaenge').select('*').eq('organization_id',currentOrgId).order('created_at',{ascending:false}).then(function(r){
+    var items = r.data||[];
+    if(items.length===0){
+      cont.innerHTML='<div style="text-align:center;padding:3rem 0;color:var(--muted)"><div style="font-size:3rem;margin-bottom:1rem">🎓</div><h3 style="font-size:16px;font-weight:600;margin-bottom:8px;color:var(--text)">Noch keine Studiengänge</h3><p style="font-size:13px;max-width:380px;margin:0 auto">Schlagen Sie Studiengänge vor — Admins können diese prüfen und bestätigen.</p></div>';
+      return;
+    }
+    var statusLabel={'vorgeschlagen':'⏳ Vorgeschlagen','verifiziert':'✅ Verifiziert','abgelehnt':'❌ Abgelehnt'};
+    var statusColor={'vorgeschlagen':'#fbbf24','verifiziert':'#4ade80','abgelehnt':'#f87171'};
+    var html='<table style="width:100%;border-collapse:collapse;font-size:12px">';
+    html+='<thead><tr style="border-bottom:1px solid var(--border)">';
+    html+='<th style="padding:8px;text-align:left;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Studiengang</th>';
+    html+='<th style="padding:8px;text-align:left;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Abschluss</th>';
+    html+='<th style="padding:8px;text-align:left;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Fakultät</th>';
+    html+='<th style="padding:8px;text-align:left;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Status</th>';
+    html+='<th style="padding:8px;text-align:left;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Aktionen</th>';
+    html+='</tr></thead><tbody>';
+    items.forEach(function(sg){
+      var sc = statusColor[sg.status]||'var(--muted)';
+      var sl = statusLabel[sg.status]||sg.status;
+      html+='<tr style="border-bottom:1px solid var(--border)">';
+      html+='<td style="padding:10px 8px;font-weight:500">'+sg.name+'</td>';
+      html+='<td style="padding:10px 8px;color:var(--muted)">'+( sg.abschluss||'—')+'</td>';
+      html+='<td style="padding:10px 8px;color:var(--muted)">'+(sg.fakultaet||'—')+'</td>';
+      html+='<td style="padding:10px 8px"><span style="background:'+sc+'18;color:'+sc+';padding:2px 10px;border-radius:100px;font-size:11px;font-weight:600">'+sl+'</span></td>';
+      html+='<td style="padding:10px 8px">';
+      if(sg.status!=='verifiziert') html+='<button onclick="confirmStudiengang(\''+sg.id+'\')" style="background:rgba(74,222,128,0.1);color:#4ade80;border:1px solid rgba(74,222,128,0.3);border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer;font-family:inherit;margin-right:4px" title="Bestätigen">✅</button>';
+      if(sg.status==='vorgeschlagen') html+='<button onclick="editStudiengang(\''+sg.id+'\',\''+sg.name.replace(/'/g,"\\'")+'\')" style="background:rgba(251,191,36,0.1);color:#fbbf24;border:1px solid rgba(251,191,36,0.3);border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer;font-family:inherit;margin-right:4px" title="Korrigieren">✏️</button>';
+      if(sg.status!=='abgelehnt') html+='<button onclick="rejectStudiengang(\''+sg.id+'\')" style="background:rgba(248,113,113,0.1);color:#f87171;border:1px solid rgba(248,113,113,0.3);border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer;font-family:inherit" title="Ablehnen">❌</button>';
+      html+='</td></tr>';
+    });
+    html+='</tbody></table>';
+    cont.innerHTML=html;
+  });
+}
+
+function showStudiengangForm(){
+  var f=document.getElementById('sg-form');
+  f.style.display=f.style.display==='none'?'block':'none';
+  document.getElementById('sg-edit-id').value='';
+  document.getElementById('sg-name').value='';
+  document.getElementById('sg-abschluss').value='bachelor';
+  document.getElementById('sg-fak').value='';
+}
+
+function saveStudiengang(){
+  var name=document.getElementById('sg-name').value.trim();
+  var abschluss=document.getElementById('sg-abschluss').value;
+  var fak=document.getElementById('sg-fak').value.trim();
+  var editId=document.getElementById('sg-edit-id').value;
+  if(!name){showToast('Bitte Namen eingeben');return;}
+  var data={name:name,abschluss:abschluss,fakultaet:fak||null};
+  if(editId){
+    sb.from('studiengaenge').update(data).eq('id',editId).then(function(r){
+      if(r.error){showToast('Fehler: '+r.error.message);return;}
+      showToast('✓ Studiengang aktualisiert');
+      document.getElementById('sg-form').style.display='none';
+      loadStudiengaenge();
+    });
+  } else {
+    data.organization_id=currentOrgId;
+    data.status='vorgeschlagen';
+    sb.from('studiengaenge').insert(data).then(function(r){
+      if(r.error){showToast('Fehler: '+r.error.message);return;}
+      showToast('✓ Studiengang vorgeschlagen');
+      document.getElementById('sg-form').style.display='none';
+      loadStudiengaenge();
+    });
+  }
+}
+
+function confirmStudiengang(id){
+  sb.from('studiengaenge').update({status:'verifiziert'}).eq('id',id).then(function(r){
+    if(r.error){showToast('Fehler: '+r.error.message);return;}
+    showToast('✅ Studiengang bestätigt & live');
+    loadStudiengaenge();
+  });
+}
+
+function editStudiengang(id, name){
+  var newName=prompt('Studiengang korrigieren:',name);
+  if(!newName||newName===name) return;
+  sb.from('studiengaenge').update({name:newName}).eq('id',id).then(function(r){
+    if(r.error){showToast('Fehler: '+r.error.message);return;}
+    showToast('✓ Name korrigiert');
+    loadStudiengaenge();
+  });
+}
+
+function rejectStudiengang(id){
+  if(!confirm('Studiengang ablehnen?')) return;
+  sb.from('studiengaenge').update({status:'abgelehnt'}).eq('id',id).then(function(r){
+    if(r.error){showToast('Fehler: '+r.error.message);return;}
+    showToast('Studiengang abgelehnt');
+    loadStudiengaenge();
+  });
+}
 </script>
+
+<!-- PERSON PROFILE MODAL -->
+<div id="personModal" onclick="if(event.target===this)closePersonModal()" style="position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:500;padding:1rem">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:20px;width:100%;max-width:400px;overflow:hidden;animation:fadeIn .25s ease">
+    <!-- Banner -->
+    <div id="pm-banner" style="height:90px;position:relative;border-radius:20px 20px 0 0">
+      <button onclick="closePersonModal()" style="position:absolute;top:12px;right:12px;width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,0.4);border:none;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">✕</button>
+    </div>
+    <!-- Avatar row -->
+    <div style="padding:0 1.5rem;margin-top:-40px;margin-bottom:.5rem;display:flex;align-items:flex-end;gap:12px">
+      <div id="pm-avatar" style="width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;border:4px solid var(--surface);color:#fff;flex-shrink:0"></div>
+    </div>
+    <!-- Info -->
+    <div style="padding:0 1.5rem 1.5rem">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;flex-wrap:wrap">
+        <h2 id="pm-name" style="font-family:'DM Serif Display',serif;font-size:20px;font-weight:400;line-height:1.2"></h2>
+        <span id="pm-online" style="display:none;width:9px;height:9px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px rgba(34,197,94,0.5);animation:pulse 2s infinite;flex-shrink:0" title="Online"></span>
+      </div>
+      <p id="pm-role" style="font-size:13px;color:var(--accent2);margin-bottom:2px;font-weight:500"></p>
+      <p id="pm-dept" style="font-size:12px;color:var(--muted);margin-bottom:1rem;line-height:1.4"></p>
+      <div id="pm-details" style="border-top:1px solid var(--border);padding-top:1rem;display:flex;flex-direction:column;gap:8px;margin-bottom:1.2rem"></div>
+      <div style="display:flex;gap:8px">
+        <a id="pm-email-btn" href="#" style="flex:1;padding:9px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:10px;color:#fff;font-size:12px;font-weight:600;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:5px">✉ Kontaktieren</a>
+        <button onclick="closePersonModal()" style="padding:9px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--muted);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif">Schließen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
