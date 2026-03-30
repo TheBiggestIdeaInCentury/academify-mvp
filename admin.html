@@ -412,12 +412,34 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
         <button class="btn-primary" style="flex:none;padding:10px 16px" onclick="openModal('Neue Einheit','','','Neue Organisationseinheit hinzufügen')">+ Einheit hinzufügen</button>
       </div>
 
-      <div class="org-tree" id="org-tree-content">
+      <div id="org-tree-content" style="overflow-x:auto;padding-bottom:2rem">
         <div style="text-align:center;padding:3rem 0;color:var(--muted)">
           <div style="font-size:2rem;margin-bottom:8px">⏳</div>
           Wird geladen...
         </div>
       </div>
+
+      <style>
+      .org-node{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 16px;text-align:center;position:relative;min-width:140px;max-width:180px;transition:all .2s}
+      .org-node:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 4px 12px rgba(124,109,250,0.15)}
+      .org-node-name{font-size:12px;font-weight:600;line-height:1.3}
+      .org-node-role{font-size:10px;color:var(--muted);margin-top:2px}
+      .org-node-dept{font-size:9px;color:var(--muted2);margin-top:2px}
+      .org-node.level-0{border-color:var(--gold);background:linear-gradient(135deg,rgba(255,215,0,0.08),var(--surface2));border-width:2px}
+      .org-node.level-1{border-color:var(--accent)}
+      .org-node.level-2{border-color:#38bdf8}
+      .org-node.level-3{border-color:#4ade80}
+      .org-node.level-4{border-color:#a78bfa}
+      .org-node.level-5{border-color:#f87171}
+      .org-branch{display:flex;flex-direction:column;align-items:center;gap:0}
+      .org-children{display:flex;gap:12px;justify-content:center;position:relative;padding-top:20px}
+      .org-children::before{content:'';position:absolute;top:0;left:50%;width:1px;height:20px;background:var(--border)}
+      .org-connector{display:flex;justify-content:center;padding:0;position:relative;height:20px}
+      .org-connector::after{content:'';width:1px;height:20px;background:var(--border)}
+      .org-hline{position:absolute;top:0;height:1px;background:var(--border)}
+      .org-group{margin-top:1.5rem}
+      .org-group-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;padding:4px 12px;border-radius:100px;display:inline-block}
+      </style>
     </div>
 
     <!-- PAGE: Mitarbeiter -->
@@ -1234,50 +1256,140 @@ function timeAgo(dateStr){
   return 'vor '+days+' Tagen';
 }
 
-// ── ORGANIGRAMM LIVE ──
+// ── ORGANIGRAMM BAUMDIAGRAMM ──
+function makeNode(m, level){
+  var cls = 'org-node level-'+level;
+  var name = (m.position?m.position+' ':'')+m.vorname+' '+m.nachname;
+  var role = roleLabels[m.rolle]||m.rolle;
+  var dept = m.fakultaet||m.abteilung||'';
+  return '<div class="'+cls+'">'
+    +'<div class="org-node-name">'+name+'</div>'
+    +'<div class="org-node-role">'+role+'</div>'
+    +(dept?'<div class="org-node-dept">'+dept+'</div>':'')
+    +'</div>';
+}
+
+function makeNodeSimple(title, sub, level){
+  return '<div class="org-node level-'+level+'">'
+    +'<div class="org-node-name">'+title+'</div>'
+    +'<div class="org-node-role">'+sub+'</div>'
+    +'</div>';
+}
+
+function connector(){return '<div class="org-connector"></div>';}
+
 function loadOrganigramm(){
   if(!currentOrgId) return;
   var container = document.getElementById('org-tree-content');
 
   Promise.all([
     sb.from('fakultaeten').select('*').eq('organization_id',currentOrgId).order('sortierung'),
-    sb.from('mitarbeiter').select('*').eq('organization_id',currentOrgId).eq('aktiv',true).order('kategorie')
+    sb.from('mitarbeiter').select('*').eq('organization_id',currentOrgId).eq('aktiv',true)
   ]).then(function(results){
     var faks = results[0].data || [];
     var mas = results[1].data || [];
 
-    if(faks.length===0 && mas.length===0){
+    if(mas.length===0){
       container.innerHTML='<div style="text-align:center;padding:3rem 0;color:var(--muted)"><div style="font-size:3rem;margin-bottom:1rem">🏛️</div><h3 style="font-size:16px;font-weight:600;margin-bottom:8px;color:var(--text)">Noch kein Organigramm erstellt</h3><p style="font-size:13px;line-height:1.6;max-width:400px;margin:0 auto">Fügen Sie Mitarbeiter hinzu, um das Organigramm automatisch zu befüllen.</p></div>';
       return;
     }
 
-    var html = '';
-    var katOrder = ['hochschulleitung','fakultaet','wissenschaft','verwaltung_technik','studentische_beschaeftigte'];
-    var katNames = {hochschulleitung:'👔 Hochschulleitung & Gremien',fakultaet:'🏛️ Fakultäten & Fachbereiche',wissenschaft:'🔬 Wissenschaftliches Personal',verwaltung_technik:'🏢 Verwaltung & Technik',studentische_beschaeftigte:'📚 Studentische Beschäftigte'};
-    var katColors = {hochschulleitung:'#fbbf24',fakultaet:'#38bdf8',wissenschaft:'#4ade80',verwaltung_technik:'#a78bfa',studentische_beschaeftigte:'#f87171'};
+    // Sortiere nach Hierarchie
+    var praesident = mas.filter(function(m){return m.rolle==='praesident'})[0];
+    var vps = mas.filter(function(m){return m.rolle==='vizepraesident'});
+    var kanzler = mas.filter(function(m){return m.rolle==='kanzler'})[0];
+    var dekane = mas.filter(function(m){return m.rolle==='dekan'});
+    var prodekane = mas.filter(function(m){return m.rolle==='prodekan'});
+    var profs = mas.filter(function(m){return m.rolle==='professor'});
+    var junprofs = mas.filter(function(m){return m.rolle==='juniorprofessor'});
+    var postdocs = mas.filter(function(m){return m.rolle==='postdoc'});
+    var lehrkraefte = mas.filter(function(m){return m.rolle==='lehrkraft'});
+    var verwaltung = mas.filter(function(m){return m.kategorie==='verwaltung_technik'});
+    var studBesch = mas.filter(function(m){return m.kategorie==='studentische_beschaeftigte'});
+    var gremien = mas.filter(function(m){return ['praesidium','senat','hochschulrat'].indexOf(m.rolle)!==-1});
 
-    // Fakultäten anzeigen
-    if(faks.length>0){
-      html+='<div style="margin-bottom:1.5rem"><h3 style="font-size:14px;font-weight:600;color:var(--accent2);margin-bottom:10px">🏛️ Fakultäten ('+faks.length+')</h3><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px">';
-      faks.forEach(function(f){
-        html+='<div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;border-left:3px solid var(--accent)"><div style="font-size:13px;font-weight:600">'+f.name+'</div>'+(f.kuerzel?'<div style="font-size:10px;color:var(--muted)">'+f.kuerzel+'</div>':'')+'</div>';
-      });
-      html+='</div></div>';
+    var html = '<div style="display:flex;flex-direction:column;align-items:center;min-width:800px">';
+
+    // EBENE 0: Präsident
+    if(praesident){
+      html += '<div style="display:flex;flex-direction:column;align-items:center">';
+      html += makeNode(praesident, 0);
+      html += connector();
+      html += '</div>';
     }
 
-    // Mitarbeiter nach Kategorie
-    katOrder.forEach(function(kat){
-      var filtered = mas.filter(function(m){return m.kategorie===kat;});
-      if(filtered.length===0) return;
-      var color = katColors[kat]||'var(--accent2)';
-      html+='<div style="margin-bottom:1.5rem"><h3 style="font-size:14px;font-weight:600;margin-bottom:10px"><span style="color:'+color+'">'+katNames[kat]+'</span> <span style="font-size:11px;color:var(--muted);font-weight:400">('+filtered.length+')</span></h3>';
-      html+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px">';
-      filtered.forEach(function(m){
-        html+='<div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;border-left:3px solid '+color+'"><div style="font-size:13px;font-weight:600">'+(m.position?m.position+' ':'')+m.vorname+' '+m.nachname+'</div><div style="font-size:10px;color:var(--muted)">'+(roleLabels[m.rolle]||m.rolle)+'</div>'+(m.fakultaet?'<div style="font-size:10px;color:var(--muted2)">'+m.fakultaet+'</div>':'')+'</div>';
-      });
-      html+='</div></div>';
-    });
+    // EBENE 1: VPs + Kanzler
+    var level1 = [];
+    vps.forEach(function(v){level1.push(v)});
+    if(kanzler) level1.push(kanzler);
+    if(gremien.length>0) gremien.forEach(function(g){level1.push(g)});
 
+    if(level1.length>0){
+      // Horizontale Linie
+      html += '<div style="position:relative;width:100%;display:flex;justify-content:center">';
+      html += '<div style="position:absolute;top:0;height:1px;background:var(--border);width:'+(Math.min(level1.length*180, 800))+'px"></div>';
+      html += '</div>';
+      html += '<div style="display:flex;gap:16px;justify-content:center;padding-top:0">';
+      level1.forEach(function(m){
+        html += '<div style="display:flex;flex-direction:column;align-items:center">';
+        html += '<div style="width:1px;height:20px;background:var(--border)"></div>';
+        html += makeNode(m, 1);
+        html += '</div>';
+      });
+      html += '</div>';
+    }
+
+    // EBENE 2: Fakultäten mit Dekanen
+    if(dekane.length>0 || faks.length>0){
+      html += '<div style="margin-top:2rem;width:100%">';
+      html += '<div style="text-align:center;margin-bottom:12px"><span class="org-group-title" style="background:rgba(56,189,248,0.1);color:#38bdf8">🏛️ Fakultäten & Fachbereiche</span></div>';
+      html += '<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">';
+
+      // Match Dekane zu Fakultäten
+      faks.forEach(function(f){
+        var dekan = dekane.find(function(d){return d.fakultaet && f.name.indexOf(d.fakultaet)!==-1 || d.fakultaet && d.fakultaet.indexOf(f.kuerzel||'XXX')!==-1});
+        var prodekan = prodekane.find(function(p){return p.fakultaet && f.name.indexOf(p.fakultaet)!==-1 || p.fakultaet && p.fakultaet.indexOf(f.kuerzel||'XXX')!==-1});
+
+        html += '<div style="display:flex;flex-direction:column;align-items:center">';
+        html += '<div class="org-node level-2" style="min-width:160px">';
+        html += '<div class="org-node-name">'+f.name+'</div>';
+        if(f.kuerzel) html += '<div class="org-node-dept">'+f.kuerzel+'</div>';
+        if(dekan) html += '<div style="margin-top:6px;padding-top:6px;border-top:1px solid var(--border)"><div class="org-node-name" style="font-size:11px">'+(dekan.position?dekan.position+' ':'')+dekan.vorname+' '+dekan.nachname+'</div><div class="org-node-role">Dekan</div></div>';
+        if(prodekan) html += '<div style="margin-top:4px"><div class="org-node-name" style="font-size:10px;font-weight:400">'+(prodekan.position?prodekan.position+' ':'')+prodekan.vorname+' '+prodekan.nachname+'</div><div class="org-node-role" style="font-size:9px">Prodekan</div></div>';
+        html += '</div></div>';
+      });
+      html += '</div></div>';
+    }
+
+    // EBENE 3: Wissenschaftliches Personal
+    var wissAll = profs.concat(junprofs).concat(postdocs).concat(lehrkraefte);
+    if(wissAll.length>0){
+      html += '<div style="margin-top:2rem;width:100%">';
+      html += '<div style="text-align:center;margin-bottom:12px"><span class="org-group-title" style="background:rgba(74,222,128,0.1);color:#4ade80">🔬 Wissenschaftliches Personal</span></div>';
+      html += '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">';
+      wissAll.forEach(function(m){ html += makeNode(m, 3); });
+      html += '</div></div>';
+    }
+
+    // EBENE 4: Verwaltung & Technik
+    if(verwaltung.length>0){
+      html += '<div style="margin-top:2rem;width:100%">';
+      html += '<div style="text-align:center;margin-bottom:12px"><span class="org-group-title" style="background:rgba(167,139,250,0.1);color:#a78bfa">🏢 Verwaltung & Technik</span></div>';
+      html += '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">';
+      verwaltung.forEach(function(m){ html += makeNode(m, 4); });
+      html += '</div></div>';
+    }
+
+    // EBENE 5: Studentische Beschäftigte
+    if(studBesch.length>0){
+      html += '<div style="margin-top:2rem;width:100%">';
+      html += '<div style="text-align:center;margin-bottom:12px"><span class="org-group-title" style="background:rgba(248,113,113,0.1);color:#f87171">📚 Studentische Beschäftigte</span></div>';
+      html += '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">';
+      studBesch.forEach(function(m){ html += makeNode(m, 5); });
+      html += '</div></div>';
+    }
+
+    html += '</div>';
     container.innerHTML = html;
   });
 }
