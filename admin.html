@@ -1142,7 +1142,10 @@ function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  event.currentTarget.classList.add('active');
+  // Aktives Nav-Item markieren (klappt auch bei programmatischem Aufruf)
+  var activeNav = document.querySelector('.nav-item[onclick*="\''+id+'\'"]');
+  if(activeNav) activeNav.classList.add('active');
+  else if(typeof event !== 'undefined' && event && event.currentTarget) event.currentTarget.classList.add('active');
   if(id==='organigramm') loadOrganigramm();
   if(id==='studierende') loadStudierende();
   if(id==='studiengaenge') loadStudiengaenge();
@@ -2289,8 +2292,9 @@ async function loadStudierende(){
   html += '<div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:1.5rem">';
   html += '<div class="stat-card"><div class="stat-icon">👨‍🎓</div><div class="stat-val">'+studierende.length+'</div><div class="stat-label">Eingeschrieben</div></div>';
   html += '<div class="stat-card"><div class="stat-icon">📚</div><div class="stat-val">'+sortedKeys.length+'</div><div class="stat-label">Studiengänge</div></div>';
-  var avgSem = studierende.filter(function(p){return p.semester;}).reduce(function(a,p){return a+p.semester;},0) / (studierende.filter(function(p){return p.semester;}).length||1);
-  html += '<div class="stat-card"><div class="stat-icon">📅</div><div class="stat-val">'+(isNaN(avgSem)?'—':avgSem.toFixed(1))+'</div><div class="stat-label">Ø Semester</div></div>';
+  var studMitSem = studierende.filter(function(p){ return p.semester && typeof p.semester === 'number' && p.semester > 0 && p.semester < 20; });
+  var avgSem = studMitSem.length > 0 ? studMitSem.reduce(function(a,p){return a+p.semester;},0) / studMitSem.length : null;
+  html += '<div class="stat-card"><div class="stat-icon">📅</div><div class="stat-val">'+(avgSem===null?'—':avgSem.toFixed(1))+'</div><div class="stat-label">Ø Semester</div></div>';
   html += '</div>';
 
   // Pro Studiengang eine Kachel
