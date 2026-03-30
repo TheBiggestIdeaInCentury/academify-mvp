@@ -965,6 +965,7 @@ async function loadDomains() {
     if (data && data.length > 0) {
       const org = data[0];
       currentOrgId = org.id;
+      setOrgType(org.type || 'edu');
       document.getElementById('orgName').value = org.name || '';
       document.getElementById('orgType').value = org.type || 'edu';
       document.getElementById('domain1').value = org.domain_1 || '';
@@ -1086,16 +1087,87 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-// ── MITARBEITER CRUD (Supabase) ──
-var roleLabels = {praesident:'👔 Präsident/Rektor',vizepraesident:'👔 Vizepräsident',kanzler:'👔 Kanzler',praesidium:'👔 Präsidium',senat:'👔 Senat',hochschulrat:'👔 Hochschulrat',dekan:'🏛️ Dekan',prodekan:'🏛️ Prodekan',fakultaetsrat:'🏛️ Fakultätsrat',professor:'👨‍🏫 Professor',juniorprofessor:'👨‍🏫 Juniorprofessor',postdoc:'🔬 PostDoc',lehrkraft:'🔬 Lehrkraft',verwaltung:'🏢 Verwaltung',bibliothek_it:'🏢 Bibliothek/IT',service:'🏢 Service',tutor:'📚 Tutor',hiwi_wiss:'📚 Wiss. Hilfskraft',hiwi_verwaltung:'📚 Stud. Hilfskraft'};
+// ── DYNAMISCHES KATEGORIE-SYSTEM ──
+// Bestimme Org-Typ und lade passende Kategorien
+var currentOrgType = 'edu'; // wird beim Laden aktualisiert
 
-var rollenByKategorie = {
+// ═══ BILDUNGSEINRICHTUNGEN ═══
+var eduRoleLabels = {praesident:'👔 Präsident/Rektor',vizepraesident:'👔 Vizepräsident',kanzler:'👔 Kanzler',praesidium:'👔 Präsidium',senat:'👔 Senat',hochschulrat:'👔 Hochschulrat',dekan:'🏛️ Dekan',prodekan:'🏛️ Prodekan',fakultaetsrat:'🏛️ Fakultätsrat',professor:'👨‍🏫 Professor',juniorprofessor:'👨‍🏫 Juniorprofessor',postdoc:'🔬 PostDoc',lehrkraft:'🔬 Lehrkraft',verwaltung:'🏢 Verwaltung',bibliothek_it:'🏢 Bibliothek/IT',service:'🏢 Service',tutor:'📚 Tutor',hiwi_wiss:'📚 Wiss. Hilfskraft',hiwi_verwaltung:'📚 Stud. Hilfskraft'};
+
+var eduKategorien = [
+  {v:'hochschulleitung',t:'1. Hochschulleitung & Gremien',icon:'👔',color:'#fbbf24'},
+  {v:'fakultaet',t:'2. Fakultäten & Fachbereiche',icon:'🏛️',color:'#38bdf8'},
+  {v:'wissenschaft',t:'3. Wissenschaftliches Personal',icon:'🔬',color:'#4ade80'},
+  {v:'verwaltung_technik',t:'4. Verwaltung & Technik',icon:'🏢',color:'#a78bfa'},
+  {v:'studentische_beschaeftigte',t:'5. Studentische Beschäftigte',icon:'📚',color:'#f87171'}
+];
+
+var eduRollenByKategorie = {
   hochschulleitung:[{v:'praesident',t:'Präsident/Rektor'},{v:'vizepraesident',t:'Vizepräsident/Prorektor'},{v:'kanzler',t:'Kanzler'},{v:'praesidium',t:'Präsidium/Rektorat'},{v:'senat',t:'Senat'},{v:'hochschulrat',t:'Hochschulrat/Aufsichtsrat'}],
   fakultaet:[{v:'dekan',t:'Dekan'},{v:'prodekan',t:'Prodekan/Studiendekan'},{v:'fakultaetsrat',t:'Fakultätsrat'}],
   wissenschaft:[{v:'professor',t:'Professor'},{v:'juniorprofessor',t:'Juniorprofessor/Assistenzprof.'},{v:'postdoc',t:'Wiss. Mitarbeiter/PostDoc'},{v:'lehrkraft',t:'Lehrkraft f. bes. Aufgaben'}],
   verwaltung_technik:[{v:'verwaltung',t:'Verwaltung'},{v:'bibliothek_it',t:'Bibliothek, IT, Labortechnik'},{v:'service',t:'Service (Hausdienst, Mensa, Sicherheit)'}],
   studentische_beschaeftigte:[{v:'tutor',t:'Tutor'},{v:'hiwi_wiss',t:'Wiss. Hilfskraft (Hiwi)'},{v:'hiwi_verwaltung',t:'Stud. Hilfskraft (Verwaltung/Service)'}]
 };
+
+// ═══ UNTERNEHMEN ═══
+var bizRoleLabels = {ceo:'👔 CEO/Geschäftsführer',cfo:'👔 CFO',coo:'👔 COO',cto:'👔 CTO',cmo:'👔 CMO',cso:'👔 CSO',vorstand:'👔 Vorstand',aufsichtsrat:'👔 Aufsichtsrat',bereichsleiter:'📊 Bereichsleiter',controller:'📊 Controller',stratege:'📊 Strategieberater',finanzleiter:'💰 Finanzleiter',buchhalter:'💰 Buchhalter',steuerberater:'💰 Steuerberater',hr_leiter:'👥 HR-Leiter',recruiter:'👥 Recruiter',personalentwickler:'👥 Personalentwickler',produktionsleiter:'🏭 Produktionsleiter',qualitaetsmanager:'🏭 Qualitätsmanager',logistik:'🏭 Logistik',einkaufsleiter:'🛒 Einkaufsleiter',beschaffung:'🛒 Beschaffung',vertriebsleiter:'📦 Vertriebsleiter',key_account:'📦 Key Account Manager',sales:'📦 Sales Manager',marketingleiter:'📢 Marketingleiter',pr_manager:'📢 PR-Manager',content_manager:'📢 Content Manager',social_media:'📢 Social Media Manager',it_leiter:'💻 IT-Leiter',developer:'💻 Entwickler',sysadmin:'💻 Systemadministrator',data_analyst:'💻 Data Analyst',jurist:'⚖️ Jurist',compliance:'⚖️ Compliance Officer',datenschutz:'⚖️ Datenschutzbeauftragter',forschungsleiter:'🔬 Forschungsleiter',entwickler:'🔬 Produktentwickler',innovation:'🔬 Innovationsmanager',regionalleiter:'🌍 Regionalleiter',country_manager:'🌍 Country Manager',export_manager:'🌍 Export Manager',werkstudent:'📚 Werkstudent',praktikant:'📚 Praktikant',azubi:'📚 Auszubildender'};
+
+var bizKategorien = [
+  {v:'geschaeftsfuehrung',t:'1. Geschäftsführung / Vorstand',icon:'👔',color:'#fbbf24'},
+  {v:'strategie_controlling',t:'2. Strategie & Controlling',icon:'📊',color:'#38bdf8'},
+  {v:'finanzen',t:'3. Finanzen & Rechnungswesen',icon:'💰',color:'#4ade80'},
+  {v:'personal',t:'4. Personal / HR',icon:'👥',color:'#fb923c'},
+  {v:'produktion',t:'5. Produktion / Operations',icon:'🏭',color:'#94a3b8'},
+  {v:'einkauf',t:'6. Einkauf & Beschaffung',icon:'🛒',color:'#f472b6'},
+  {v:'vertrieb',t:'7. Vertrieb & Sales',icon:'📦',color:'#2dd4bf'},
+  {v:'marketing',t:'8. Marketing & Kommunikation',icon:'📢',color:'#c084fc'},
+  {v:'it_digital',t:'9. IT & Digitalisierung',icon:'💻',color:'#60a5fa'},
+  {v:'recht_compliance',t:'10. Recht & Compliance',icon:'⚖️',color:'#a78bfa'},
+  {v:'forschung_entwicklung',t:'11. Forschung & Entwicklung',icon:'🔬',color:'#34d399'},
+  {v:'international',t:'12. International / Regionen',icon:'🌍',color:'#fbbf24'},
+  {v:'nachwuchs',t:'13. Nachwuchskräfte',icon:'📚',color:'#f87171'}
+];
+
+var bizRollenByKategorie = {
+  geschaeftsfuehrung:[{v:'ceo',t:'CEO / Geschäftsführer'},{v:'cfo',t:'CFO / Finanzvorstand'},{v:'coo',t:'COO / Betriebsvorstand'},{v:'cto',t:'CTO / Technikvorstand'},{v:'cmo',t:'CMO / Marketingvorstand'},{v:'cso',t:'CSO / Vertriebsvorstand'},{v:'vorstand',t:'Vorstandsmitglied'},{v:'aufsichtsrat',t:'Aufsichtsrat'}],
+  strategie_controlling:[{v:'bereichsleiter',t:'Bereichsleiter'},{v:'controller',t:'Controller'},{v:'stratege',t:'Strategieberater'}],
+  finanzen:[{v:'finanzleiter',t:'Finanzleiter'},{v:'buchhalter',t:'Buchhalter'},{v:'steuerberater',t:'Steuerberater'}],
+  personal:[{v:'hr_leiter',t:'HR-Leiter/Personalleiter'},{v:'recruiter',t:'Recruiter'},{v:'personalentwickler',t:'Personalentwickler'}],
+  produktion:[{v:'produktionsleiter',t:'Produktionsleiter'},{v:'qualitaetsmanager',t:'Qualitätsmanager'},{v:'logistik',t:'Logistik/Supply Chain'}],
+  einkauf:[{v:'einkaufsleiter',t:'Einkaufsleiter'},{v:'beschaffung',t:'Beschaffung/Procurement'}],
+  vertrieb:[{v:'vertriebsleiter',t:'Vertriebsleiter'},{v:'key_account',t:'Key Account Manager'},{v:'sales',t:'Sales Manager'}],
+  marketing:[{v:'marketingleiter',t:'Marketingleiter'},{v:'pr_manager',t:'PR-Manager'},{v:'content_manager',t:'Content Manager'},{v:'social_media',t:'Social Media Manager'}],
+  it_digital:[{v:'it_leiter',t:'IT-Leiter/CIO'},{v:'developer',t:'Entwickler/Developer'},{v:'sysadmin',t:'Systemadministrator'},{v:'data_analyst',t:'Data Analyst'}],
+  recht_compliance:[{v:'jurist',t:'Jurist/Syndikusanwalt'},{v:'compliance',t:'Compliance Officer'},{v:'datenschutz',t:'Datenschutzbeauftragter'}],
+  forschung_entwicklung:[{v:'forschungsleiter',t:'Forschungsleiter'},{v:'entwickler',t:'Produktentwickler'},{v:'innovation',t:'Innovationsmanager'}],
+  international:[{v:'regionalleiter',t:'Regionalleiter'},{v:'country_manager',t:'Country Manager'},{v:'export_manager',t:'Export Manager'}],
+  nachwuchs:[{v:'werkstudent',t:'Werkstudent'},{v:'praktikant',t:'Praktikant'},{v:'azubi',t:'Auszubildender'}]
+};
+
+// ═══ DYNAMISCHE AUSWAHL ═══
+function getKategorien(){ return currentOrgType==='edu' ? eduKategorien : bizKategorien; }
+function getRollenByKategorie(){ return currentOrgType==='edu' ? eduRollenByKategorie : bizRollenByKategorie; }
+function getRoleLabels(){ return currentOrgType==='edu' ? eduRoleLabels : bizRoleLabels; }
+var roleLabels = eduRoleLabels; // Default
+var rollenByKategorie = eduRollenByKategorie; // Default
+
+function setOrgType(type){
+  currentOrgType = type;
+  roleLabels = getRoleLabels();
+  rollenByKategorie = getRollenByKategorie();
+  // Kategorie-Select aktualisieren
+  var katSel = document.getElementById('ma-kategorie');
+  if(katSel){
+    katSel.innerHTML='';
+    getKategorien().forEach(function(k){
+      katSel.innerHTML+='<option value="'+k.v+'">'+k.t+'</option>';
+    });
+    updateRollenSelect();
+  }
+}
+
+// ── MITARBEITER CRUD (Supabase) ──
 
 function updateRollenSelect(){
   var kat=document.getElementById('ma-kategorie').value;
@@ -1293,6 +1365,63 @@ function loadOrganigramm(){
       container.innerHTML='<div style="text-align:center;padding:3rem 0;color:var(--muted)"><div style="font-size:3rem;margin-bottom:1rem">🏛️</div><h3 style="font-size:16px;font-weight:600;margin-bottom:8px;color:var(--text)">Noch kein Organigramm erstellt</h3><p style="font-size:13px;line-height:1.6;max-width:400px;margin:0 auto">Fügen Sie Mitarbeiter hinzu, um das Organigramm automatisch zu befüllen.</p></div>';
       return;
     }
+
+    // UNTERNEHMEN: Generisches Kategorie-Organigramm
+    if(currentOrgType === 'unternehmen'){
+      var kats = getKategorien();
+      var labels = getRoleLabels();
+      var html = '<div style="display:flex;flex-direction:column;align-items:center;min-width:800px">';
+
+      // CEO/Geschäftsführung oben
+      var topRoles = ['ceo','vorstand'];
+      var ceos = mas.filter(function(m){return topRoles.indexOf(m.rolle)!==-1});
+      var topOther = mas.filter(function(m){return m.kategorie==='geschaeftsfuehrung' && topRoles.indexOf(m.rolle)===-1});
+
+      if(ceos.length>0){
+        html += '<div style="display:flex;gap:16px;justify-content:center">';
+        ceos.forEach(function(m){
+          html += '<div style="display:flex;flex-direction:column;align-items:center">';
+          html += '<div class="org-node level-0" style="position:relative">';
+          html += '<div class="org-node-name">'+(m.position?m.position+' ':'')+m.vorname+' '+m.nachname+'</div>';
+          html += '<div class="org-node-role">'+(labels[m.rolle]||m.rolle)+'</div>';
+          html += countBadge(mas.length, 'var(--gold)');
+          html += '</div></div>';
+        });
+        html += '</div>';
+        html += gozLine(mas.length+' Gesamt', 'var(--gold)');
+      }
+
+      // C-Level (CFO, COO, CTO etc.)
+      if(topOther.length>0){
+        html += '<div style="display:flex;gap:16px;justify-content:center;margin-top:8px">';
+        topOther.forEach(function(m){
+          html += '<div style="display:flex;flex-direction:column;align-items:center">';
+          html += '<div style="width:1px;height:16px;background:var(--border)"></div>';
+          html += makeNode(m, 1);
+          html += '</div>';
+        });
+        html += '</div>';
+      }
+
+      // Alle anderen Kategorien (nur wenn Mitarbeiter vorhanden)
+      kats.forEach(function(kat){
+        if(kat.v==='geschaeftsfuehrung') return; // schon oben
+        var filtered = mas.filter(function(m){return m.kategorie===kat.v});
+        if(filtered.length===0) return; // LEER = AUSBLENDEN
+        html += '<div style="margin-top:1.5rem;width:100%;display:flex;flex-direction:column;align-items:center">';
+        html += gozLine(filtered.length+' '+kat.t.replace(/^\d+\.\s*/,''), kat.color);
+        html += '<div style="text-align:center;margin-bottom:8px;margin-top:4px"><span class="org-group-title" style="background:'+kat.color+'15;color:'+kat.color+'">'+kat.icon+' '+kat.t+' ('+filtered.length+')</span></div>';
+        html += '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">';
+        filtered.forEach(function(m){ html += makeNode(m, kats.indexOf(kat)+1 > 5 ? 4 : kats.indexOf(kat)+1); });
+        html += '</div></div>';
+      });
+
+      html += '</div>';
+      container.innerHTML = html;
+      return;
+    }
+
+    // ═══ BILDUNGSEINRICHTUNG: Spezifisches Organigramm ═══
 
     // Sortiere nach Hierarchie
     var praesident = mas.filter(function(m){return m.rolle==='praesident'})[0];
