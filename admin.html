@@ -297,6 +297,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
     <div class="nav-item active" onclick="showPage('dashboard')"><span class="nav-icon">📊</span>Dashboard</div>
     <div class="nav-item" onclick="showPage('organigramm')"><span class="nav-icon">🏛️</span>Organigramm<span class="nav-badge">Neu</span></div>
     <div class="nav-item" onclick="showPage('mitarbeiter')"><span class="nav-icon">👥</span>Mitarbeiter</div>
+    <div class="nav-item" onclick="showPage('studierende')"><span class="nav-icon">👨‍🎓</span>Studierende</div>
     <div class="nav-item" onclick="showPage('studiengaenge')"><span class="nav-icon">🎓</span>Studiengänge</div>
 
     <div class="nav-label">Verwaltung</div>
@@ -452,6 +453,18 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
       .org-cluster-body{width:100%;display:flex;flex-direction:column;align-items:center;overflow:hidden;transition:all .3s}
       .org-cluster-body.collapsed{display:none}
       </style>
+    </div>
+
+    <!-- PAGE: Studierende -->
+    <div class="page" id="page-studierende">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+        <div>
+          <h2 style="font-family:'DM Serif Display',serif;font-size:22px">Studierende</h2>
+          <p style="font-size:13px;color:var(--muted)">Übersicht aller eingeschriebenen Studierenden</p>
+        </div>
+        <button class="btn-primary" style="flex:none;padding:10px 16px" onclick="loadStudierende()">🔄 Aktualisieren</button>
+      </div>
+      <div id="stud-content"><div style="text-align:center;padding:3rem;color:var(--muted)">Lade Studierende…</div></div>
     </div>
 
     <!-- PAGE: Studiengänge -->
@@ -1131,6 +1144,7 @@ function showPage(id) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   event.currentTarget.classList.add('active');
   if(id==='organigramm') loadOrganigramm();
+  if(id==='studierende') loadStudierende();
   if(id==='studiengaenge') loadStudiengaenge();
   if(id==='bewertungen') loadBewertungen();
   if(id==='statistiken') loadStatistiken();
@@ -2223,6 +2237,89 @@ function loadStatistiken(){
 
     cont.innerHTML = html;
   });
+}
+
+// ─── STUDIERENDE PAGE ────────────────────────────────────────────────────────
+async function loadStudierende(){
+  if(!currentOrgId) return;
+  var cont = document.getElementById('stud-content');
+  cont.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--muted)">Wird geladen...</div>';
+
+  // Profile + Studiengänge + Fakultäten parallel laden
+  var results = await Promise.all([
+    sb.from('profiles').select('id,vorname,nachname,email,rolle,studiengang,semester,abschluss,updated_at').eq('organization_id',currentOrgId),
+    sb.from('studiengaenge').select('id,name,fakultaet_id,abschluss').eq('organization_id',currentOrgId).eq('aktiv',true).order('name'),
+    sb.from('fakultaeten').select('id,name,kuerzel').eq('organization_id',currentOrgId)
+  ]);
+
+  var profiles  = results[0].data || [];
+  var sgs       = results[1].data || [];
+  var faks      = results[2].data || [];
+
+  // Nur echte Studierende (vorname + nachname vorhanden, rolle student)
+  var studierende = profiles.filter(function(p){
+    return p.rolle === 'student' && p.vorname && p.nachname;
+  });
+
+  if(studierende.length === 0){
+    cont.innerHTML = '<div class="card"><div style="text-align:center;padding:3rem 0;color:var(--muted)"><div style="font-size:3rem;margin-bottom:1rem">👨‍🎓</div><h3 style="font-size:16px;font-weight:600;margin-bottom:8px;color:var(--text)">Noch keine Studierenden</h3><p style="font-size:13px;max-width:380px;margin:0 auto">Sobald sich Studierende registrieren, erscheinen sie hier.</p></div></div>';
+    return;
+  }
+
+  // Hilfsmaps
+  var fakMap = {};
+  faks.forEach(function(f){ fakMap[f.id] = f.kuerzel || f.name; });
+  var sgFakMap = {};
+  sgs.forEach(function(sg){ sgFakMap[sg.name] = sg.fakultaet_id ? (fakMap[sg.fakultaet_id]||'—') : '—'; });
+
+  // Nach Studiengang gruppieren
+  var groups = {};
+  studierende.forEach(function(p){
+    var key = p.studiengang || 'Kein Studiengang';
+    if(!groups[key]) groups[key] = [];
+    groups[key].push(p);
+  });
+  var sortedKeys = Object.keys(groups).sort();
+
+  // Farben für Avatar-Hintergründe
+  var avatarColors = ['#fb923c','#7c6dfa','#4ade80','#38bdf8','#f472b6','#facc15'];
+
+  var html = '';
+  // KPI-Zeile oben
+  html += '<div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:1.5rem">';
+  html += '<div class="stat-card"><div class="stat-icon">👨‍🎓</div><div class="stat-val">'+studierende.length+'</div><div class="stat-label">Eingeschrieben</div></div>';
+  html += '<div class="stat-card"><div class="stat-icon">📚</div><div class="stat-val">'+sortedKeys.length+'</div><div class="stat-label">Studiengänge</div></div>';
+  var avgSem = studierende.filter(function(p){return p.semester;}).reduce(function(a,p){return a+p.semester;},0) / (studierende.filter(function(p){return p.semester;}).length||1);
+  html += '<div class="stat-card"><div class="stat-icon">📅</div><div class="stat-val">'+(isNaN(avgSem)?'—':avgSem.toFixed(1))+'</div><div class="stat-label">Ø Semester</div></div>';
+  html += '</div>';
+
+  // Pro Studiengang eine Kachel
+  sortedKeys.forEach(function(sgName, gi){
+    var members = groups[sgName];
+    var fak = sgFakMap[sgName] || '—';
+    var color = avatarColors[gi % avatarColors.length];
+
+    html += '<div class="card" style="margin-bottom:.75rem">';
+    html += '<div class="card-head" style="margin-bottom:1rem">';
+    html += '<span class="card-title">🎓 '+sgName+'</span>';
+    html += '<span style="font-size:11px;color:var(--muted)">Fakultät: '+fak+' &nbsp;·&nbsp; '+members.length+' Studierende</span>';
+    html += '</div>';
+
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.6rem">';
+    members.forEach(function(p){
+      var initials = (p.vorname[0]||'')+(p.nachname[0]||'');
+      html += '<div style="display:flex;align-items:center;gap:10px;background:var(--surface2);border-radius:10px;padding:.6rem .8rem">';
+      html += '<div style="width:36px;height:36px;border-radius:50%;background:'+color+';display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0">'+initials+'</div>';
+      html += '<div style="min-width:0">';
+      html += '<div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+p.vorname+' '+p.nachname+'</div>';
+      html += '<div style="font-size:11px;color:var(--muted)">'+(p.semester?'Sem. '+p.semester:'—')+(p.abschluss?' · '+p.abschluss:'')+'</div>';
+      html += '</div></div>';
+    });
+    html += '</div>';
+    html += '</div>';
+  });
+
+  cont.innerHTML = html;
 }
 </script>
 
