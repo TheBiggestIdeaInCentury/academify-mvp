@@ -1187,17 +1187,34 @@ function loadMitarbeiter(){
     var wrap=document.getElementById('ma-table-wrap');
     if(!r.data || r.data.length===0){ empty.style.display='block'; wrap.style.display='none'; return; }
     empty.style.display='none'; wrap.style.display='block';
-    tbody.innerHTML='';
-    r.data.forEach(function(m){
-      var tr=document.createElement('tr');
-      tr.style.borderBottom='1px solid var(--border)';
-      var katLabels={hochschulleitung:'Leitung',fakultaet:'Fakultät',wissenschaft:'Wissenschaft',verwaltung_technik:'Verwaltung',studentische_beschaeftigte:'Stud. Beschäftigte'};
-      tr.innerHTML='<td style="padding:10px 8px;font-weight:500">'+(m.position?m.position+' ':'')+m.vorname+' '+m.nachname+'</td>'
-        +'<td style="padding:10px 8px;color:var(--muted)">'+(m.email||'—')+'</td>'
-        +'<td style="padding:10px 8px"><span style="background:rgba(255,255,255,0.04);color:var(--muted);padding:2px 8px;border-radius:100px;font-size:10px;border:1px solid var(--border)">'+(katLabels[m.kategorie]||m.kategorie)+'</span></td>'
-        +'<td style="padding:10px 8px"><span style="background:rgba(124,109,250,0.1);color:var(--accent2);padding:2px 8px;border-radius:100px;font-size:10px">'+(roleLabels[m.rolle]||m.rolle)+'</span></td>'
-        +'<td style="padding:10px 8px"><button onclick="editMitarbeiter(\''+m.id+'\')" style="background:none;border:none;color:var(--accent2);cursor:pointer;font-size:12px;margin-right:8px">✏️</button><button onclick="deleteMitarbeiter(\''+m.id+'\')" style="background:none;border:none;color:var(--coral);cursor:pointer;font-size:12px">🗑️</button></td>';
-      tbody.appendChild(tr);
+
+    // Online-Status: Prüfe welche Mitarbeiter-E-Mails ein aktives Profil haben (letzte 30 Min)
+    sb.from('profiles').select('email,updated_at').then(function(pResult){
+      var onlineEmails={};
+      if(pResult.data){
+        var now=new Date().getTime();
+        pResult.data.forEach(function(p){
+          if(p.email && p.updated_at){
+            var diff=now-new Date(p.updated_at).getTime();
+            if(diff < 30*60*1000) onlineEmails[p.email.toLowerCase()]=true;
+          }
+        });
+      }
+
+      tbody.innerHTML='';
+      r.data.forEach(function(m){
+        var tr=document.createElement('tr');
+        tr.style.borderBottom='1px solid var(--border)';
+        var katLabels={hochschulleitung:'Leitung',fakultaet:'Fakultät',wissenschaft:'Wissenschaft',verwaltung_technik:'Verwaltung',studentische_beschaeftigte:'Stud. Beschäftigte'};
+        var isOnline=m.email && onlineEmails[m.email.toLowerCase()];
+        var onlineDot=isOnline?'<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;margin-left:6px;box-shadow:0 0 6px rgba(34,197,94,0.5);animation:pulse 2s infinite" title="Online"></span>':'';
+        tr.innerHTML='<td style="padding:10px 8px;font-weight:500;display:flex;align-items:center">'+(m.position?m.position+' ':'')+m.vorname+' '+m.nachname+onlineDot+'</td>'
+          +'<td style="padding:10px 8px;color:var(--muted)">'+(m.email||'—')+'</td>'
+          +'<td style="padding:10px 8px"><span style="background:rgba(255,255,255,0.04);color:var(--muted);padding:2px 8px;border-radius:100px;font-size:10px;border:1px solid var(--border)">'+(katLabels[m.kategorie]||m.kategorie)+'</span></td>'
+          +'<td style="padding:10px 8px"><span style="background:rgba(124,109,250,0.1);color:var(--accent2);padding:2px 8px;border-radius:100px;font-size:10px">'+(roleLabels[m.rolle]||m.rolle)+'</span>'+onlineDot+'</td>'
+          +'<td style="padding:10px 8px"><button onclick="editMitarbeiter(\''+m.id+'\')" style="background:none;border:none;color:var(--accent2);cursor:pointer;font-size:12px;margin-right:8px">✏️</button><button onclick="deleteMitarbeiter(\''+m.id+'\')" style="background:none;border:none;color:var(--coral);cursor:pointer;font-size:12px">🗑️</button></td>';
+        tbody.appendChild(tr);
+      });
     });
     // Update stat
     var statEl=document.querySelector('[data-stat="mitarbeiter"]');
@@ -1356,10 +1373,24 @@ function loadOrganigramm(){
 
   Promise.all([
     sb.from('fakultaeten').select('*').eq('organization_id',currentOrgId).order('sortierung'),
-    sb.from('mitarbeiter').select('*').eq('organization_id',currentOrgId).eq('aktiv',true)
+    sb.from('mitarbeiter').select('*').eq('organization_id',currentOrgId).eq('aktiv',true),
+    sb.from('profiles').select('email,updated_at')
   ]).then(function(results){
     var faks = results[0].data || [];
     var mas = results[1].data || [];
+    // Online-Status Map
+    var onlineEmails={};
+    var now=new Date().getTime();
+    (results[2].data||[]).forEach(function(p){
+      if(p.email && p.updated_at){
+        var diff=now-new Date(p.updated_at).getTime();
+        if(diff < 30*60*1000) onlineEmails[p.email.toLowerCase()]=true;
+      }
+    });
+    function onlineDot(email){
+      if(!email) return '';
+      return onlineEmails[email.toLowerCase()]?'<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;margin-left:5px;box-shadow:0 0 5px rgba(34,197,94,0.5);animation:pulse 2s infinite"></span>':'';
+    }
 
     if(mas.length===0){
       container.innerHTML='<div style="text-align:center;padding:3rem 0;color:var(--muted)"><div style="font-size:3rem;margin-bottom:1rem">🏛️</div><h3 style="font-size:16px;font-weight:600;margin-bottom:8px;color:var(--text)">Noch kein Organigramm erstellt</h3><p style="font-size:13px;line-height:1.6;max-width:400px;margin:0 auto">Fügen Sie Mitarbeiter hinzu, um das Organigramm automatisch zu befüllen.</p></div>';
@@ -1382,7 +1413,7 @@ function loadOrganigramm(){
         ceos.forEach(function(m){
           html += '<div style="display:flex;flex-direction:column;align-items:center">';
           html += '<div class="org-node level-0" style="position:relative">';
-          html += '<div class="org-node-name">'+(m.position?m.position+' ':'')+m.vorname+' '+m.nachname+'</div>';
+          html += '<div class="org-node-name">'+(m.position?m.position+' ':'')+m.vorname+' '+m.nachname+onlineDot(m.email)+'</div>';
           html += '<div class="org-node-role">'+(labels[m.rolle]||m.rolle)+'</div>';
           html += countBadge(mas.length, 'var(--gold)');
           html += '</div></div>';
@@ -1465,7 +1496,7 @@ function loadOrganigramm(){
       var totalUnder = level1.length + faks.length + wissAll.length + verwaltung.length + studBesch.length;
       html += '<div style="display:flex;flex-direction:column;align-items:center">';
       html += '<div class="org-node level-0" style="position:relative">';
-      html += '<div class="org-node-name">'+(praesident.position?praesident.position+' ':'')+praesident.vorname+' '+praesident.nachname+'</div>';
+      html += '<div class="org-node-name">'+(praesident.position?praesident.position+' ':'')+praesident.vorname+' '+praesident.nachname+onlineDot(praesident.email)+'</div>';
       html += '<div class="org-node-role">'+(roleLabels[praesident.rolle]||praesident.rolle)+'</div>';
       html += countBadge(totalUnder, 'var(--gold)');
       html += '</div>';
@@ -1490,7 +1521,7 @@ function loadOrganigramm(){
         html += '<div style="display:flex;flex-direction:column;align-items:center">';
         html += '<div style="width:1px;height:20px;background:rgba(124,109,250,0.4)"></div>';
         html += '<div class="org-node level-1" style="position:relative">';
-        html += '<div class="org-node-name">'+(m.position?m.position+' ':'')+m.vorname+' '+m.nachname+'</div>';
+        html += '<div class="org-node-name">'+(m.position?m.position+' ':'')+m.vorname+' '+m.nachname+onlineDot(m.email)+'</div>';
         html += '<div class="org-node-role">'+(roleLabels[m.rolle]||m.rolle)+'</div>';
         if(m.ressort) html += '<div class="org-node-dept">'+m.ressort+'</div>';
         if(m.zustaendigkeiten) html += '<div class="org-node-dept">'+m.zustaendigkeiten+'</div>';
@@ -1519,8 +1550,8 @@ function loadOrganigramm(){
         html += '<div class="org-node level-2" style="min-width:155px;position:relative">';
         html += '<div class="org-node-name">'+f.name+'</div>';
         if(f.kuerzel) html += '<div class="org-node-dept">'+f.kuerzel+'</div>';
-        if(dekan) html += '<div style="margin-top:6px;padding-top:6px;border-top:1px solid var(--border)"><div class="org-node-name" style="font-size:11px">'+(dekan.position?dekan.position+' ':'')+dekan.vorname+' '+dekan.nachname+'</div><div class="org-node-role">Dekan</div></div>';
-        if(prodekan) html += '<div style="margin-top:3px"><div class="org-node-name" style="font-size:10px;font-weight:400">'+(prodekan.position?prodekan.position+' ':'')+prodekan.vorname+' '+prodekan.nachname+'</div><div class="org-node-role" style="font-size:9px">Prodekan</div></div>';
+        if(dekan) html += '<div style="margin-top:6px;padding-top:6px;border-top:1px solid var(--border)"><div class="org-node-name" style="font-size:11px">'+(dekan.position?dekan.position+' ':'')+dekan.vorname+' '+dekan.nachname+onlineDot(dekan.email)+'</div><div class="org-node-role">Dekan</div></div>';
+        if(prodekan) html += '<div style="margin-top:3px"><div class="org-node-name" style="font-size:10px;font-weight:400">'+(prodekan.position?prodekan.position+' ':'')+prodekan.vorname+' '+prodekan.nachname+onlineDot(prodekan.email)+'</div><div class="org-node-role" style="font-size:9px">Prodekan</div></div>';
         if(fakTotal>0) html += countBadge(fakTotal, '#38bdf8');
         html += '</div></div>';
       });
