@@ -1016,39 +1016,57 @@ function markUnsaved() {
 // Domains aus Supabase laden (basierend auf eingeloggtem Admin)
 async function loadDomains() {
   try {
-    // Finde die Organisation basierend auf der E-Mail-Domain des Admins
     const {data:session} = await sb.auth.getSession();
     var orgData = null;
+
     if(session && session.session){
+      var uid = session.session.user.id;
       var adminEmail = session.session.user.email;
       var adminDomain = adminEmail.split('@')[1];
-      const {data:allOrgs} = await sb.from('organizations').select('*').eq('status','active');
-      if(allOrgs){
-        orgData = allOrgs.find(function(o){
-          return [o.domain_1,o.domain_2,o.domain_3,o.domain_4].some(function(d){return d && d===adminDomain;});
-        });
+
+      // 1. Zuverlässigste Methode: Org via Profil des Admins
+      var profRes = await sb.from('profiles').select('organization_id').eq('id', uid).maybeSingle();
+      if(profRes.data && profRes.data.organization_id){
+        var orgRes = await sb.from('organizations').select('*').eq('id', profRes.data.organization_id).maybeSingle();
+        orgData = orgRes.data;
+      }
+
+      // 2. Fallback: Domain-Matching (flexibel: inu.de matcht @stud.inu.de oder inu.de)
+      if(!orgData){
+        var {data:allOrgs} = await sb.from('organizations').select('*').eq('status','active');
+        if(allOrgs){
+          orgData = allOrgs.find(function(o){
+            return [o.domain_1,o.domain_2,o.domain_3,o.domain_4].some(function(d){
+              if(!d) return false;
+              var clean = d.replace('@','');
+              return clean === adminDomain || clean.endsWith('.'+adminDomain) || adminDomain.endsWith('.'+clean);
+            });
+          });
+        }
       }
     }
-    // Fallback: erste Org
+
+    // 3. Letzter Fallback: erste aktive Org mit Profilen
     if(!orgData){
-      const {data:firstOrg} = await sb.from('organizations').select('*').eq('status','active').limit(1);
+      var {data:firstOrg} = await sb.from('organizations').select('*').eq('status','active').order('created_at').limit(1);
       if(firstOrg && firstOrg.length>0) orgData = firstOrg[0];
     }
-    const data = orgData ? [orgData] : [];
-    const error = null;
-    if (data && data.length > 0) {
-      const org = data[0];
-      currentOrgId = org.id;
-      setOrgType(org.type || 'edu');
-      document.getElementById('orgName').value = org.name || '';
-      document.getElementById('orgType').value = org.type || 'edu';
-      document.getElementById('domain1').value = org.domain_1 || '';
-      document.getElementById('domain2').value = org.domain_2 || '';
-      document.getElementById('domain3').value = org.domain_3 || '';
-      document.getElementById('domain4').value = org.domain_4 || '';
+
+    if(orgData){
+      currentOrgId = orgData.id;
+      setOrgType(orgData.type || 'edu');
+      document.getElementById('orgName').value = orgData.name || '';
+      document.getElementById('orgType').value = orgData.type || 'edu';
+      document.getElementById('domain1').value = orgData.domain_1 || '';
+      document.getElementById('domain2').value = orgData.domain_2 || '';
+      document.getElementById('domain3').value = orgData.domain_3 || '';
+      document.getElementById('domain4').value = orgData.domain_4 || '';
       unsavedChanges = false;
       document.getElementById('btnSaveDomains').textContent = '💾 Domains speichern';
       document.getElementById('domainSyncStatus').innerHTML = '<span style="font-size:10px;color:var(--success)">●</span><span style="font-size:11px;color:var(--success);font-weight:600">Sync mit Supabase ✓</span>';
+
+      // Dashboard-Stats NACH dem Setzen von currentOrgId laden
+      loadDashboardStats();
     }
   } catch (e) {
     document.getElementById('domainSyncStatus').innerHTML = '<span style="font-size:10px;color:var(--coral)">●</span><span style="font-size:11px;color:var(--coral);font-weight:600">Offline</span>';
@@ -1369,7 +1387,7 @@ window.showPage = function(id,el){
 };
 
 // Dashboard Stats beim Start laden
-setTimeout(function(){loadDashboardStats();}, 800);
+// loadDashboardStats wird am Ende von loadDomains aufgerufen (nach currentOrgId-Setzen)
 
 // ── DASHBOARD LIVE STATS ──
 function loadDashboardStats(){
