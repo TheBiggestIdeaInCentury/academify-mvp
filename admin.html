@@ -1321,7 +1321,7 @@ function loadMitarbeiter(){
         var katLabels={hochschulleitung:'Leitung',fakultaet:'Fakultät',wissenschaft:'Wissenschaft',verwaltung_technik:'Verwaltung',studentische_beschaeftigte:'Stud. Beschäftigte'};
         var isOnline=m.email && onlineEmails[m.email.toLowerCase()];
         var onlineDot=isOnline?'<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;margin-left:6px;box-shadow:0 0 6px rgba(34,197,94,0.5);animation:pulse 2s infinite" title="Online"></span>':'';
-        tr.innerHTML='<td style="padding:10px 8px;font-weight:500;display:flex;align-items:center">'+(m.position?m.position+' ':'')+m.vorname+' '+m.nachname+onlineDot+'</td>'
+        tr.innerHTML='<td style="padding:10px 8px;font-weight:500;display:flex;align-items:center">'+m.vorname+' '+m.nachname+onlineDot+'</td>'
           +'<td style="padding:10px 8px;color:var(--muted)">'+(m.email||'—')+'</td>'
           +'<td style="padding:10px 8px"><span style="background:rgba(255,255,255,0.04);color:var(--muted);padding:2px 8px;border-radius:100px;font-size:10px;border:1px solid var(--border)">'+(katLabels[m.kategorie]||m.kategorie)+'</span></td>'
           +'<td style="padding:10px 8px"><span style="background:rgba(124,109,250,0.1);color:var(--accent2);padding:2px 8px;border-radius:100px;font-size:10px">'+(roleLabels[m.rolle]||m.rolle)+'</span></td>'
@@ -1462,7 +1462,7 @@ function makeNode(m, level){
   var cls = 'org-node level-'+level+' org-clickable';
   var name = (m.position?m.position+' ':'')+m.vorname+' '+m.nachname;
   var role = roleLabels[m.rolle]||m.rolle;
-  var dept = m.fakultaet||m.abteilung||'';
+  var dept = m.fachrichtung||m.institut||'';
   if(m.id) orgPersonMap[m.id]=m;
   return '<div class="'+cls+'" onclick="openPersonProfile(\''+m.id+'\')" title="Profil anzeigen">'
     +'<div class="org-node-name">'+name+(orgOnlineEmailsGlobal[m.email]?'<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;margin-left:5px;box-shadow:0 0 5px rgba(34,197,94,0.5);animation:pulse 2s infinite"></span>':'')+'</div>'
@@ -1534,7 +1534,7 @@ function loadOrganigramm(){
           orgPersonMap[m.id]=m;
           html += '<div style="display:flex;flex-direction:column;align-items:center">';
           html += '<div class="org-node level-0 org-clickable" style="position:relative" onclick="openPersonProfile(\''+m.id+'\')" title="Profil anzeigen">';
-          html += '<div class="org-node-name">'+(m.position?m.position+' ':'')+m.vorname+' '+m.nachname+onlineDot(m.email)+'</div>';
+          html += '<div class="org-node-name">'+m.vorname+' '+m.nachname+onlineDot(m.email)+'</div>';
           html += '<div class="org-node-role">'+(labels[m.rolle]||m.rolle)+'</div>';
           html += countBadge(mas.length, 'var(--gold)');
           html += '</div></div>';
@@ -1586,8 +1586,8 @@ function loadOrganigramm(){
     var junprofs = mas.filter(function(m){return m.rolle==='juniorprofessor'});
     var postdocs = mas.filter(function(m){return m.rolle==='postdoc'});
     var lehrkraefte = mas.filter(function(m){return m.rolle==='lehrkraft'});
-    var verwaltung = mas.filter(function(m){return m.kategorie==='verwaltung_technik'});
-    var studBesch = mas.filter(function(m){return m.kategorie==='studentische_beschaeftigte'});
+    var verwaltung = mas.filter(function(m){return m.rolle==='verwaltung'});
+    var studBesch = mas.filter(function(m){return m.rolle==='studentische_beschaeftigte'});
     var gremien = mas.filter(function(m){return ['praesidium','senat','hochschulrat'].indexOf(m.rolle)!==-1});
     var wissAll = profs.concat(junprofs).concat(postdocs).concat(lehrkraefte);
 
@@ -1645,9 +1645,9 @@ function loadOrganigramm(){
         html += '<div style="display:flex;flex-direction:column;align-items:center">';
         html += '<div style="width:1px;height:20px;background:rgba(124,109,250,0.4)"></div>';
         html += '<div class="org-node level-1 org-clickable" style="position:relative" onclick="openPersonProfile(\''+m.id+'\')" title="Profil anzeigen">';
-        html += '<div class="org-node-name">'+(m.position?m.position+' ':'')+m.vorname+' '+m.nachname+onlineDot(m.email)+'</div>';
+        html += '<div class="org-node-name">'+m.vorname+' '+m.nachname+onlineDot(m.email)+'</div>';
         html += '<div class="org-node-role">'+(roleLabels[m.rolle]||m.rolle)+'</div>';
-        if(m.ressort) html += '<div class="org-node-dept">'+m.ressort+'</div>';
+        if(m.fachrichtung) html += '<div class="org-node-dept">'+m.fachrichtung+'</div>';
         if(m.zustaendigkeiten) html += '<div class="org-node-dept">'+m.zustaendigkeiten+'</div>';
         if(underCount>0) html += countBadge(underCount, 'var(--accent)');
         html += '</div>';
@@ -1664,11 +1664,11 @@ function loadOrganigramm(){
       html += '<div class="org-cluster-body" id="cluster-body-faks">';
       html += '<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:8px">';
       faks.forEach(function(f){
-        var dekan = dekane.find(function(d){return d.fakultaet && (f.name.indexOf(d.fakultaet)!==-1 || (f.kuerzel && d.fakultaet.indexOf(f.kuerzel)!==-1))});
-        var prodekan = prodekane.find(function(p){return p.fakultaet && (f.name.indexOf(p.fakultaet)!==-1 || (f.kuerzel && p.fakultaet.indexOf(f.kuerzel)!==-1))});
+        var dekan = dekane.find(function(d){return d.fachrichtung && (f.name.indexOf(d.fachrichtung)!==-1 || (f.kuerzel && d.fachrichtung.indexOf(f.kuerzel)!==-1))});
+        var prodekan = prodekane.find(function(p){return p.fachrichtung && (f.name.indexOf(p.fachrichtung)!==-1 || (f.kuerzel && p.fachrichtung.indexOf(f.kuerzel)!==-1))});
         // Zähle Wissenschaftler in dieser Fakultät
-        var fakWiss = wissAll.filter(function(w){return w.fakultaet && (f.name.indexOf(w.fakultaet)!==-1 || (f.kuerzel && w.fakultaet.indexOf(f.kuerzel)!==-1))});
-        var fakStud = studBesch.filter(function(s){return s.fakultaet && (f.name.indexOf(s.fakultaet)!==-1 || (f.kuerzel && s.fakultaet.indexOf(f.kuerzel)!==-1))});
+        var fakWiss = wissAll.filter(function(w){return w.fachrichtung && (f.name.indexOf(w.fachrichtung)!==-1 || (f.kuerzel && w.fachrichtung.indexOf(f.kuerzel)!==-1))});
+        var fakStud = studBesch.filter(function(s){return s.fachrichtung && (f.name.indexOf(s.fachrichtung)!==-1 || (f.kuerzel && s.fachrichtung.indexOf(f.kuerzel)!==-1))});
         var fakTotal = (dekan?1:0)+(prodekan?1:0)+fakWiss.length+fakStud.length;
 
         // Studiengänge dieser Fakultät
@@ -1679,8 +1679,8 @@ function loadOrganigramm(){
         html += '<div class="org-node level-2" style="min-width:180px;max-width:230px;position:relative">';
         html += '<div class="org-node-name">'+f.name+'</div>';
         if(f.kuerzel) html += '<div class="org-node-dept">'+f.kuerzel+'</div>';
-        if(dekan) html += '<div style="margin-top:6px;padding-top:6px;border-top:1px solid var(--border)"><div class="org-node-name" style="font-size:11px">'+(dekan.position?dekan.position+' ':'')+dekan.vorname+' '+dekan.nachname+onlineDot(dekan.email)+'</div><div class="org-node-role">Dekan</div></div>';
-        if(prodekan) html += '<div style="margin-top:3px"><div class="org-node-name" style="font-size:10px;font-weight:400">'+(prodekan.position?prodekan.position+' ':'')+prodekan.vorname+' '+prodekan.nachname+onlineDot(prodekan.email)+'</div><div class="org-node-role" style="font-size:9px">Prodekan</div></div>';
+        if(dekan) html += '<div style="margin-top:6px;padding-top:6px;border-top:1px solid var(--border)"><div class="org-node-name" style="font-size:11px">'+dekan.vorname+' '+dekan.nachname+onlineDot(dekan.email)+'</div><div class="org-node-role">Dekan</div></div>';
+        if(prodekan) html += '<div style="margin-top:3px"><div class="org-node-name" style="font-size:10px;font-weight:400">'+prodekan.vorname+' '+prodekan.nachname+onlineDot(prodekan.email)+'</div><div class="org-node-role" style="font-size:9px">Prodekan</div></div>';
         if(fakSGs.length>0){
           html += '<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;gap:3px;justify-content:center">';
           fakSGs.forEach(function(sg){
@@ -1889,10 +1889,10 @@ var orgOnlineEmailsGlobal = {};
 function openPersonProfile(id){
   var m = orgPersonMap[id];
   if(!m) return;
-  var name = (m.position?m.position+' ':'')+m.vorname+' '+m.nachname;
+  var name = (m.schwerpunkt?m.schwerpunkt+' ':'')+m.vorname+' '+m.nachname;
   var role = roleLabels[m.rolle]||m.rolle;
-  var dept = m.abteilung||'';
-  var fak = m.fakultaet||'';
+  var dept = m.institut||'';
+  var fak = m.fachrichtung||'';
   var isOnline = m.email && orgOnlineEmailsGlobal[m.email.toLowerCase()];
   // Initials
   var initials = (m.vorname?m.vorname[0]:'')+(m.nachname?m.nachname[0]:'');
@@ -1919,7 +1919,7 @@ function openPersonProfile(id){
   } else {
     if(fak) details += '<div style="display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted)"><span>🏛️</span><span>'+fak+'</span></div>';
     if(dept) details += '<div style="display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted)"><span>🏢</span><span>'+dept+'</span></div>';
-    if(m.ressort) details += '<div style="display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted)"><span>📋</span><span>Ressort: '+m.ressort+'</span></div>';
+    if(m.schwerpunkt) details += '<div style="display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted)"><span>📋</span><span>'+m.schwerpunkt+'</span></div>';
     if(m.zustaendigkeiten) details += '<div style="display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted)"><span>🎯</span><span>'+m.zustaendigkeiten+'</span></div>';
   }
   if(!details) details = '<div style="font-size:12px;color:var(--muted);font-style:italic">Keine weiteren Angaben</div>';
