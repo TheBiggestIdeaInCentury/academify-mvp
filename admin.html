@@ -1460,7 +1460,7 @@ function timeAgo(dateStr){
 // ── ORGANIGRAMM BAUMDIAGRAMM ──
 function makeNode(m, level){
   var cls = 'org-node level-'+level+' org-clickable';
-  var name = (m.position?m.position+' ':'')+m.vorname+' '+m.nachname;
+  var name = m.vorname+' '+m.nachname;
   var role = roleLabels[m.rolle]||m.rolle;
   var dept = m.fachrichtung||m.institut||'';
   if(m.id) orgPersonMap[m.id]=m;
